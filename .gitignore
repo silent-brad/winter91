@@ -1,0 +1,14 @@
+*
+!.gitignore
+!LICENSE
+!README.md
+!IDEA.md
+
+!flake.nix
+!flake.lock
+!nimpkgs/
+!nimpkgs/flake.nix
+!nimpkgs/flake.lock
+
+!src/
+!src/**
