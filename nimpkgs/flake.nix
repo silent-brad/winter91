@@ -5,7 +5,12 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     # Add more packages here:
-    happyx = {
+    checksums = {
+      url = "github:nim-lang/checksums";
+      flake = false;
+    };
+
+    db_connector = {
       url = "github:nim-lang/db_connector";
       flake = false;
     };

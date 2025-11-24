@@ -1,0 +1,156 @@
+{% extends "partials/_master.nimja" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<article style="max-width: 500px; margin: 0 auto;">
+    <header>
+        <h1>Settings</h1>
+        <p>Customize your Winter 100 profile</p>
+    </header>
+    
+    {% if error_message.isSome() %}
+        <div class="error" style="
+            background-color: var(--pico-del-background-color); 
+            color: var(--pico-del-color); 
+            padding: 1rem; 
+            border-radius: var(--pico-border-radius); 
+            margin-bottom: 1rem;
+        ">
+            {{error_message.get()}}
+        </div>
+    {% endif %}
+    
+    {% if success_message.isSome() %}
+        <div class="success" style="
+            background-color: var(--pico-ins-background-color); 
+            color: var(--pico-ins-color); 
+            padding: 1rem; 
+            border-radius: var(--pico-border-radius); 
+            margin-bottom: 1rem;
+        ">
+            {{success_message.get()}}
+        </div>
+    {% endif %}
+    
+    <form method="post" action="/settings" enctype="multipart/form-data">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h3>Profile Avatar</h3>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 1rem 0;">
+                {% if user.isSome() %}
+                    {% let user = user.get() %}
+                    {% importnimja "partials/_user_avatar.nimja" %}
+                {% endif %}
+                <div>
+                    <label for="color">
+                        Avatar Color
+                        <input 
+                            type="color" 
+                            id="color" 
+                            name="color" 
+                            {% if current_color.isSome() %}value="{{current_color.get()}}"{% else %}value="#007bff"{% endif %}
+                        >
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <label for="profile_picture">
+            Profile Picture (Optional)
+            <input 
+                type="file" 
+                id="profile_picture" 
+                name="profile_picture" 
+                accept="image/*"
+            >
+            <small>Upload a custom profile picture, or leave empty to use avatar with your initials.</small>
+        </label>
+        
+        <label for="email">
+            Email
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="Enter your email"
+                {% if email.isSome() %}value="{{email.get()}}"{% endif %}
+                required
+            >
+        </label>
+        
+        <fieldset>
+            <legend>Change Password (Optional)</legend>
+            
+            <label for="current_password">
+                Current Password
+                <input 
+                    type="password" 
+                    id="current_password" 
+                    name="current_password" 
+                    placeholder="Enter current password"
+                >
+                <small>Required only if changing password.</small>
+            </label>
+            
+            <label for="new_password">
+                New Password
+                <input 
+                    type="password" 
+                    id="new_password" 
+                    name="new_password" 
+                    placeholder="Enter new password"
+                    minlength="8"
+                >
+                <small>Leave empty to keep current password.</small>
+            </label>
+            
+            <label for="confirm_new_password">
+                Confirm New Password
+                <input 
+                    type="password" 
+                    id="confirm_new_password" 
+                    name="confirm_new_password" 
+                    placeholder="Confirm new password"
+                    minlength="8"
+                >
+            </label>
+        </fieldset>
+        
+        <button type="submit">Save Changes</button>
+    </form>
+</article>
+
+{% block extra_js %}
+<script>
+// Update avatar preview when color changes
+document.getElementById('color').addEventListener('input', function() {
+    const avatar = document.querySelector('.avatar');
+    if (avatar) {
+        avatar.style.backgroundColor = this.value;
+    }
+});
+
+// Password confirmation validation
+document.getElementById('confirm_new_password').addEventListener('input', function() {
+    const newPassword = document.getElementById('new_password').value;
+    const confirmPassword = this.value;
+    
+    if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+        this.setCustomValidity('Passwords do not match');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+// Require current password if changing password
+document.getElementById('new_password').addEventListener('input', function() {
+    const currentPasswordField = document.getElementById('current_password');
+    if (this.value) {
+        currentPasswordField.required = true;
+    } else {
+        currentPasswordField.required = false;
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

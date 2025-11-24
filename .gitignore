@@ -12,3 +12,7 @@
 
 !src/
 !src/**
+!templates/
+!templates/**
+!static/
+!static/**

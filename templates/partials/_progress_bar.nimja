@@ -1,0 +1,15 @@
+<div class="progress-bar" style="
+    background-color: var(--pico-muted-border-color); 
+    border-radius: 6px; 
+    height: 8px; 
+    overflow: hidden;
+    width: {{width | default("100px")}};
+">
+    <div class="progress-fill" style="
+        background-color: var(--pico-primary); 
+        height: 100%; 
+        width: {{progress_percent}}%; 
+        transition: width 0.3s ease;
+        border-radius: 6px;
+    "></div>
+</div>
