@@ -1,5 +1,6 @@
 import asynchttpserver, asyncdispatch
 import strutils, uri, tables, json, options, strformat
+import strformat
 import database
 import db_connector/db_sqlite
 import nimja/parser
@@ -73,8 +74,7 @@ proc render_template(template_name: string, context: JsonNode = newJObject(), se
   else:
     template_context["session"] = newJBool(false)
   
-  # Use nimja to render templates from files
-  return compile_template_file(path = & template_name, base_dir = get_script_dir(), context = template_context)
+  compileTemplateFile(fmt"templates/{template_name}", base_dir = get_script_dir(), context = template_context)
 
 proc handle_request(req: Request) {.async, gcsafe.} =
   try:
