@@ -1,5 +1,6 @@
 import db_connector/db_sqlite
-import strutils, times, options, os
+import strutils, options, os
+from times import DateTime, parse
 
 type
   User* = object
@@ -42,31 +43,26 @@ proc init_database*(): DbConn =
   
   db.exec(sql"""
     CREATE TABLE IF NOT EXISTS passkeys (
-      code TEXT PRIMARY KEY,
-      used BOOLEAN DEFAULT FALSE,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      code TEXT PRIMARY KEY
     )
   """)
   
-  # Add some default passkeys
-  db.exec(sql"INSERT OR IGNORE INTO passkeys (code) VALUES (?)", "WINTER2025")
-  db.exec(sql"INSERT OR IGNORE INTO passkeys (code) VALUES (?)", "WALK100")
-  db.exec(sql"INSERT OR IGNORE INTO passkeys (code) VALUES (?)", "CHALLENGE")
-  
   # Add passkey from environment if provided
-  let env_passkey = getEnv("PASSKEY")
-  if env_passkey != "":
+  if exists_env("PASSKEY"):
+    let env_passkey = get_env("PASSKEY")
     db.exec(sql"INSERT OR IGNORE INTO passkeys (code) VALUES (?)", env_passkey)
+  else:
+    echo "No passkey provided"
   
   return db
 
 proc get_user_by_email*(db: DbConn, email: string): Option[User] =
-  let row = db.getRow(sql"SELECT id, email, password_hash, name, color, created_at FROM users WHERE email = ?", email)
+  let row = db.get_row(sql"SELECT id, email, password_hash, name, color, created_at FROM users WHERE email = ?", email)
   if row[0] == "":
     return none(User)
   
   return some(User(
-    id: parseBiggestInt(row[0]),
+    id: parse_biggest_int(row[0]),
     email: row[1],
     password_hash: row[2],
     name: row[3],
@@ -79,11 +75,8 @@ proc create_user*(db: DbConn, email, password_hash, name, color: string): int64 
               email, password_hash, name, color)
 
 proc validate_passkey*(db: DbConn, code: string): bool =
-  let row = db.getRow(sql"SELECT used FROM passkeys WHERE code = ?", code)
-  return row[0] != "" and row[0] == "0"
-
-proc use_passkey*(db: DbConn, code: string) =
-  db.exec(sql"UPDATE passkeys SET used = TRUE WHERE code = ?", code)
+  let row = db.get_row(sql"SELECT * FROM passkeys WHERE code = ?", code)
+  return row[0] == code
 
 proc log_miles*(db: DbConn, user_id: int64, miles: float) =
   db.exec(sql"INSERT INTO mile_entries (user_id, miles) VALUES (?, ?)", user_id, miles)

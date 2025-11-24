@@ -9,7 +9,7 @@
         <p>Track everyone's progress towards the Winter 100 goal!</p>
     </header>
     
-    {% if users.len() > 0 %}
+    {% if user_stats.len() > 0 %}
         <div class="overflow-auto">
             <table>
                 <thead>
@@ -23,13 +23,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for (rank, user) in users.pairs() %}
+                    {% for (rank, user) in user_stats.pairs() %}
                         <tr>
                             <td>{{rank + 1}}</td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    {% importnimja "partials/_user_avatar.nimja" %}
-                                    <span>{{user.name}}</span>
+                                    {#% importnimja "partials/_user_avatar.nimja" %#}
+                                    {#<span>{{user.name}}</span>#}
                                 </div>
                             </td>
                             <td><strong>{{user.total_miles}}</strong></td>

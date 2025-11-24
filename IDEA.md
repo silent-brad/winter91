@@ -1,5 +1,9 @@
 # Winter 100 IDEA Phase 1
 
+## TODO
+- [ ] Add dashboard/progress page
+- [ ] Add graph showing progress over days
+
 ## Tech stack
 - Nix (<https://nixos.org/>)
 - Nim

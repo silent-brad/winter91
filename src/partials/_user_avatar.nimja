@@ -2,7 +2,7 @@
     width: 40px; 
     height: 40px; 
     border-radius: 50%; 
-    background-color: {{user.color | default("#007bff")}}; 
+    background-color: {{user.color}}; 
     color: white; 
     display: flex; 
     align-items: center; 

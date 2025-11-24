@@ -16,7 +16,7 @@
           version = "0.0.1";
           src = ./.;
 
-          buildInputs = with pkgs; [ nim-2_0 ];
+          buildInputs = with pkgs; [ nim-2_0 sqlite ];
 
           buildPhase = ''
             mkdir -p $out/bin
@@ -29,12 +29,12 @@
             # Copy static files to out dir
 
             export HOME=$(pwd)
-            ${pkgs.nim-2_0}/bin/nim c -d:release -o:$out/bin/app src/main.nim
+            cd src && ${pkgs.nim-2_0}/bin/nim c -d:release --mm:none -o:$out/bin/app main.nim
           '';
         };
 
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [ nim-2_0 ];
+          packages = with pkgs; [ nim-2_0 sqlite ];
           shellHook = ''
             echo "Nimrod: $(${pkgs.nim-2_0}/bin/nim -v)"
             echo "Run './result/bin/app'."

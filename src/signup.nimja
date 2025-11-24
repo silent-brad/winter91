@@ -9,7 +9,7 @@
         <p>Join the Winter 100 challenge!</p>
     </header>
     
-    {% if error_message.isSome() %}
+    {% if error_message.is_some() %}
         <div class="error" style="
             background-color: var(--pico-del-background-color); 
             color: var(--pico-del-color); 
@@ -21,7 +21,7 @@
         </div>
     {% endif %}
     
-    {% if success_message.isSome() %}
+    {% if success_message.is_some() %}
         <div class="success" style="
             background-color: var(--pico-ins-background-color); 
             color: var(--pico-ins-color); 
@@ -34,18 +34,30 @@
     {% endif %}
     
     <form method="post" action="/signup">
-        <label for="passkey_code">
+        <label for="passkey">
             Passkey Code
             <input 
                 type="text" 
-                id="passkey_code" 
-                name="passkey_code" 
+                id="passkey" 
+                name="passkey" 
                 placeholder="Enter invitation code"
-                {% if passkey_code.isSome() %}value="{{passkey_code.get()}}"{% endif %}
+                {% if passkey.is_some() %}value="{{passkey.get()}}"{% endif %}
                 required
                 autofocus
             >
             <small>You need a valid invitation code to join.</small>
+        </label>
+
+        <label for="name">
+            Name
+            <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                placeholder="Enter your name"
+                {% if name.is_some() %}value="{{name.get()}}"{% endif %}
+                required
+            >
         </label>
         
         <label for="email">
@@ -55,8 +67,19 @@
                 id="email" 
                 name="email" 
                 placeholder="Enter your email"
-                {% if email.isSome() %}value="{{email.get()}}"{% endif %}
+                {% if email.is_some() %}value="{{email.get()}}"{% endif %}
                 required
+            >
+        </label>
+
+        <label for="color">
+            Color
+            <input 
+                type="color" 
+                id="color" 
+                name="color" 
+                value="#3b82f6"
+                {% if current_color.is_some() %}value="{{current_color.get()}}"{% endif %}
             >
         </label>
         

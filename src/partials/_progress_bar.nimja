@@ -3,7 +3,7 @@
     border-radius: 6px; 
     height: 8px; 
     overflow: hidden;
-    width: {{width | default("100px")}};
+    width: {{width}};
 ">
     <div class="progress-fill" style="
         background-color: var(--pico-primary); 
