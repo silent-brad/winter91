@@ -20,15 +20,13 @@
 
           buildPhase = ''
             mkdir -p $out/bin
-            mkdir -p $out
 
             # Manually install nim packages
             for pkg in ${nim-pkgs.packages.${system}.default}/pkgs/*; do
               cp -r $pkg src/$(basename $pkg)
             done
 
-            # Copy templates to output directory for runtime
-            cp -r templates $out/
+            # Copy static files to out dir
 
             export HOME=$(pwd)
             ${pkgs.nim-2_0}/bin/nim c -d:release -o:$out/bin/app src/main.nim
