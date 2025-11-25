@@ -33,7 +33,9 @@
         </div>
     {% endif %}
     
-    <form method="post" action="/login">
+    <div id="message-container"></div>
+    
+    <form method="post" action="/login" hx-post="/login" hx-target="#message-container" hx-swap="innerHTML">
         <label for="email">
             Email
             <input 

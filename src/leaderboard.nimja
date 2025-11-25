@@ -9,6 +9,18 @@
         <p>Track everyone's progress towards the Winter 100 goal!</p>
     </header>
     
+    {% if success_message.is_some() %}
+        <div class="success" style="
+            background-color: var(--pico-ins-background-color); 
+            color: var(--pico-ins-color); 
+            padding: 1rem; 
+            border-radius: var(--pico-border-radius); 
+            margin-bottom: 1rem;
+        ">
+            {{success_message.get()}}
+        </div>
+    {% endif %}
+    
     {% if user_stats.len() > 0 %}
         <div class="overflow-auto">
             <table>
@@ -23,41 +35,42 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for (rank, user) in user_stats.pairs() %}
+                    {% for (rank, user_stat) in user_stats.pairs() %}
                         <tr>
                             <td>{{rank + 1}}</td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    {#% importnimja "partials/_user_avatar.nimja" %#}
-                                    {#<span>{{user.name}}</span>#}
+                                    {% let user = user_stat.user %}
+                                    {% importnimja "partials/_user_avatar.nimja" %}
+                                    <span>{{user.name}}</span>
                                 </div>
                             </td>
-                            <td><strong>{{user.total_miles}}</strong></td>
+                            <td><strong>{{user_stat.total_miles}}</strong></td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    {% let progress_percent = (user.total_miles.float / 100.0 * 100.0).min(100.0) %}
+                                    {% let progress_percent = (user_stat.total_miles.float / 100.0 * 100.0).min(100.0) %}
                                     {% let width = "100px" %}
                                     {% importnimja "partials/_progress_bar.nimja" %}
                                     <small>{{progress_percent.int}}%</small>
                                 </div>
                             </td>
                             <td>
-                                {% if user.last_miles > 0 %}
+                                {% if user_stat.last_miles > 0 %}
                                     <span style="color: var(--pico-primary); font-weight: bold;">
-                                        +{{user.last_miles}}
+                                        +{{user_stat.last_miles}}
                                     </span>
                                     <br>
                                     <small style="color: var(--pico-muted-color);">
-                                        {{user.last_logged}}
+                                        {{user_stat.last_logged}}
                                     </small>
                                 {% else %}
                                     <span style="color: var(--pico-muted-color);">No logs yet</span>
                                 {% endif %}
                             </td>
                             <td>
-                                {% if user.current_streak > 0 %}
+                                {% if user_stat.current_streak > 0 %}
                                     <span style="color: var(--pico-primary); font-weight: bold;">
-                                        {{user.current_streak}} day{% if user.current_streak != 1 %}s{% endif %}
+                                        {{user_stat.current_streak}} day{% if user_stat.current_streak != 1 %}s{% endif %}
                                     </span>
                                 {% else %}
                                     <span style="color: var(--pico-muted-color);">No streak</span>

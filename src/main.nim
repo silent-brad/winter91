@@ -82,7 +82,7 @@ proc parse_form_data(body: string): Table[string, string] =
 proc render_template(template_name: static string, session: Option[Session] = none(Session), error_message: Option[string] = none(string), success_message: Option[string] = none(string), email: Option[string] = none(string), name: Option[string] = none(string), current_color: Option[string] = none(string), passkey: Option[string] = none(string), miles: Option[string] = none(string), current_total: Option[float] = none(float), user_id: Option[int64] = none(int64)): string {.gcsafe.} =
   compile_template_file(template_name, baseDir = get_script_dir())
 
-proc render_leaderboard(user_stats: seq[Entry], session: Option[Session] = none(Session)): string {.gcsafe.} =
+proc render_leaderboard(user_stats: seq[Entry], session: Option[Session] = none(Session), success_message: Option[string] = none(string)): string {.gcsafe.} =
   compile_template_file("leaderboard.nimja", baseDir = get_script_dir())
 
 proc render_settings(user: Option[User_Info_2], session: Option[Session] = none(Session), error_message: Option[string] = none(string), success_message: Option[string] = none(string), current_color: Option[string] = none(string), email: Option[string] = none(string)): string {.gcsafe.} =
@@ -115,21 +115,33 @@ proc handle_request(req: Request) {.async, gcsafe.} =
         of "/signup":
           response_body = render_template("signup.nimja", session)
         of "/leaderboard":
-          let leaderboard = get_leaderboard(db_conn)
-          var user_stats: seq[Entry] = @[]
-          for db_entry in leaderboard:
-            var user: User_Info = User_Info(name: db_entry.user.name, color: db_entry.user.color, initials: get_initials(db_entry.user.name))
-            let last_miles = if db_entry.last_miles.isSome: db_entry.last_miles.get() else: 0.0
-            let last_logged = if db_entry.last_logged.isSome: $db_entry.last_logged.get() else: ""
-            var entry: Entry = Entry(
-              user: user, 
-              total_miles: db_entry.total_miles, 
-              last_miles: last_miles,
-              last_logged: last_logged,
-              current_streak: db_entry.streak
-            )
-            user_stats.add(entry)
-          response_body = render_leaderboard(user_stats, session)
+          if session.is_none:
+            status = Http302
+            headers = new_http_headers([("Location", "/login")])
+          else:
+            let leaderboard = get_leaderboard(db_conn)
+            var user_stats: seq[Entry] = @[]
+            for db_entry in leaderboard:
+              var user: User_Info = User_Info(name: db_entry.user.name, color: db_entry.user.color, initials: get_initials(db_entry.user.name))
+              let last_miles = if db_entry.last_miles.isSome: db_entry.last_miles.get() else: 0.0
+              let last_logged = if db_entry.last_logged.isSome: $db_entry.last_logged.get() else: ""
+              var entry: Entry = Entry(
+                user: user, 
+                total_miles: db_entry.total_miles, 
+                last_miles: last_miles,
+                last_logged: last_logged,
+                current_streak: db_entry.streak
+              )
+              user_stats.add(entry)
+              # Check for success parameter
+              var success_msg: Option[string] = none(string)
+              if req.url.query.len > 0:
+                if "success=signup" in req.url.query:
+                  success_msg = some("Account created successfully! Welcome to Winter 100!")
+                elif "success=login" in req.url.query:
+                  success_msg = some("Login successful! Welcome back to Winter 100!")
+            
+              response_body = render_leaderboard(user_stats, session, success_msg)
         
         of "/log":
           if session.is_none:
@@ -185,9 +197,9 @@ proc handle_request(req: Request) {.async, gcsafe.} =
           let password = form_data.get_or_default("password", "")
           
           if email == "":
-            response_body = """<p style="color: red;">Email is required</p>"""
+            response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email is required</div>"""
           elif password == "":
-            response_body = """<p style="color: red;">Password is required</p>"""
+            response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Password is required</div>"""
           else:
             let user_opt = get_user_by_email(db_conn, email)
             if user_opt.is_some and verify_password(password, user_opt.get().password_hash):
@@ -196,11 +208,11 @@ proc handle_request(req: Request) {.async, gcsafe.} =
                 sessions[session_id] = Session(user_id: user_opt.get().id, email: email)
               headers = new_http_headers([
                 ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
-                ("HX-Redirect", "/leaderboard")
+                ("HX-Redirect", "/leaderboard?success=login")
               ])
-              response_body = """<p style="color: green;">Login successful!</p>"""
+              response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Login successful! Redirecting...</div>"""
             else:
-              response_body = """<p style="color: red;">Invalid email or password</p>"""
+              response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email or password</div>"""
         
         of "/signup":
           let passkey = form_data.get_or_default("passkey", "")
@@ -212,17 +224,17 @@ proc handle_request(req: Request) {.async, gcsafe.} =
           let color = form_data.get_or_default("color", "#3b82f6")
           
           if passkey == "":
-            response_body = """<p style="color: red;">Passkey is required</p>"""
+            response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Passkey is required</div>"""
           elif name == "":
-            response_body = """<p style="color: red;">Name is required</p>"""
+            response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Name is required</div>"""
           elif email == "":
-            response_body = """<p style="color: red;">Email is required</p>"""
+            response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email is required</div>"""
           elif password == "":
-            response_body = """<p style="color: red;">Password is required</p>"""
+            response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Password is required</div>"""
           elif not validate_passkey(db_conn, passkey):
-            response_body = """<p style="color: red;">Invalid passkey</p>"""
+            response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid passkey</div>"""
           elif get_user_by_email(db_conn, email).is_some:
-            response_body = """<p style="color: red;">Email already registered</p>"""
+            response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email already registered</div>"""
           else:
             try:
               let password_hash = hash_password(password)
@@ -234,11 +246,11 @@ proc handle_request(req: Request) {.async, gcsafe.} =
               
               headers = new_http_headers([
                 ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
-                ("HX-Redirect", "/leaderboard")
+                ("HX-Redirect", "/leaderboard?success=signup")
               ])
-              response_body = """<p style="color: green;">Account created successfully!</p>"""
+              response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Account created successfully!</div>"""
             except:
-              response_body = """<p style="color: red;">Error creating account</p>"""
+              response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Error creating account</div>"""
         
         of "/log":
           if session.is_none:

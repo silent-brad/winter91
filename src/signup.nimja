@@ -9,31 +9,36 @@
         <p>Join the Winter 100 challenge!</p>
     </header>
     
-    {% if error_message.is_some() %}
-        <div class="error" style="
-            background-color: var(--pico-del-background-color); 
-            color: var(--pico-del-color); 
-            padding: 1rem; 
-            border-radius: var(--pico-border-radius); 
-            margin-bottom: 1rem;
-        ">
-            {{error_message.get()}}
-        </div>
-    {% endif %}
+    <div id="signup-messages">
+        {% if error_message.is_some() %}
+            <div class="error" style="
+                background-color: var(--pico-del-background-color); 
+                color: var(--pico-del-color); 
+                padding: 1rem; 
+                border-radius: var(--pico-border-radius); 
+                margin-bottom: 1rem;
+            ">
+                {{error_message.get()}}
+            </div>
+        {% endif %}
+        
+        {% if success_message.is_some() %}
+            <div class="success" style="
+                background-color: var(--pico-ins-background-color); 
+                color: var(--pico-ins-color); 
+                padding: 1rem; 
+                border-radius: var(--pico-border-radius); 
+                margin-bottom: 1rem;
+            ">
+                {{success_message.get()}}
+            </div>
+        {% endif %}
+    </div>
     
-    {% if success_message.is_some() %}
-        <div class="success" style="
-            background-color: var(--pico-ins-background-color); 
-            color: var(--pico-ins-color); 
-            padding: 1rem; 
-            border-radius: var(--pico-border-radius); 
-            margin-bottom: 1rem;
-        ">
-            {{success_message.get()}}
-        </div>
-    {% endif %}
-    
-    <form method="post" action="/signup">
+    <form method="post" action="/signup" 
+          hx-post="/signup"
+          hx-target="#signup-messages"
+          hx-swap="innerHTML">
         <label for="passkey">
             Passkey Code
             <input 
