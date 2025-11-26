@@ -137,5 +137,41 @@ proc get_leaderboard*(db: DbConn): seq[tuple[user: User, total_miles: float, las
 proc update_user*(db: DbConn, user_id: int64, name, color: string) =
   db.exec(sql"UPDATE users SET name = ?, color = ? WHERE id = ?", name, color, user_id)
 
+proc get_user_miles_by_date*(db: DbConn, user_id: int64): seq[tuple[date: string, miles: float]] =
+  let rows = db.getAllRows(sql"""
+    SELECT DATE(logged_at) as date, SUM(miles) as daily_miles
+    FROM mile_entries 
+    WHERE user_id = ?
+    GROUP BY DATE(logged_at)
+    ORDER BY date DESC
+    LIMIT 30
+  """, user_id)
+  
+  var results: seq[tuple[date: string, miles: float]] = @[]
+  for row in rows:
+    results.add((row[0], parseFloat(row[1])))
+  
+  return results
+
+proc get_user_recent_entries*(db: DbConn, user_id: int64, limit: int = 10): seq[MileEntry] =
+  let rows = db.getAllRows(sql"""
+    SELECT id, user_id, miles, logged_at
+    FROM mile_entries 
+    WHERE user_id = ?
+    ORDER BY logged_at DESC
+    LIMIT ?
+  """, user_id, limit)
+  
+  var results: seq[MileEntry] = @[]
+  for row in rows:
+    results.add(MileEntry(
+      id: parseBiggestInt(row[0]),
+      user_id: parseBiggestInt(row[1]),
+      miles: parseFloat(row[2]),
+      logged_at: parse(row[3], "yyyy-MM-dd HH:mm:ss")
+    ))
+  
+  return results
+
 proc update_user_password*(db: DbConn, user_id: int64, password_hash: string) =
   db.exec(sql"UPDATE users SET password_hash = ? WHERE id = ?", password_hash, user_id)

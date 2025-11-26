@@ -4,7 +4,7 @@ import database
 import db_connector/db_sqlite
 import nimja/parser
 import std/hashes, checksums/sha1
-from times import DateTime, epochTime
+from times import DateTime, epochTime, format
 import locks
 import os, random
 
@@ -80,13 +80,13 @@ proc parse_form_data(body: string): Table[string, string] =
       result[key] = value
 
 proc render_template(template_name: static string, session: Option[Session] = none(Session), error_message: Option[string] = none(string), success_message: Option[string] = none(string), email: Option[string] = none(string), name: Option[string] = none(string), current_color: Option[string] = none(string), passkey: Option[string] = none(string), miles: Option[string] = none(string), current_total: Option[float] = none(float), user_id: Option[int64] = none(int64)): string {.gcsafe.} =
-  compile_template_file(template_name, baseDir = get_script_dir())
+  compile_template_file(template_name, base_dir = get_script_dir())
 
 proc render_leaderboard(user_stats: seq[Entry], session: Option[Session] = none(Session), success_message: Option[string] = none(string)): string {.gcsafe.} =
-  compile_template_file("leaderboard.nimja", baseDir = get_script_dir())
+  compile_template_file("leaderboard.nimja", base_dir = get_script_dir())
 
 proc render_settings(user: Option[User_Info_2], session: Option[Session] = none(Session), error_message: Option[string] = none(string), success_message: Option[string] = none(string), current_color: Option[string] = none(string), email: Option[string] = none(string)): string {.gcsafe.} =
-  compile_template_file("settings.nimja", baseDir = get_script_dir())
+  compile_template_file("settings.nimja", base_dir = get_script_dir())
 
 proc handle_request(req: Request) {.async, gcsafe.} =
   {.cast(gcsafe).}:
@@ -143,13 +143,28 @@ proc handle_request(req: Request) {.async, gcsafe.} =
             
               response_body = render_leaderboard(user_stats, session, success_msg)
         
+        of "/dashboard":
+          if session.is_none:
+            status = Http302
+            headers = new_http_headers([("Location", "/login")])
+          else:
+            let current_total = get_user_total_miles(db_conn, session.get().user_id)
+            # Check for success parameter
+            var success_msg: Option[string] = none(string)
+            if req.url.query.len > 0:
+              if "success=signup" in req.url.query:
+                success_msg = some("Account created successfully! Welcome to Winter 100!")
+              elif "success=login" in req.url.query:
+                success_msg = some("Login successful! Welcome back to Winter 100!")
+            response_body = render_template("dashboard.nimja", session, none(string), success_msg, none(string), none(string), none(string), none(string), none(string), some(current_total))
+        
         of "/log":
           if session.is_none:
             status = Http302
             headers = new_http_headers([("Location", "/login")])
           else:
             let current_total = get_user_total_miles(db_conn, session.get().user_id)
-            response_body = render_template("log_miles.nimja", session, none(string), none(string), none(string), none(string), none(string), none(string), none(string), some(current_total))
+            response_body = render_template("dashboard.nimja", session, none(string), none(string), none(string), none(string), none(string), none(string), none(string), some(current_total))
         
         of "/about":
           let user_id_opt = if session.isSome: some(session.get().user_id) else: none(int64)
@@ -168,6 +183,40 @@ proc handle_request(req: Request) {.async, gcsafe.} =
             else:
               status = Http302
               headers = new_http_headers([("Location", "/login")])
+        
+        of "/api/user-miles-data":
+          if session.is_none:
+            status = Http401
+            headers = new_http_headers([("Content-Type", "application/json")])
+            response_body = "{\"error\": \"Unauthorized\"}"
+          else:
+            headers = new_http_headers([("Content-Type", "application/json")])
+            let user_id = session.get().user_id
+            let miles_by_date = get_user_miles_by_date(db_conn, user_id)
+            let recent_entries = get_user_recent_entries(db_conn, user_id, 10)
+            
+            var dates_json = "["
+            var miles_json = "["
+            var entries_json = "["
+            
+            for i, entry in miles_by_date:
+              if i > 0:
+                dates_json.add(",")
+                miles_json.add(",")
+              dates_json.add("\"" & entry.date & "\"")
+              miles_json.add($entry.miles)
+            
+            for i, entry in recent_entries:
+              if i > 0:
+                entries_json.add(",")
+              let date_str = $entry.logged_at.format("yyyy-MM-dd")
+              entries_json.add(&"""{"date": "{date_str}", "miles": {entry.miles}}""")
+            
+            dates_json.add("]")
+            miles_json.add("]")
+            entries_json.add("]")
+            
+            response_body = &"""{"dates": {dates_json}, "miles": {miles_json}, "entries": {entries_json}}"""
         
         of "/logout":
           if session.is_some:
@@ -208,7 +257,7 @@ proc handle_request(req: Request) {.async, gcsafe.} =
                 sessions[session_id] = Session(user_id: user_opt.get().id, email: email)
               headers = new_http_headers([
                 ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
-                ("HX-Redirect", "/leaderboard?success=login")
+                ("HX-Redirect", "/dashboard?success=login")
               ])
               response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Login successful! Redirecting...</div>"""
             else:
@@ -246,7 +295,7 @@ proc handle_request(req: Request) {.async, gcsafe.} =
               
               headers = new_http_headers([
                 ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
-                ("HX-Redirect", "/leaderboard?success=signup")
+                ("HX-Redirect", "/dashboard?success=signup")
               ])
               response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Account created successfully!</div>"""
             except:

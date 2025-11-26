@@ -10,8 +10,8 @@
         <ul>
             <li><a href="/about">About</a></li>
             {% if session.isSome() %}
+                <li><a href="/dashboard">Dashboard</a></li>
                 <li><a href="/leaderboard">Leaderboard</a></li>
-                <li><a href="/log">Log Miles</a></li>
                 <li><a href="/settings">Settings</a></li>
                 <li><a href="/logout" role="button" class="secondary">Log out</a></li>
             {% else %}

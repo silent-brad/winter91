@@ -1,8 +1,10 @@
 # Winter 100 IDEA Phase 1
 
 ## TODO
-- [ ] Add dashboard/progress page
-- [ ] Add graph showing progress over days
+- [x] Add dashboard/progress page
+- [x] Add graph showing progress over days
+
+- [ ] Create `DEPS.md` file to list all dependencies
 
 ## Tech stack
 - Nix (<https://nixos.org/>)
