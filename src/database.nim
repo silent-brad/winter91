@@ -154,9 +154,9 @@ proc get_user_miles_by_date*(db: DbConn, user_id: int64): seq[tuple[date: string
   return results
 
 proc get_user_recent_entries*(db: DbConn, user_id: int64, limit: int = 10): seq[MileEntry] =
-  let rows = db.getAllRows(sql"""
+  let rows = db.get_all_rows(sql"""
     SELECT id, user_id, miles, logged_at
-    FROM mile_entries 
+    FROM mile_entries
     WHERE user_id = ?
     ORDER BY logged_at DESC
     LIMIT ?
@@ -165,9 +165,9 @@ proc get_user_recent_entries*(db: DbConn, user_id: int64, limit: int = 10): seq[
   var results: seq[MileEntry] = @[]
   for row in rows:
     results.add(MileEntry(
-      id: parseBiggestInt(row[0]),
-      user_id: parseBiggestInt(row[1]),
-      miles: parseFloat(row[2]),
+      id: parse_biggest_int(row[0]),
+      user_id: parse_biggest_int(row[1]),
+      miles: parse_float(row[2]),
       logged_at: parse(row[3], "yyyy-MM-dd HH:mm:ss")
     ))
   

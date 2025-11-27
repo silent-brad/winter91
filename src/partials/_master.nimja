@@ -14,9 +14,9 @@
     <main class="container">
         {% block content %}{% endblock %}
     </main>
-    
+     
     {% importnimja "partials/_footer.nimja" %}
-    
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

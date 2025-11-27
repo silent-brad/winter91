@@ -123,6 +123,7 @@
         </p>
     </footer>
 </article>
+{% endblock %}
 
 {% block extra_js %}
 <script>
@@ -137,5 +138,4 @@ document.getElementById('confirm_password').addEventListener('input', function()
     }
 });
 </script>
-{% endblock %}
 {% endblock %}

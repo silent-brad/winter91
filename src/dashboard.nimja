@@ -95,9 +95,11 @@
         </div>
     </div>
 </article>
+{% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
 <script>
 function incrementMiles() {
     const input = document.getElementById('miles');
@@ -115,6 +117,27 @@ function decrementMiles() {
 
 // Chart setup
 const ctx = document.getElementById('milesChart').getContext('2d');
+
+/*const data = {"dates": ["2025-11-25","2025-11-24"], "miles": [10.0,12.0], "entries": [{"date": "2025-11-25", "miles": 10.0},{"date": "2025-11-24", "miles": 2.0},{"date": "2025-11-24", "miles": 6.5},{"date": "2025-11-24", "miles": 3.5}]};
+
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: data.dates,
+    datasets: [{
+      label: 'Daily Miles',
+      data: data.miles, // Will be populated with miles data
+      borderColor: 'rgb(59, 130, 246)',
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      //tension: 0.1,
+      fill: true
+    }],
+  },
+  options: {
+    responsive: false,
+  },
+});*/
+
 const milesChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -129,6 +152,9 @@ const milesChart = new Chart(ctx, {
         }]
     },
     options: {
+      responsive: false,
+    },
+    /*options: {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
@@ -151,7 +177,7 @@ const milesChart = new Chart(ctx, {
                 display: false
             }
         }
-    }
+    }*/
 });
 
 // Load chart data and daily miles list
@@ -200,5 +226,4 @@ document.addEventListener('htmx:afterSwap', function(event) {
     }
 });
 </script>
-{% endblock %}
 {% endblock %}

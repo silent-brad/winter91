@@ -126,8 +126,8 @@ proc handle_request(req: Request) {.async, gcsafe.} =
               let last_miles = if db_entry.last_miles.isSome: db_entry.last_miles.get() else: 0.0
               let last_logged = if db_entry.last_logged.isSome: $db_entry.last_logged.get() else: ""
               var entry: Entry = Entry(
-                user: user, 
-                total_miles: db_entry.total_miles, 
+                user: user,
+                total_miles: db_entry.total_miles,
                 last_miles: last_miles,
                 last_logged: last_logged,
                 current_streak: db_entry.streak
@@ -210,13 +210,13 @@ proc handle_request(req: Request) {.async, gcsafe.} =
               if i > 0:
                 entries_json.add(",")
               let date_str = $entry.logged_at.format("yyyy-MM-dd")
-              entries_json.add(&"""{"date": "{date_str}", "miles": {entry.miles}}""")
+              entries_json.add(&"""{{"date": "{date_str}", "miles": {entry.miles}}}""")
             
             dates_json.add("]")
             miles_json.add("]")
             entries_json.add("]")
             
-            response_body = &"""{"dates": {dates_json}, "miles": {miles_json}, "entries": {entries_json}}"""
+            response_body = &"""{{"dates": {dates_json}, "miles": {miles_json}, "entries": {entries_json}}}"""
         
         of "/logout":
           if session.is_some:

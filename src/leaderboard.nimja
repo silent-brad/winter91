@@ -87,6 +87,7 @@
         </p>
     {% endif %}
 </article>
+{%endblock%}
 
 {% block extra_js %}
 <script>
@@ -97,5 +98,4 @@
         }, 30000);
     }
 </script>
-{% endblock %}
 {% endblock %}

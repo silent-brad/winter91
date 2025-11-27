@@ -119,6 +119,7 @@
         <button type="submit">Save Changes</button>
     </form>
 </article>
+{% endblock %}
 
 {% block extra_js %}
 <script>
@@ -152,5 +153,4 @@ document.getElementById('new_password').addEventListener('input', function() {
     }
 });
 </script>
-{% endblock %}
 {% endblock %}
