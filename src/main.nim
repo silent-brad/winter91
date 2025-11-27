@@ -83,10 +83,10 @@ proc render_template(template_name: static string, session: Option[Session] = no
   compile_template_file(template_name, base_dir = get_script_dir())
 
 proc render_leaderboard(user_stats: seq[Entry], session: Option[Session] = none(Session), success_message: Option[string] = none(string)): string {.gcsafe.} =
-  compile_template_file("leaderboard.nimja", base_dir = get_script_dir())
+  compile_template_file("leaderboard.jinja", base_dir = get_script_dir())
 
 proc render_settings(user: Option[User_Info_2], session: Option[Session] = none(Session), error_message: Option[string] = none(string), success_message: Option[string] = none(string), current_color: Option[string] = none(string), email: Option[string] = none(string)): string {.gcsafe.} =
-  compile_template_file("settings.nimja", base_dir = get_script_dir())
+  compile_template_file("settings.jinja", base_dir = get_script_dir())
 
 proc handle_request(req: Request) {.async, gcsafe.} =
   {.cast(gcsafe).}:
@@ -109,11 +109,11 @@ proc handle_request(req: Request) {.async, gcsafe.} =
       of Http_get:
         case req.url.path:
         of "/":
-          response_body = render_template("index.nimja", session)
+          response_body = render_template("index.jinja", session)
         of "/login":
-          response_body = render_template("login.nimja", session)
+          response_body = render_template("login.jinja", session)
         of "/signup":
-          response_body = render_template("signup.nimja", session)
+          response_body = render_template("signup.jinja", session)
         of "/leaderboard":
           if session.is_none:
             status = Http302
@@ -156,7 +156,7 @@ proc handle_request(req: Request) {.async, gcsafe.} =
                 success_msg = some("Account created successfully! Welcome to Winter 100!")
               elif "success=login" in req.url.query:
                 success_msg = some("Login successful! Welcome back to Winter 100!")
-            response_body = render_template("dashboard.nimja", session, none(string), success_msg, none(string), none(string), none(string), none(string), none(string), some(current_total))
+            response_body = render_template("dashboard.jinja", session, none(string), success_msg, none(string), none(string), none(string), none(string), none(string), some(current_total))
         
         of "/log":
           if session.is_none:
@@ -164,11 +164,11 @@ proc handle_request(req: Request) {.async, gcsafe.} =
             headers = new_http_headers([("Location", "/login")])
           else:
             let current_total = get_user_total_miles(db_conn, session.get().user_id)
-            response_body = render_template("dashboard.nimja", session, none(string), none(string), none(string), none(string), none(string), none(string), none(string), some(current_total))
+            response_body = render_template("dashboard.jinja", session, none(string), none(string), none(string), none(string), none(string), none(string), none(string), some(current_total))
         
         of "/about":
           let user_id_opt = if session.isSome: some(session.get().user_id) else: none(int64)
-          response_body = render_template("about.nimja", session, none(string), none(string), none(string), none(string), none(string), none(string), none(string), none(float), user_id_opt)
+          response_body = render_template("about.jinja", session, none(string), none(string), none(string), none(string), none(string), none(string), none(string), none(float), user_id_opt)
         
         of "/settings":
           if session.is_none:

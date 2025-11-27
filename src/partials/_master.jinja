@@ -9,13 +9,13 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    {% importnimja "partials/_header.nimja" %}
+    {% importnimja "partials/_header.jinja" %}
     
     <main class="container">
         {% block content %}{% endblock %}
     </main>
      
-    {% importnimja "partials/_footer.nimja" %}
+    {% importnimja "partials/_footer.jinja" %}
 
     {% block extra_js %}{% endblock %}
 </body>

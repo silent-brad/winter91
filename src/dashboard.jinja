@@ -1,4 +1,4 @@
-{% extends "partials/_master.nimja" %}
+{% extends "partials/_master.jinja" %}
 
 {% block title %}Dashboard{% endblock %}
 
@@ -41,7 +41,7 @@
             <p style="margin: 0;">out of 100 miles</p>
             {% let progress_percent = (current_total.get().float / 100.0 * 100.0).min(100.0) %}
             {% let width = "300px" %}
-            {% importnimja "partials/_progress_bar.nimja" %}
+            {% importnimja "partials/_progress_bar.jinja" %}
             <small style="color: var(--pico-muted-color); margin-top: 0.5rem; display: block;">
                 {{progress_percent.int}}% complete
             </small>

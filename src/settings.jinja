@@ -1,4 +1,4 @@
-{% extends "partials/_master.nimja" %}
+{% extends "partials/_master.jinja" %}
 
 {% block title %}Settings{% endblock %}
 
@@ -39,7 +39,7 @@
             <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 1rem 0;">
                 {% if user.isSome() %}
                     {% let user = user.get() %}
-                    {% importnimja "partials/_user_avatar.nimja" %}
+                    {% importnimja "partials/_user_avatar.jinja" %}
                 {% endif %}
                 <div>
                     <label for="color">

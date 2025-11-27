@@ -1,4 +1,4 @@
-{% extends "partials/_master.nimja" %}
+{% extends "partials/_master.jinja" %}
 
 {% block title %}Leaderboard{% endblock %}
 
@@ -41,7 +41,7 @@
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     {% let user = user_stat.user %}
-                                    {% importnimja "partials/_user_avatar.nimja" %}
+                                    {% importnimja "partials/_user_avatar.jinja" %}
                                     <span>{{user.name}}</span>
                                 </div>
                             </td>
@@ -50,7 +50,7 @@
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     {% let progress_percent = (user_stat.total_miles.float / 100.0 * 100.0).min(100.0) %}
                                     {% let width = "100px" %}
-                                    {% importnimja "partials/_progress_bar.nimja" %}
+                                    {% importnimja "partials/_progress_bar.jinja" %}
                                     <small>{{progress_percent.int}}%</small>
                                 </div>
                             </td>
