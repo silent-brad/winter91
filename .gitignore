@@ -4,6 +4,7 @@ src/result
 !LICENSE
 !README.md
 !IDEA.md
+!DEPS.md
 
 !flake.nix
 !flake.lock
