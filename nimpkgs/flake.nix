@@ -20,6 +20,11 @@
       #rev = "master";
       flake = false;
     };
+
+    dotenv = {
+      url = "github:euantorano/dotenv.nim";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:
@@ -41,15 +46,17 @@
             else
               let value = inputs.${name};
               in ''
-                mkdir -p $out/pkgs/${name}
-                cp -r ${value}/src/${name}/* $out/pkgs/${name}
+                mkdir -p $out/pkgs/
+                # Detect if pkg is a folder or a single file
+                if [ -d ${value}/src/${name} ]; then
+                  # For folder
+                  mkdir -p $out/pkgs/${name}
+                  cp -r ${value}/src/${name}/* $out/pkgs/${name}
+                else
+                  # For single file
+                  cp ${value}/src/${name}.nim $out/pkgs/${name}.nim
+                fi
               '') (builtins.attrNames inputs));
-        };
-
-        devShells.default = pkgs.mkShell {
-          shellHook = ''
-            echo "Installing Nim Packages"
-          '';
         };
       });
 }

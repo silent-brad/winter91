@@ -41,19 +41,6 @@ proc init_database*(): DbConn =
     )
   """)
   
-  db.exec(sql"""
-    CREATE TABLE IF NOT EXISTS passkeys (
-      code TEXT PRIMARY KEY
-    )
-  """)
-  
-  # Add passkey from environment if provided
-  if exists_env("PASSKEY"):
-    let env_passkey = get_env("PASSKEY")
-    db.exec(sql"INSERT OR IGNORE INTO passkeys (code) VALUES (?)", env_passkey)
-  else:
-    echo "No passkey provided"
-  
   return db
 
 proc get_user_by_email*(db: DbConn, email: string): Option[User] =
@@ -73,10 +60,6 @@ proc get_user_by_email*(db: DbConn, email: string): Option[User] =
 proc create_user*(db: DbConn, email, password_hash, name, color: string): int64 =
   db.insertID(sql"INSERT INTO users (email, password_hash, name, color) VALUES (?, ?, ?, ?)", 
               email, password_hash, name, color)
-
-proc validate_passkey*(db: DbConn, code: string): bool =
-  let row = db.get_row(sql"SELECT * FROM passkeys WHERE code = ?", code)
-  return row[0] == code
 
 proc log_miles*(db: DbConn, user_id: int64, miles: float) =
   db.exec(sql"INSERT INTO mile_entries (user_id, miles) VALUES (?, ?)", user_id, miles)

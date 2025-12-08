@@ -1,11 +1,20 @@
 import asynchttpserver, asyncdispatch
 import strutils, options
-import database
 import db_connector/db_sqlite
 import locks
-import types, auth, routes, utils
+import database, types, auth, routes, utils
+import os, std/envvars, dotenv
 
 var db_conn: DbConn
+var PASSKEY: string
+
+# Add passkey from environment if provided
+load()
+if exists_env("PASSKEY"):
+  PASSKEY = get_env("PASSKEY")
+else:
+  echo "No passkey provided"
+  quit(1)
 
 proc handle_request(req: Request) {.async, gcsafe.} =
   {.cast(gcsafe).}:
@@ -22,12 +31,12 @@ proc handle_request(req: Request) {.async, gcsafe.} =
       var response_body: string
       var status: HttpCode
       var headers: HttpHeaders
-      
+
       case req.req_method:
       of Http_get:
         (response_body, status, headers) = handle_get_routes(req, session, db_conn)
       of Http_post:
-        (response_body, status, headers) = handle_post_routes(req, session, db_conn)
+        (response_body, status, headers) = handle_post_routes(req, session, db_conn, PASSKEY)
       else:
         status = Http405
         headers = new_http_headers([("Content-Type", "text/html")])

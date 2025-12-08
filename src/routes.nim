@@ -162,7 +162,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
   
   return (response_body, status, headers)
 
-proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn): (string, HttpCode, HttpHeaders) =
+proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn, PASSKEY: string): (string, HttpCode, HttpHeaders) =
   let content_length = if req.headers.has_key("content-length"): parse_int($req.headers["content-length"]) else: 0
   var body = ""
   if content_length > 0:
@@ -198,7 +198,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email or password</div>"""
 
   of "/signup":
-    let passkey = form_data.get_or_default("passkey", "")
+    let passkey = to_upper_ascii(form_data.get_or_default("passkey", ""))
     if passkey == "":
       echo "Passkey is required"
     let name = form_data.get_or_default("name", "")
@@ -214,7 +214,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email is required</div>"""
     elif password == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Password is required</div>"""
-    elif not validate_passkey(db_conn, passkey):
+    elif not (passkey == PASSKEY):
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid passkey</div>"""
     elif get_user_by_email(db_conn, email).is_some:
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email already registered</div>"""

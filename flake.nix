@@ -23,10 +23,13 @@
 
             # Manually install nim packages
             for pkg in ${nim-pkgs.packages.${system}.default}/pkgs/*; do
-              cp -r $pkg src/$(basename $pkg)
+              # Detect if pkg is a folder or a single file
+              if [ -d $pkg ]; then
+                cp -r $pkg src/$(basename $pkg)
+              else
+                cp $pkg src/
+              fi
             done
-
-            # Copy static files to out dir
 
             export HOME=$(pwd)
             cd src && ${pkgs.nim-2_0}/bin/nim c -d:release --mm:none -o:$out/bin/app main.nim
