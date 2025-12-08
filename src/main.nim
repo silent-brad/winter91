@@ -45,7 +45,7 @@ proc get_initials(name: string): string =
   let parts = name.split()
   for part in parts:
     if part.len > 0:
-      initials.add(part[0].toUpperAscii())
+      initials.add(part[0].to_upper_ascii())
       if initials.len >= 2:
         break
   return if initials.len > 0: initials else: "??"
@@ -229,8 +229,31 @@ proc handle_request(req: Request) {.async, gcsafe.} =
           status = Http302
           headers = new_http_headers([("Location", "/"), ("Set-Cookie", "session_id=; HttpOnly; Path=/; Max-Age=0")])
         else:
-          status = Http404
-          response_body = "Page not found"
+          # Check if it's a static file request
+          if req.url.path.starts_with("/static/"):
+            let file_path = req.url.path[1..^1]  # Remove leading slash
+            let full_path = file_path
+            if file_exists(full_path):
+              let ext = split_file(full_path).ext.to_lower_ascii()
+              let content_type = case ext:
+                of ".js": "application/javascript"
+                of ".css": "text/css"
+                of ".html": "text/html"
+                of ".png": "image/png"
+                of ".jpg", ".jpeg": "image/jpeg"
+                of ".gif": "image/gif"
+                of ".svg": "image/svg+xml"
+                of ".ico": "image/x-icon"
+                else: "application/octet-stream"
+              
+              headers = new_http_headers([("Content-Type", content_type)])
+              response_body = read_file(full_path)
+            else:
+              status = Http404
+              response_body = "File not found"
+          else:
+            status = Http404
+            response_body = "Page not found"
           
       of Http_post:
         let content_length = if req.headers.has_key("content-length"): parse_int($req.headers["content-length"]) else: 0

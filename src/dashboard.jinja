@@ -98,8 +98,7 @@
 {% endblock %}
 
 {% block extra_js %}
-<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
+<script src="/static/chart.js"></script>
 <script>
 function incrementMiles() {
     const input = document.getElementById('miles');
@@ -153,31 +152,22 @@ const milesChart = new Chart(ctx, {
     },
     options: {
       responsive: false,
+      scales: {
+          y: {
+              beginAtZero: true,
+              title: {
+                  display: true,
+                  text: 'Miles'
+              }
+          },
+          x: {
+              title: {
+                  display: true,
+                  text: 'Date'
+              }
+          }
+      },
     },
-    /*options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            y: {
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    text: 'Miles'
-                }
-            },
-            x: {
-                title: {
-                    display: true,
-                    text: 'Date'
-                }
-            }
-        },
-        plugins: {
-            legend: {
-                display: false
-            }
-        }
-    }*/
 });
 
 // Load chart data and daily miles list
