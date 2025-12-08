@@ -14,5 +14,7 @@ src/result
 
 !src/
 !src/**
+!templates/
+!templates/**
 !static/
 !static/**
