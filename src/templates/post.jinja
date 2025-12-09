@@ -1,0 +1,90 @@
+{% extends "partials/_master.jinja" %}
+
+{% block title %}Posts{% endblock %}
+
+{% block content %}
+<article style="max-width: 800px; margin: 0 auto;">
+    <header>
+        <h1>Community Posts</h1>
+        <p>Share your journey with pictures and text!</p>
+    </header>
+
+    <!-- Create Post Form -->
+    <div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius); margin-bottom: 2rem;">
+        <h3>Create a Post</h3>
+        <form method="post" action="/post" hx-post="/post" hx-target="#post-response" hx-swap="innerHTML" enctype="multipart/form-data">
+            <label for="text_content">
+                Share your thoughts
+                <textarea 
+                    id="text_content" 
+                    name="text_content" 
+                    placeholder="Tell us about your workout, share motivation, or just say hi!"
+                    rows="4"
+                ></textarea>
+                <small>What's on your mind? Share your fitness journey!</small>
+            </label>
+            
+            <label for="image">
+                Add a picture (optional)
+                <input 
+                    type="file" 
+                    id="image" 
+                    name="image" 
+                    accept="image/*"
+                >
+                <small>Upload a photo from your workout or anything fitness-related.</small>
+            </label>
+            
+            <button type="submit">Post</button>
+        </form>
+        <div id="post-response"></div>
+    </div>
+
+    <!-- Posts Feed -->
+    <div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
+        <h3>Recent Posts</h3>
+        {% if posts.len > 0 %}
+            <div id="posts-feed">
+                {% for post in posts %}
+                    <article style="border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+                        <header style="margin-bottom: 0.5rem;">
+                            <strong>{{post.user_name}}</strong>
+                            <small style="color: var(--pico-muted-color); margin-left: 0.5rem;">{{post.created_at}}</small>
+                        </header>
+                        
+                        <p style="margin-bottom: 0.5rem;">{{post.text_content}}</p>
+                        
+                        {% if post.image_filename != "" %}
+                            <div style="margin: 0.5rem 0;">
+                                <img 
+                                    src="/pictures/{{post.image_filename}}" 
+                                    alt="Post image" 
+                                    style="max-width: 100%; height: auto; border-radius: var(--pico-border-radius);"
+                                >
+                            </div>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No posts yet. Be the first to share something!</p>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Reload posts after successful post creation
+document.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.target.id === 'post-response') {
+        // Check if the response contains success message
+        if (event.detail.target.innerHTML.includes('successfully')) {
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+    }
+});
+</script>
+{% endblock %}

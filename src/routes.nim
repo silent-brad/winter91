@@ -5,7 +5,7 @@ import db_connector/db_sqlite
 import locks
 import os
 from times import DateTime, epochTime, format
-import types, auth, templates, utils
+import types, auth, templates, utils, upload
 
 proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn): (string, HttpCode, HttpHeaders) =
   var response_body = ""
@@ -70,6 +70,14 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
     else:
       let current_total = get_user_total_miles(db_conn, session.get().user_id)
       response_body = render_template("dashboard.jinja", session, none(string), none(string), none(string), none(string), none(string), none(string), none(string), some(current_total))
+
+  of "/post":
+    if session.is_none:
+      status = Http302
+      headers = new_http_headers([("Location", "/login")])
+    else:
+      let posts = get_all_posts(db_conn)
+      response_body = render_post_page(posts, session)
 
   of "/about":
     let user_id_opt = if session.isSome: some(session.get().user_id) else: none(int64)
@@ -156,11 +164,96 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       else:
         status = Http404
         response_body = "File not found"
+    # Check if it's a picture file request
+    elif req.url.path.starts_with("/pictures/"):
+      let file_path = req.url.path[1..^1]  # Remove leading slash
+      if file_exists(file_path):
+        let ext = split_file(file_path).ext.to_lower_ascii()
+        let content_type = case ext:
+          of ".png": "image/png"
+          of ".jpg", ".jpeg": "image/jpeg"
+          of ".gif": "image/gif"
+          of ".webp": "image/webp"
+          else: "application/octet-stream"
+        
+        headers = new_http_headers([("Content-Type", content_type)])
+        response_body = read_file(file_path)
+      else:
+        status = Http404
+        response_body = "File not found"
     else:
       status = Http404
       response_body = "Page not found"
   
   return (response_body, status, headers)
+
+proc parse_multipart_binary*(body: string, boundary: string): seq[tuple[name: string, filename: string, content: string, content_type: string]] =
+  var parts: seq[tuple[name: string, filename: string, content: string, content_type: string]] = @[]
+  
+  if body.len == 0 or boundary.len == 0:
+    return parts
+  
+  let delimiter = "--" & boundary
+  let end_delimiter = delimiter & "--"
+  
+  var pos = 0
+  
+  # Find first boundary
+  let first_boundary = body.find(delimiter, pos)
+  if first_boundary == -1:
+    return parts
+  
+  pos = first_boundary + delimiter.len
+  
+  while pos < body.len:
+    # Skip CRLF after boundary
+    if pos + 1 < body.len and body[pos] == '\r' and body[pos + 1] == '\n':
+      pos += 2
+    
+    # Find next boundary or end
+    let next_boundary = body.find(delimiter, pos)
+    if next_boundary == -1:
+      break
+    
+    let section = body[pos..<next_boundary]
+    
+    # Parse section
+    let header_end = section.find("\r\n\r\n")
+    if header_end == -1:
+      pos = next_boundary + delimiter.len
+      continue
+    
+    let headers = section[0..<header_end]
+    let content_start = header_end + 4
+    let content = section[content_start..^1]
+    
+    var name = ""
+    var filename = ""
+    var content_type = ""
+    
+    # Parse headers
+    for line in headers.split("\r\n"):
+      if line.starts_with("Content-Disposition:"):
+        # Parse Content-Disposition header
+        for part in line.split(";"):
+          let trimmed = part.strip()
+          if trimmed.starts_with("name=\""):
+            name = trimmed[6..^2]
+          elif trimmed.starts_with("filename=\""):
+            filename = trimmed[10..^2]
+      elif line.starts_with("Content-Type:"):
+        content_type = line[13..^1].strip()
+    
+    if name.len > 0:
+      parts.add((name, filename, content, content_type))
+    
+    pos = next_boundary + delimiter.len
+    
+    # Check if this is the end delimiter
+    if pos + 2 < body.len and body[pos] == '-' and body[pos + 1] == '-':
+      break
+  
+  return parts
 
 proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn, PASSKEY: string): (string, HttpCode, HttpHeaders) =
   let content_length = if req.headers.has_key("content-length"): parse_int($req.headers["content-length"]) else: 0
@@ -253,16 +346,152 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
       except:
         response_body = """<p style="color: red;">Invalid miles value</p>"""
 
+  of "/post":
+    if session.is_none:
+      status = Http401
+      response_body = """<p style="color: red;">You must be logged in to create posts</p>"""
+    else:
+      # Handle multipart form data
+      var boundary = ""
+
+      if req.headers.has_key("content-type"):
+        let content_type = req.headers["content-type"]
+        if content_type.contains("multipart/form-data"):
+          for part in content_type.split(";"):
+            let trimmed = part.strip()
+            if trimmed.starts_with("boundary="):
+              boundary = trimmed[9..^1]
+              # Remove quotes if present
+              if boundary.starts_with("\"") and boundary.ends_with("\""):
+                boundary = boundary[1..^2]
+      
+      var text_content = ""
+      var image_filename = ""
+      
+      # Parse multipart form if boundary exists
+      if boundary.len > 0:
+        let form_parts = parse_multipart_binary(body, boundary)
+        for part in form_parts:
+          if part.name == "text_content":
+            text_content = part.content
+          elif part.name == "image":
+            if part.filename.len > 0 and part.content.len > 0:
+              image_filename = save_uploaded_file(part.content, part.filename, "pictures")
+      else:
+        # For non-multipart forms (text-only posts without files)
+        text_content = form_data.get_or_default("text_content", "")
+      
+      if text_content.strip() == "" and image_filename == "":
+        #[try:
+          text_content = form_data.get_or_default("text_content", "Hi!")
+          image_content = form_data["image"].get_or_default("")
+          image_filename = save_uploaded_file(form_data = image_content, "test.webp", "pictures")
+
+          discard create_post(db_conn, session.get().user_id, text_content, image_filename)
+          headers = new_http_headers([("HX-Redirect", "/post")])
+          response_body = """<p style="color: green;">Post created successfully!</p>"""
+        except:
+          response_body = """<p style="color: red;">Error creating post</p>"""]#
+
+        # Loop thru every key in form_data and print it to response_body
+        response_body = &"""<p style="color: red;">DATA: {boundary}</p>"""
+        #for part in parse_multipart_binary(body, boundary):
+        #  response_body.add(&"""<p style="color: red;">DATA: {part}</p>""")
+
+        # Loop thru every key in form_data and print it to response_body
+        #for key, value in form_data.pairs:
+          #response_body.add(&"""<p style="color: red;">{key}: {value}</p>""")
+
+        #response_body = &"""<p style="color: red;">{form_data["text_content"]}</p>"""
+        #response_body = """<p style="color: red;">Post content (text or image) is required</p>"""
+      else:
+        try:
+          discard create_post(db_conn, session.get().user_id, text_content, image_filename)
+          headers = new_http_headers([("HX-Redirect", "/post")])
+          response_body = """<p style="color: green;">Post created successfully!</p>"""
+        except:
+          response_body = """<p style="color: red;">Error creating post</p>"""
+
+  of "/upload-avatar":
+    if session.is_none:
+      status = Http401
+      response_body = """<p style="color: red;">You must be logged in to upload avatar</p>"""
+    else:
+      # Handle multipart form data for avatar upload
+      var boundary = ""
+      if req.headers.has_key("content-type"):
+        let content_type = req.headers["content-type"]
+        if content_type.contains("multipart/form-data"):
+          for part in content_type.split(";"):
+            let trimmed = part.strip()
+            if trimmed.starts_with("boundary="):
+              boundary = trimmed[9..^1]
+              # Remove quotes if present
+              if boundary.starts_with("\"") and boundary.ends_with("\""):
+                boundary = boundary[1..^2]
+      
+      if boundary.len > 0:
+        let form_parts = parse_multipart_binary(body, boundary)
+        for part in form_parts:
+          if part.name == "avatar" and part.filename.len > 0 and part.content.len > 0:
+            let avatar_filename = save_uploaded_file(part.content, "avatar_" & part.filename, "pictures")
+            try:
+              update_user_avatar(db_conn, session.get().user_id, avatar_filename)
+              response_body = """<p style="color: green;">Avatar updated successfully!</p>"""
+            except:
+              response_body = """<p style="color: red;">Error updating avatar</p>"""
+            break
+        if response_body == "":
+          response_body = """<p style="color: red;">No avatar file uploaded</p>"""
+      else:
+        response_body = """<p style="color: red;">Invalid file upload format</p>"""
+
   of "/settings":
     if session.is_none:
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to update settings</p>"""
     else:
-      let name = form_data.get_or_default("name", "")
-      let color = form_data.get_or_default("color", "#3b82f6")
-      let current_password = form_data.get_or_default("current_password", "")
-      let new_password = form_data.get_or_default("new_password", "")
-      let confirm_password = form_data.get_or_default("confirm_password", "")
+      # Handle multipart form data
+      var boundary = ""
+      if req.headers.has_key("content-type"):
+        let content_type = req.headers["content-type"]
+        if content_type.contains("multipart/form-data"):
+          for part in content_type.split(";"):
+            let trimmed = part.strip()
+            if trimmed.starts_with("boundary="):
+              boundary = trimmed[9..^1]
+              # Remove quotes if present
+              if boundary.starts_with("\"") and boundary.ends_with("\""):
+                boundary = boundary[1..^2]
+
+      # Extract form fields from multipart data if present
+      var name = ""
+      var color = "#3b82f6"
+      var current_password = ""
+      var new_password = ""
+      var confirm_password = ""
+      
+      if boundary.len > 0:
+        let form_parts = parse_multipart_binary(body, boundary)
+        for part in form_parts:
+          case part.name:
+            of "name":
+              name = part.content
+            of "color":
+              color = part.content
+            of "current_password":
+              current_password = part.content
+            of "new_password":
+              new_password = part.content
+            of "confirm_password":
+              confirm_password = part.content
+      else:
+        # Fallback to regular form data parsing
+        name = form_data.get_or_default("name", "")
+        color = form_data.get_or_default("color", "#3b82f6")
+        current_password = form_data.get_or_default("current_password", "")
+        new_password = form_data.get_or_default("new_password", "")
+        confirm_password = form_data.get_or_default("confirm_password", "")
       
       if name == "":
         response_body = """<p style="color: red;">Name is required</p>"""
@@ -275,15 +504,29 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           var success = true
           var error_msg = ""
           
+          # Handle profile picture upload (already parsed above)
+          if boundary.len > 0:
+            let form_parts = parse_multipart_binary(body, boundary)
+            for part in form_parts:
+              if part.name == "profile_picture" and part.filename.len > 0 and part.content.len > 0:
+                let avatar_filename = save_uploaded_file(part.content, "avatar_" & part.filename, "pictures")
+                try:
+                  update_user_avatar(db_conn, session.get().user_id, avatar_filename)
+                except:
+                  success = false
+                  error_msg = "Error updating profile picture"
+                break
+          
           # Update basic info
-          try:
-            update_user(db_conn, user.id, name, color)
-          except:
-            success = false
-            error_msg = "Error updating profile"
+          if success:
+            try:
+              update_user(db_conn, user.id, name, color)
+            except:
+              success = false
+              error_msg = "Error updating profile"
           
           # Handle password change if provided
-          if current_password != "" or new_password != "" or confirm_password != "":
+          if success and (current_password != "" or new_password != "" or confirm_password != ""):
             if current_password == "":
               success = false
               error_msg = "Current password is required"

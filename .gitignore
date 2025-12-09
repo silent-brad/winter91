@@ -3,7 +3,7 @@ src/result
 !.gitignore
 !LICENSE
 !README.md
-!IDEA.md
+!TODO.md
 !DEPS.md
 
 !flake.nix

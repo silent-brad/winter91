@@ -23,6 +23,14 @@ type
     last_logged*: string
     current_streak*: int
 
+  Post* = object
+    id*: int64
+    user_id*: int64
+    user_name*: string
+    text_content*: string
+    image_filename*: string
+    created_at*: string
+
 const
   static_dir* = "static"
   port* = 8080

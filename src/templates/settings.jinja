@@ -66,6 +66,18 @@
             <small>Upload a custom profile picture, or leave empty to use avatar with your initials.</small>
         </label>
         
+        <label for="name">
+            Name
+            <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                placeholder="Enter your name"
+                {% if user.isSome() %}value="{{user.get().name}}"{% endif %}
+                required
+            >
+        </label>
+        
         <label for="email">
             Email
             <input 
