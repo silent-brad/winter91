@@ -14,7 +14,11 @@ src/result
 
 !src/
 !src/**
-!templates/
-!templates/**
+!src/database/
+!src/database/**
+!src/routes/
+!src/routes/**
+!src/templates/
+!src/templates/**
 !static/
 !static/**
