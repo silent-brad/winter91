@@ -183,6 +183,6 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
         response_body = "File not found"
     else:
       status = Http404
-      response_body = "Page not found"
+      response_body = render_template("404.jinja", session)
   
   return (response_body, status, headers)

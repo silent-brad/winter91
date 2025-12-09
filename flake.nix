@@ -15,8 +15,6 @@
           pname = "winter-100";
           version = "0.0.1";
           src = ./.;
-          
-
 
           buildInputs = with pkgs; [ nim-2_0 sqlite ];
 
@@ -26,7 +24,7 @@
             # Setup nim package path
             export HOME=$(pwd)
             mkdir -p packages
-            
+
             for pkg in ${nim-pkgs.packages.${system}.default}/pkgs/*; do
               # Copy package to local packages directory
               if [ -d $pkg ]; then
@@ -35,10 +33,8 @@
                 cp $pkg packages/
               fi
             done
-            
 
-            
-            cd src && ${pkgs.nim-2_0}/bin/nim c -d:release --mm:none --path:../packages -o:$out/bin/app main.nim
+            ${pkgs.nim-2_0}/bin/nim c -d:release --mm:none --path:../packages -o:$out/bin/app src/main.nim
           '';
         };
 
