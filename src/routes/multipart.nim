@@ -1,69 +1,113 @@
+import asyncdispatch
+import asynchttpserver
 import strutils
+import tables
+import os
+import sequtils
 
-proc parse_multipart_binary*(body: string, boundary: string): seq[tuple[name: string, filename: string, content: string, content_type: string]] =
-  var parts: seq[tuple[name: string, filename: string, content: string, content_type: string]] = @[]
-  
-  if body.len == 0 or boundary.len == 0:
-    return parts
-  
-  let delimiter = "--" & boundary
-  let end_delimiter = delimiter & "--"
-  
-  var pos = 0
-  
-  # Find first boundary
-  let first_boundary = body.find(delimiter, pos)
-  if first_boundary == -1:
-    return parts
-  
-  pos = first_boundary + delimiter.len
-  
-  while pos < body.len:
-    # Skip CRLF after boundary
-    if pos + 1 < body.len and body[pos] == '\r' and body[pos + 1] == '\n':
-      pos += 2
-    
-    # Find next boundary or end
-    let next_boundary = body.find(delimiter, pos)
-    if next_boundary == -1:
+proc parseMultipart(req: Request) {.async.} =
+  if not req.headers.hasKey("content-type"):
+    await req.respond(Http400, "Missing Content-Type")
+    return
+
+  let ctHeader = req.headers["content-type"]
+  let contentType = if ctHeader.len > 0: ctHeader[0] else: ""
+  if not contentType.startsWith("multipart/form-data"):
+    await req.respond(Http400, "Invalid Content-Type")
+    return
+
+  # Extract boundary more robustly by parsing parameters
+  let params = contentType.split(';').mapIt(it.strip())
+  var boundary = ""
+  for param in params:
+    if param.startsWith("boundary="):
+      let boundaryRaw = param[9 .. ^1].strip()
+      boundary = if boundaryRaw.startsWith('"') and boundaryRaw.endsWith('"'): boundaryRaw[1 .. ^2] else: boundaryRaw
       break
-    
-    let section = body[pos..<next_boundary]
-    
-    # Parse section
-    let header_end = section.find("\r\n\r\n")
-    if header_end == -1:
-      pos = next_boundary + delimiter.len
-      continue
-    
-    let headers = section[0..<header_end]
-    let content_start = header_end + 4
-    let content = section[content_start..^1]
-    
+  if boundary == "":
+    await req.respond(Http400, "Missing boundary")
+    return
+
+  let fullBoundary = "--" & boundary
+
+  # Get full body (already available as string)
+  let body = req.body
+
+  # Split into parts (parts[0] is preamble, last is epilogue)
+  let parts = body.split(fullBoundary)
+  if parts.len < 3 or not parts[^1].startsWith("--"):  # At least preamble, one part, epilogue; check final '--' for validity
+    await req.respond(Http400, "Malformed multipart body")
+    return
+
+  var fields: Table[string, string]
+  var files: Table[string, (string, string, int)]  # (filename, contentType, size)
+
+  for i in 1 ..< parts.len - 1:
+    var part = parts[i].strip(leading = true, chars = {'\r', '\n'})
+    if part.len == 0: continue
+
+    # Find end of headers (\r\n\r\n)
+    let headerEnd = part.find("\r\n\r\n")
+    if headerEnd == -1: continue
+
+    let headerStr = part[0 ..< headerEnd]
+    var partBody = part[headerEnd + 4 .. ^1].strip(trailing = true, chars = {'\r', '\n'})
+
+    # Parse part headers
+    var partHeaders = newTable[string, string]()
+    for line in headerStr.split("\r\n"):
+      if line.len == 0: continue
+      let colonPos = line.find(':')
+      if colonPos != -1:
+        let key = line[0 ..< colonPos].strip().toLowerAscii()
+        let val = line[colonPos + 1 .. ^1].strip()
+        partHeaders[key] = val
+
+    # Parse Content-Disposition
+    if not partHeaders.hasKey("content-disposition"): continue
+    let disp = partHeaders["content-disposition"]
+    if not disp.startsWith("form-data"): continue
+
+    let dispParams = disp.split(';').mapIt(it.strip())
     var name = ""
     var filename = ""
-    var content_type = ""
-    
-    # Parse headers
-    for line in headers.split("\r\n"):
-      if line.starts_with("Content-Disposition:"):
-        # Parse Content-Disposition header
-        for part in line.split(";"):
-          let trimmed = part.strip()
-          if trimmed.starts_with("name=\""):
-            name = trimmed[6..^2]
-          elif trimmed.starts_with("filename=\""):
-            filename = trimmed[10..^2]
-      elif line.starts_with("Content-Type:"):
-        content_type = line[13..^1].strip()
-    
-    if name.len > 0:
-      parts.add((name, filename, content, content_type))
-    
-    pos = next_boundary + delimiter.len
-    
-    # Check if this is the end delimiter
-    if pos + 2 < body.len and body[pos] == '-' and body[pos + 1] == '-':
-      break
-  
-  return parts
+    for param in dispParams[1 .. ^1]:
+      let kv = param.split('=', 1)
+      if kv.len != 2: continue
+      let pkey = kv[0].strip()
+      let pval = kv[1].strip(chars = {'"'})
+      if pkey == "name": name = pval
+      elif pkey == "filename": filename = pval
+
+    if name.len == 0: continue
+
+    let ctype = partHeaders.getOrDefault("content-type", "application/octet-stream")
+
+    if filename.len > 0:
+      # File upload - save to disk
+      let uploadDir = "uploads"
+      if not dirExists(uploadDir): createDir(uploadDir)
+      let safeFilename = filename.replace("/", "").replace("\\", "")  # Basic sanitization
+      let path = uploadDir / safeFilename
+      writeFile(path, partBody)
+      files[name] = (filename, ctype, partBody.len)
+    else:
+      # Regular field
+      fields[name] = partBody
+
+  # Example: Process parsed data (echo for demo)
+  #echo "Fields: ", fields
+  #echo "Files: ", files
+
+  # Clean up or process further here...
+
+  await req.respond(Http200, "Multipart parsed successfully")
+
+#[proc handler(req: Request) {.async.} =
+  if req.reqMethod == HttpPost:
+    await parseMultipart(req)
+  else:
+    await req.respond(Http405, "Only POST allowed")
+
+let server = newAsyncHttpServer()
+waitFor server.serve(Port(8080), handler)]#

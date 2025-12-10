@@ -36,7 +36,7 @@ proc handle_request(req: Request) {.async, gcsafe.} =
       of Http_get:
         (response_body, status, headers) = handle_get_routes(req, session, db_conn)
       of Http_post:
-        (response_body, status, headers) = handle_post_routes(req, session, db_conn, PASSKEY)
+        (response_body, status, headers) = await handle_post_routes(req, session, db_conn, PASSKEY)
       else:
         status = Http405
         headers = new_http_headers([("Content-Type", "text/html")])

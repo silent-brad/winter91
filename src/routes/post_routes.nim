@@ -1,4 +1,4 @@
-import asynchttpserver
+import asynchttpserver, asyncdispatch
 import strutils, uri, tables, json, options, strformat
 import ../database/[models, users, miles, posts]
 import db_connector/db_sqlite
@@ -8,7 +8,7 @@ from times import DateTime, epochTime, format
 import ../types, ../auth, ../templates, ../utils, ../upload
 import multipart
 
-proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn, PASSKEY: string): (string, HttpCode, HttpHeaders) =
+proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn, PASSKEY: string): Future[(string, HttpCode, HttpHeaders)] {.async.} =
   let content_length = if req.headers.has_key("content-length"): parse_int($req.headers["content-length"]) else: 0
   var body = ""
   if content_length > 0:
@@ -104,77 +104,72 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to create posts</p>"""
     else:
-      # Handle multipart form data
-      var boundary = ""
-
-      if req.headers.has_key("content-type"):
-        let content_type = req.headers["content-type"]
-        if content_type.contains("multipart/form-data"):
-          for part in content_type.split(";"):
-            let trimmed = part.strip()
-            if trimmed.starts_with("boundary="):
-              boundary = trimmed[9..^1]
-              # Remove quotes if present
-              if boundary.starts_with("\"") and boundary.ends_with("\""):
-                boundary = boundary[1..^2]
-      
+      # Handle multipart form data using stator
+      await parseMultipart(req)
+      #[
       var text_content = ""
       var image_filename = ""
       
-      # Parse multipart form if boundary exists
-      if boundary.len > 0:
-        let form_parts = parse_multipart_binary(body, boundary)
-        for part in form_parts:
-          if part.name == "text_content":
-            text_content = part.content
-          elif part.name == "image":
-            if part.filename.len > 0 and part.content.len > 0:
-              image_filename = save_uploaded_file(part.content, part.filename, "pictures")
+      if req.headers.has_key("content-type"):
+        let content_type = req.headers["content-type"]
+        if content_type.contains("multipart/form-data"):
+          try:
+            let form_parts = parse_multipart_binary(body, content_type)
+            for part in form_parts:
+              if part.name == "text_content":
+                text_content = part.content
+              elif part.name == "image":
+                if part.filename.len > 0 and part.content.len > 0:
+                  image_filename = save_uploaded_file(part.content, part.filename, "pictures")
+          except Exception as e:
+            echo "Error parsing multipart data: ", e.msg
+            response_body = """<p style="color: red;">Error parsing uploaded data</p>"""
+        else:
+          # For non-multipart forms (text-only posts without files)
+          text_content = form_data.get_or_default("text_content", "")
       else:
-        # For non-multipart forms (text-only posts without files)
         text_content = form_data.get_or_default("text_content", "")
       
-      if text_content.strip() == "" and image_filename == "":
-        response_body = &"""<p style="color: red;">DATA: {boundary}</p>"""
-      else:
+      if response_body == "" and (text_content.strip() == "" and image_filename == ""):
+        response_body = """<p style="color: red;">Please provide text content or an image</p>"""
+      elif response_body == "":
         try:
           discard create_post(db_conn, session.get().user_id, text_content, image_filename)
           headers = new_http_headers([("HX-Redirect", "/post")])
           response_body = """<p style="color: green;">Post created successfully!</p>"""
-        except:
+        except Exception as e:
+          echo "Error creating post: ", e.msg
           response_body = """<p style="color: red;">Error creating post</p>"""
+          ]#
 
   of "/upload-avatar":
     if session.is_none:
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to upload avatar</p>"""
     else:
-      # Handle multipart form data for avatar upload
-      var boundary = ""
+      # Handle multipart form data for avatar upload using stator
       if req.headers.has_key("content-type"):
         let content_type = req.headers["content-type"]
         if content_type.contains("multipart/form-data"):
-          for part in content_type.split(";"):
-            let trimmed = part.strip()
-            if trimmed.starts_with("boundary="):
-              boundary = trimmed[9..^1]
-              # Remove quotes if present
-              if boundary.starts_with("\"") and boundary.ends_with("\""):
-                boundary = boundary[1..^2]
-      
-      if boundary.len > 0:
-        let form_parts = parse_multipart_binary(body, boundary)
-        for part in form_parts:
-          if part.name == "avatar" and part.filename.len > 0 and part.content.len > 0:
-            let avatar_filename = save_uploaded_file(part.content, "avatar_" & part.filename, "pictures")
-            try:
-              update_user_avatar(db_conn, session.get().user_id, avatar_filename)
-              response_body = """<p style="color: green;">Avatar updated successfully!</p>"""
-            except:
-              response_body = """<p style="color: red;">Error updating avatar</p>"""
-            break
-        if response_body == "":
-          response_body = """<p style="color: red;">No avatar file uploaded</p>"""
+          try:
+            let form_parts = parse_multipart_binary(body, content_type)
+            for part in form_parts:
+              if part.name == "avatar" and part.filename.len > 0 and part.content.len > 0:
+                let avatar_filename = save_uploaded_file(part.content, "avatar_" & part.filename, "pictures")
+                try:
+                  update_user_avatar(db_conn, session.get().user_id, avatar_filename)
+                  response_body = """<p style="color: green;">Avatar updated successfully!</p>"""
+                except Exception as e:
+                  echo "Error updating avatar: ", e.msg
+                  response_body = """<p style="color: red;">Error updating avatar</p>"""
+                break
+            if response_body == "":
+              response_body = """<p style="color: red;">No avatar file uploaded</p>"""
+          except Exception as e:
+            echo "Error parsing avatar upload: ", e.msg
+            response_body = """<p style="color: red;">Error parsing uploaded file</p>"""
+        else:
+          response_body = """<p style="color: red;">Invalid file upload format</p>"""
       else:
         response_body = """<p style="color: red;">Invalid file upload format</p>"""
 
@@ -183,40 +178,45 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to update settings</p>"""
     else:
-      # Handle multipart form data
-      var boundary = ""
-      if req.headers.has_key("content-type"):
-        let content_type = req.headers["content-type"]
-        if content_type.contains("multipart/form-data"):
-          for part in content_type.split(";"):
-            let trimmed = part.strip()
-            if trimmed.starts_with("boundary="):
-              boundary = trimmed[9..^1]
-              # Remove quotes if present
-              if boundary.starts_with("\"") and boundary.ends_with("\""):
-                boundary = boundary[1..^2]
-
-      # Extract form fields from multipart data if present
+      # Handle multipart form data using stator
       var name = ""
       var color = "#3b82f6"
       var current_password = ""
       var new_password = ""
       var confirm_password = ""
+      var profile_picture_content = ""
+      var profile_picture_filename = ""
       
-      if boundary.len > 0:
-        let form_parts = parse_multipart_binary(body, boundary)
-        for part in form_parts:
-          case part.name:
-            of "name":
-              name = part.content
-            of "color":
-              color = part.content
-            of "current_password":
-              current_password = part.content
-            of "new_password":
-              new_password = part.content
-            of "confirm_password":
-              confirm_password = part.content
+      if req.headers.has_key("content-type"):
+        let content_type = req.headers["content-type"]
+        if content_type.contains("multipart/form-data"):
+          try:
+            let form_parts = parse_multipart_binary(body, content_type)
+            for part in form_parts:
+              case part.name:
+                of "name":
+                  name = part.content
+                of "color":
+                  color = part.content
+                of "current_password":
+                  current_password = part.content
+                of "new_password":
+                  new_password = part.content
+                of "confirm_password":
+                  confirm_password = part.content
+                of "profile_picture":
+                  if part.filename.len > 0 and part.content.len > 0:
+                    profile_picture_content = part.content
+                    profile_picture_filename = part.filename
+          except Exception as e:
+            echo "Error parsing settings form: ", e.msg
+        else:
+          # Fallback to regular form data parsing
+          name = form_data.get_or_default("name", "")
+          color = form_data.get_or_default("color", "#3b82f6")
+          current_password = form_data.get_or_default("current_password", "")
+          new_password = form_data.get_or_default("new_password", "")
+          confirm_password = form_data.get_or_default("confirm_password", "")
       else:
         # Fallback to regular form data parsing
         name = form_data.get_or_default("name", "")
@@ -237,17 +237,14 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           var error_msg = ""
           
           # Handle profile picture upload (already parsed above)
-          if boundary.len > 0:
-            let form_parts = parse_multipart_binary(body, boundary)
-            for part in form_parts:
-              if part.name == "profile_picture" and part.filename.len > 0 and part.content.len > 0:
-                let avatar_filename = save_uploaded_file(part.content, "avatar_" & part.filename, "pictures")
-                try:
-                  update_user_avatar(db_conn, session.get().user_id, avatar_filename)
-                except:
-                  success = false
-                  error_msg = "Error updating profile picture"
-                break
+          if profile_picture_content.len > 0 and profile_picture_filename.len > 0:
+            let avatar_filename = save_uploaded_file(profile_picture_content, "avatar_" & profile_picture_filename, "pictures")
+            try:
+              update_user_avatar(db_conn, session.get().user_id, avatar_filename)
+            except Exception as e:
+              echo "Error updating profile picture: ", e.msg
+              success = false
+              error_msg = "Error updating profile picture"
           
           # Update basic info
           if success:

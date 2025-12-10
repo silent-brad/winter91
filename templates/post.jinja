@@ -12,7 +12,7 @@
     <!-- Create Post Form -->
     <div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius); margin-bottom: 2rem;">
         <h3>Create a Post</h3>
-        <form method="post" action="/post" hx-post="/post" hx-target="#post-response" hx-swap="innerHTML" enctype="multipart/form-data">
+        <form hx-post="/post" hx-target="#post-response" hx-swap="innerHTML" hx-encoding="multipart/form-data">
             <label for="text_content">
                 Share your thoughts
                 <textarea 
