@@ -3,139 +3,127 @@
 {% block title %}Sign Up{% endblock %}
 
 {% block content %}
-<article style="max-width: 400px; margin: 0 auto;">
-    <header>
-        <h1>Sign Up</h1>
-        <p>Join the Winter 100 challenge!</p>
-    </header>
-    
-    <div id="signup-messages">
-        {% if error_message.is_some() %}
-            <div class="error" style="
-                background-color: var(--pico-del-background-color); 
-                color: var(--pico-del-color); 
-                padding: 1rem; 
-                border-radius: var(--pico-border-radius); 
-                margin-bottom: 1rem;
-            ">
-                {{error_message.get()}}
-            </div>
-        {% endif %}
-        
-        {% if success_message.is_some() %}
-            <div class="success" style="
-                background-color: var(--pico-ins-background-color); 
-                color: var(--pico-ins-color); 
-                padding: 1rem; 
-                border-radius: var(--pico-border-radius); 
-                margin-bottom: 1rem;
-            ">
-                {{success_message.get()}}
-            </div>
-        {% endif %}
-    </div>
-    
-    <form method="post" action="/signup" 
-          hx-post="/signup"
-          hx-target="#signup-messages"
-          hx-swap="innerHTML">
-        <label for="passkey">
-            Passkey Code
-            <input 
-                type="text" 
-                id="passkey" 
-                name="passkey" 
-                placeholder="Enter invitation code"
-                {% if passkey.is_some() %}value="{{passkey.get()}}"{% endif %}
-                required
-                autofocus
-            >
-            <small>You need a valid invitation code to join.</small>
-        </label>
+<article class="form-container">
+  <header>
+	<h1>Sign Up</h1>
+	<p>Join the Winter 100 challenge!</p>
+  </header>
+  
+  <div id="signup-messages">
+	{% if error_message.is_some() %}
+	  <div class="error">
+		{{error_message.get()}}
+	  </div>
+	{% endif %}
+	
+	{% if success_message.is_some() %}
+	  <div class="success">
+		{{success_message.get()}}
+	  </div>
+	{% endif %}
+  </div>
+  
+  <form method="post" action="/signup" 
+		hx-post="/signup"
+		hx-target="#signup-messages"
+		hx-swap="innerHTML">
+	<label for="passkey">
+	  Passkey Code
+	  <input 
+		type="text" 
+		id="passkey" 
+		name="passkey" 
+		placeholder="Enter invitation code"
+		{% if passkey.is_some() %}value="{{passkey.get()}}"{% endif %}
+		required
+		autofocus
+	  >
+	  <small>You need a valid invitation code to join.</small>
+	</label>
 
-        <label for="name">
-            Name
-            <input 
-                type="text" 
-                id="name" 
-                name="name" 
-                placeholder="Enter your name"
-                {% if name.is_some() %}value="{{name.get()}}"{% endif %}
-                required
-            >
-        </label>
-        
-        <label for="email">
-            Email
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                placeholder="Enter your email"
-                {% if email.is_some() %}value="{{email.get()}}"{% endif %}
-                required
-            >
-        </label>
+	<label for="name">
+	  Name
+	  <input 
+		type="text" 
+		id="name" 
+		name="name" 
+		placeholder="Enter your name"
+		{% if name.is_some() %}value="{{name.get()}}"{% endif %}
+		required
+	  >
+	</label>
+	
+	<label for="email">
+	  Email
+	  <input 
+		type="email" 
+		id="email" 
+		name="email" 
+		placeholder="Enter your email"
+		{% if email.is_some() %}value="{{email.get()}}"{% endif %}
+		required
+	  >
+	</label>
 
-        <label for="color">
-            Color
-            <input 
-                type="color" 
-                id="color" 
-                name="color" 
-                value="#3b82f6"
-                {% if current_color.is_some() %}value="{{current_color.get()}}"{% endif %}
-            >
-        </label>
-        
-        <label for="password">
-            Password
-            <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                placeholder="Create a password"
-                minlength="8"
-                required
-            >
-            <small>Password must be at least 8 characters long.</small>
-        </label>
-        
-        <label for="confirm_password">
-            Confirm Password
-            <input 
-                type="password" 
-                id="confirm_password" 
-                name="confirm_password" 
-                placeholder="Confirm your password"
-                minlength="8"
-                required
-            >
-        </label>
-        
-        <button type="submit">Sign Up</button>
-    </form>
-    
-    <footer style="text-align: center; margin-top: 2rem;">
-        <p>
-            Already have an account? 
-            <a href="/login">Log in here</a>
-        </p>
-    </footer>
+	<label for="color">
+	  Color
+	  <input 
+		type="color" 
+		id="color" 
+		name="color" 
+		value="#3b82f6"
+		{% if current_color.is_some() %}value="{{current_color.get()}}"{% endif %}
+	  >
+	</label>
+	
+	<label for="password">
+	  Password
+	  <input 
+		type="password" 
+		id="password" 
+		name="password" 
+		placeholder="Create a password"
+		minlength="8"
+		required
+	  >
+	  <small>Password must be at least 8 characters long.</small>
+	</label>
+	
+	<label for="confirm_password">
+	  Confirm Password
+	  <input 
+		type="password" 
+		id="confirm_password" 
+		name="confirm_password" 
+		placeholder="Confirm your password"
+		minlength="8"
+		required
+	  >
+	</label>
+	
+	<button type="submit">Sign Up</button>
+  </form>
+  
+  <footer class="text-center">
+	<p>
+	  Already have an account? 
+	  <a href="/login">Log in here</a>
+	</p>
+  </footer>
 </article>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-document.getElementById('confirm_password').addEventListener('input', function() {
-    const password = document.getElementById('password').value;
-    const confirmPassword = this.value;
-    
-    if (password !== confirmPassword) {
-        this.setCustomValidity('Passwords do not match');
-    } else {
-        this.setCustomValidity('');
-    }
-});
+  document.getElementById('confirm_password').addEventListener('input', function() {
+	const password = document.getElementById('password').value;
+	const confirm_password = this.value;
+	
+	if (password !== confirm_password) {
+	  this.setCustomValidity('Passwords do not match');
+	} else {
+	  this.setCustomValidity('');
+	}
+  });
 </script>
 {% endblock %}

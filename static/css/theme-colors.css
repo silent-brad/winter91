@@ -1,0 +1,162 @@
+/* Winter 100 Theme Colors */
+/* Base RGB colors: Forest Green (#228B22), Sky Blue (#87CEEB), Warm Gray (#696969), Accent Orange (#FF6B35), Pure White (#FFFFFF) */
+
+:root {
+  /* Forest Green variations (primary) */
+  --color-primary-50: oklch(0.95 0.02 145);    /* Very light green */
+  --color-primary-100: oklch(0.90 0.04 145);   /* Light green */
+  --color-primary-200: oklch(0.80 0.08 145);   /* Lighter green */
+  --color-primary-300: oklch(0.70 0.12 145);   /* Light green */
+  --color-primary-400: oklch(0.60 0.16 145);   /* Medium light green */
+  --color-primary-500: oklch(0.50 0.20 145);   /* Primary green (#228B22) */
+  --color-primary-600: oklch(0.45 0.18 145);   /* Darker green */
+  --color-primary-700: oklch(0.40 0.16 145);   /* Dark green */
+  --color-primary-800: oklch(0.30 0.12 145);   /* Very dark green */
+  --color-primary-900: oklch(0.20 0.08 145);   /* Darkest green */
+
+  /* Sky Blue variations (secondary) */
+  --color-secondary-50: oklch(0.95 0.02 220);  /* Very light blue */
+  --color-secondary-100: oklch(0.90 0.04 220); /* Light blue */
+  --color-secondary-200: oklch(0.85 0.08 220); /* Lighter blue */
+  --color-secondary-300: oklch(0.80 0.12 220); /* Light blue */
+  --color-secondary-400: oklch(0.75 0.16 220); /* Medium light blue */
+  --color-secondary-500: oklch(0.70 0.20 220); /* Sky blue (#87CEEB) */
+  --color-secondary-600: oklch(0.65 0.18 220); /* Darker blue */
+  --color-secondary-700: oklch(0.55 0.16 220); /* Dark blue */
+  --color-secondary-800: oklch(0.45 0.12 220); /* Very dark blue */
+  --color-secondary-900: oklch(0.35 0.08 220); /* Darkest blue */
+
+  /* Neutral Gray variations */
+  --color-neutral-50: oklch(0.98 0.00 0);      /* Almost white */
+  --color-neutral-100: oklch(0.95 0.00 0);     /* Very light gray */
+  --color-neutral-200: oklch(0.90 0.00 0);     /* Light gray */
+  --color-neutral-300: oklch(0.80 0.00 0);     /* Light gray */
+  --color-neutral-400: oklch(0.70 0.00 0);     /* Medium gray */
+  --color-neutral-500: oklch(0.60 0.00 0);     /* Warm gray (#696969) */
+  --color-neutral-600: oklch(0.50 0.00 0);     /* Darker gray */
+  --color-neutral-700: oklch(0.40 0.00 0);     /* Dark gray */
+  --color-neutral-800: oklch(0.25 0.00 0);     /* Very dark gray */
+  --color-neutral-900: oklch(0.15 0.00 0);     /* Almost black */
+
+  /* Accent Orange variations */
+  --color-accent-50: oklch(0.95 0.02 45);      /* Very light orange */
+  --color-accent-100: oklch(0.90 0.04 45);     /* Light orange */
+  --color-accent-200: oklch(0.85 0.08 45);     /* Lighter orange */
+  --color-accent-300: oklch(0.80 0.12 45);     /* Light orange */
+  --color-accent-400: oklch(0.75 0.16 45);     /* Medium orange */
+  --color-accent-500: oklch(0.70 0.20 45);     /* Accent orange (#FF6B35) */
+  --color-accent-600: oklch(0.65 0.18 45);     /* Darker orange */
+  --color-accent-700: oklch(0.60 0.16 45);     /* Dark orange */
+  --color-accent-800: oklch(0.50 0.12 45);     /* Very dark orange */
+  --color-accent-900: oklch(0.40 0.08 45);     /* Darkest orange */
+
+  /* Success/Error/Warning variations */
+  --color-success: oklch(0.65 0.15 140);       /* Success green */
+  --color-warning: oklch(0.75 0.15 85);        /* Warning yellow */
+  --color-error: oklch(0.65 0.20 25);          /* Error red */
+
+  /* Light mode theme */
+  --color-background: var(--color-neutral-50);
+  --color-surface: var(--color-neutral-100);
+  --color-surface-variant: var(--color-neutral-200);
+  --color-text: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-700);
+  --color-text-muted: var(--color-neutral-500);
+  --color-border: var(--color-neutral-300);
+  --color-border-light: var(--color-neutral-200);
+  --color-primary: var(--color-primary-500);
+  --color-primary-hover: var(--color-primary-600);
+  --color-secondary: var(--color-secondary-500);
+  --color-accent: var(--color-accent-500);
+  --color-link: var(--color-primary-600);
+  --color-link-hover: var(--color-primary-700);
+
+  /* Button colors */
+  --color-button-primary: var(--color-primary);
+  --color-button-primary-hover: var(--color-primary-hover);
+  --color-button-secondary: var(--color-neutral-200);
+  --color-button-secondary-hover: var(--color-neutral-300);
+  --color-button-text: var(--color-neutral-50);
+  --color-button-text-secondary: var(--color-text);
+
+  /* Form colors */
+  --color-input-background: var(--color-neutral-50);
+  --color-input-border: var(--color-border);
+  --color-input-focus: var(--color-primary);
+  --color-input-text: var(--color-text);
+
+  /* Shadow colors */
+  --shadow-color: oklch(0.15 0.00 0 / 0.1);
+  --shadow-color-hover: oklch(0.15 0.00 0 / 0.15);
+}
+
+/* Dark mode theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--color-neutral-900);
+    --color-surface: var(--color-neutral-800);
+    --color-surface-variant: var(--color-neutral-700);
+    --color-text: var(--color-neutral-100);
+    --color-text-secondary: var(--color-neutral-300);
+    --color-text-muted: var(--color-neutral-500);
+    --color-border: var(--color-neutral-600);
+    --color-border-light: var(--color-neutral-700);
+    --color-primary: var(--color-primary-400);
+    --color-primary-hover: var(--color-primary-300);
+    --color-secondary: var(--color-secondary-400);
+    --color-accent: var(--color-accent-400);
+    --color-link: var(--color-primary-400);
+    --color-link-hover: var(--color-primary-300);
+
+    /* Button colors for dark mode */
+    --color-button-primary: var(--color-primary);
+    --color-button-primary-hover: var(--color-primary-hover);
+    --color-button-secondary: var(--color-neutral-700);
+    --color-button-secondary-hover: var(--color-neutral-600);
+    --color-button-text: var(--color-neutral-100);
+    --color-button-text-secondary: var(--color-text);
+
+    /* Form colors for dark mode */
+    --color-input-background: var(--color-neutral-800);
+    --color-input-border: var(--color-border);
+    --color-input-focus: var(--color-primary);
+    --color-input-text: var(--color-text);
+
+    /* Shadow colors for dark mode */
+    --shadow-color: oklch(0.05 0.00 0 / 0.2);
+    --shadow-color-hover: oklch(0.05 0.00 0 / 0.3);
+  }
+}
+
+/* Manual dark mode override */
+[data-theme="dark"] {
+  --color-background: var(--color-neutral-900);
+  --color-surface: var(--color-neutral-800);
+  --color-surface-variant: var(--color-neutral-700);
+  --color-text: var(--color-neutral-100);
+  --color-text-secondary: var(--color-neutral-300);
+  --color-text-muted: var(--color-neutral-500);
+  --color-border: var(--color-neutral-600);
+  --color-border-light: var(--color-neutral-700);
+  --color-primary: var(--color-primary-400);
+  --color-primary-hover: var(--color-primary-300);
+  --color-secondary: var(--color-secondary-400);
+  --color-accent: var(--color-accent-400);
+  --color-link: var(--color-primary-400);
+  --color-link-hover: var(--color-primary-300);
+
+  --color-button-primary: var(--color-primary);
+  --color-button-primary-hover: var(--color-primary-hover);
+  --color-button-secondary: var(--color-neutral-700);
+  --color-button-secondary-hover: var(--color-neutral-600);
+  --color-button-text: var(--color-neutral-100);
+  --color-button-text-secondary: var(--color-text);
+
+  --color-input-background: var(--color-neutral-800);
+  --color-input-border: var(--color-border);
+  --color-input-focus: var(--color-primary);
+  --color-input-text: var(--color-text);
+
+  --shadow-color: oklch(0.05 0.00 0 / 0.2);
+  --shadow-color-hover: oklch(0.05 0.00 0 / 0.3);
+}

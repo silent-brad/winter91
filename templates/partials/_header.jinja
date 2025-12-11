@@ -1,24 +1,24 @@
 <header class="container">
-    <nav>
-        <ul>
-            <li>
-                <a href="/" style="text-decoration: none; font-weight: bold; font-size: 1.2rem;">
-                    🥾 Winter 100
-                </a>
-            </li>
-        </ul>
-        <ul>
-            <li><a href="/about">About</a></li>
-            {% if session.isSome() %}
-                <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/leaderboard">Leaderboard</a></li>
-                <li><a href="/post">Posts</a></li>
-                <li><a href="/settings">Settings</a></li>
-                <li><a href="/logout" role="button" class="secondary">Log out</a></li>
-            {% else %}
-                <li><a href="/login" role="button" class="secondary">Log in</a></li>
-                <li><a href="/signup" role="button">Sign up</a></li>
-            {% endif %}
-        </ul>
-    </nav>
+  <nav>
+	<ul>
+	  <li>
+		<a href="/" style="text-decoration: none; font-weight: bold; font-size: 1.2rem;">
+		  Winter 100
+		</a>
+	  </li>
+	</ul>
+	<ul>
+	  <li><a href="/about">About</a></li>
+	  {% if session.is_some() %}
+		<li><a href="/dashboard">Dashboard</a></li>
+		<li><a href="/leaderboard">Leaderboard</a></li>
+		<li><a href="/post">Posts</a></li>
+		<li><a href="/settings">Settings</a></li>
+		<li><a href="/logout" role="button" class="secondary">Log out</a></li>
+	  {% else %}
+		<li><a href="/login" role="button" class="secondary">Log in</a></li>
+		<li><a href="/signup" role="button">Sign up</a></li>
+	  {% endif %}
+	</ul>
+  </nav>
 </header>

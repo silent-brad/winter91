@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Winter 100{% endblock %} | Winter 100 Challenge</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <script src="/static/htmx.js"></script>
-    {% block extra_head %}{% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Winter 100{% endblock %} | Winter 100 Challenge</title>
+  
+  <!-- Preload Athelas fonts -->
+  <link rel="preload" href="/static/fonts/athelas/Athelas-Regular.ttf" as="font" type="font/truetype" crossorigin>
+  <link rel="preload" href="/static/fonts/athelas/Athelas-Bold.ttf" as="font" type="font/truetype" crossorigin>
+  <link rel="preload" href="/static/fonts/athelas/Athelas-Italic.ttf" as="font" type="font/truetype" crossorigin>
+  <link rel="preload" href="/static/fonts/athelas/Athelas-BoldItalic.ttf" as="font" type="font/truetype" crossorigin>
+  
+  <!-- CSS files -->
+  <link rel="stylesheet" href="/static/css/theme-colors.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  
+  <script src="/static/js/htmx.js"></script>
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
-    {% importnimja "partials/_header.jinja" %}
-    
-    <main class="container">
-        {% block content %}{% endblock %}
-    </main>
-     
-    {% importnimja "partials/_footer.jinja" %}
+  {% importnimja "partials/_header.jinja" %}
+  
+  <main class="container">
+	{% block content %}{% endblock %}
+  </main>
+   
+  {% importnimja "partials/_footer.jinja" %}
 
-    {% block extra_js %}{% endblock %}
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

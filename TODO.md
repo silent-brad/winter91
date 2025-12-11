@@ -14,7 +14,9 @@
   - [ ] Add notifications?
   - [x] Add minimal WYSIWYG editor formatting to text in "post" route
 
+- [ ] Create brand identity
 - [ ] Add custom CSS (winter theme with light/dark mode)
+  - [ ] Add neumorphism
 
 - [ ] Make PWA
 

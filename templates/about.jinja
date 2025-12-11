@@ -4,68 +4,68 @@
 
 {% block content %}
 <article>
-    <header>
-        <h1>About Winter 100</h1>
-        <p>The challenge that keeps you moving through winter</p>
-    </header>
-    
-    <section>
-        <h2>What is Winter 100?</h2>
-        <p>
-            Winter 100 is a fitness challenge designed to help you stay active during the winter months. 
-            The goal is simple: walk or run 100 miles between the start of winter and the end of the challenge period.
-        </p>
-        
-        <blockquote>
-            "Above all, do not lose your desire to walk. Everyday, I walk myself into a state of well-being 
-            and walk away from every illness. I have walked myself into my best thoughts, and I know of no 
-            thought so burdensome that one cannot walk away from it."
-            <footer>— Søren Kierkegaard</footer>
-        </blockquote>
-    </section>
-    
-    <section>
-        <h2>How It Works</h2>
-        <ol>
-            <li><strong>Sign Up:</strong> Get an invitation code and create your account</li>
-            <li><strong>Log Miles:</strong> Track your daily walks and runs</li>
-            <li><strong>Stay Motivated:</strong> Watch your progress and compete on the leaderboard</li>
-            <li><strong>Reach 100:</strong> Complete the challenge by hitting 100 miles!</li>
-        </ol>
-    </section>
-    
-    <section>
-        <h2>Challenge Rules</h2>
-        <ul>
-            <li>Any outdoor walking or running counts toward your total</li>
-            <li>Indoor activities like treadmills count too</li>
-            <li>Log your miles honestly - this is about personal growth</li>
-            <li>Stay consistent and build healthy habits</li>
-            <li>Support and encourage your fellow challengers</li>
-        </ul>
-    </section>
-    
-    <section>
-        <h2>Why Winter?</h2>
-        <p>
-            Winter is often the most challenging time to stay active. The days are shorter, 
-            the weather is harsh, and motivation can be hard to find. Winter 100 provides 
-            structure, accountability, and community to help you not just survive winter, 
-            but thrive through it.
-        </p>
-        
-        <p>
-            By the end of the challenge, you'll have built lasting habits, improved your 
-            fitness, and proven to yourself that you can stay committed even when things get tough.
-        </p>
-    </section>
-    
-    <footer style="text-align: center; margin-top: 3rem;">
-        {% if user_id.isNone() %}
-            <a href="/signup" role="button">Join the Challenge</a>
-        {% else %}
-            <a href="/log" role="button">Log Your Miles</a>
-        {% endif %}
-    </footer>
+	<header>
+		<h1>About Winter 100</h1>
+		<p>The challenge that keeps you moving through winter</p>
+	</header>
+	
+	<section>
+		<h2>What is Winter 100?</h2>
+		<p>
+			Winter 100 is a fitness challenge designed to help you stay active during the winter months. 
+			The goal is simple: walk or run 100 miles between the start of winter and the end of the challenge period.
+		</p>
+		
+		<blockquote>
+			"Above all, do not lose your desire to walk. Everyday, I walk myself into a state of well-being 
+			and walk away from every illness. I have walked myself into my best thoughts, and I know of no 
+			thought so burdensome that one cannot walk away from it."
+			<footer>— Søren Kierkegaard</footer>
+		</blockquote>
+	</section>
+	
+	<section>
+		<h2>How It Works</h2>
+		<ol>
+			<li><strong>Sign Up:</strong> Get an invitation code and create your account</li>
+			<li><strong>Log Miles:</strong> Track your daily walks and runs</li>
+			<li><strong>Stay Motivated:</strong> Watch your progress and compete on the leaderboard</li>
+			<li><strong>Reach 100:</strong> Complete the challenge by hitting 100 miles!</li>
+		</ol>
+	</section>
+	
+	<section>
+		<h2>Challenge Rules</h2>
+		<ul>
+			<li>Any outdoor walking or running counts toward your total</li>
+			<li>Indoor activities like treadmills count too</li>
+			<li>Log your miles honestly - this is about personal growth</li>
+			<li>Stay consistent and build healthy habits</li>
+			<li>Support and encourage your fellow challengers</li>
+		</ul>
+	</section>
+	
+	<section>
+		<h2>Why Winter?</h2>
+		<p>
+			Winter is often the most challenging time to stay active. The days are shorter, 
+			the weather is harsh, and motivation can be hard to find. Winter 100 provides 
+			structure, accountability, and community to help you not just survive winter, 
+			but thrive through it.
+		</p>
+		
+		<p>
+			By the end of the challenge, you'll have built lasting habits, improved your 
+			fitness, and proven to yourself that you can stay committed even when things get tough.
+		</p>
+	</section>
+	
+	<footer style="text-align: center; margin-top: 3rem;">
+		{% if user_id.isNone() %}
+			<a href="/signup" role="button">Join the Challenge</a>
+		{% else %}
+			<a href="/log" role="button">Log Your Miles</a>
+		{% endif %}
+	</footer>
 </article>
 {% endblock %}

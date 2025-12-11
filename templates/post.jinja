@@ -4,99 +4,99 @@
 
 {% block content %}
 <article style="max-width: 800px; margin: 0 auto;">
-    <header>
-        <h1>Community Posts</h1>
-        <p>Share your journey with pictures and text!</p>
-    </header>
+	<header>
+		<h1>Community Posts</h1>
+		<p>Share your journey with pictures and text!</p>
+	</header>
 
-    <!-- Create Post Form -->
-    <div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius); margin-bottom: 2rem;">
-        <h3>Create a Post</h3>
-        <form hx-post="/post" hx-target="#post-response" hx-swap="innerHTML" hx-encoding="multipart/form-data" id="post-form">
-            <label for="text_content">
-                Share your thoughts
-                
-                <!-- WYSIWYG Toolbar -->
-                <div id="wysiwyg-toolbar" style="border: 1px solid var(--pico-border-color); border-bottom: none; border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0; padding: 0.5rem; background: var(--pico-background-color); display: flex; flex-wrap: wrap; gap: 0.25rem;">
-                    <button type="button" onclick="formatText('bold')" title="Bold" style="padding: 0.25rem 0.5rem; font-weight: bold;">B</button>
-                    <button type="button" onclick="formatText('italic')" title="Italic" style="padding: 0.25rem 0.5rem; font-style: italic;">I</button>
-                    <button type="button" onclick="formatText('underline')" title="Underline" style="padding: 0.25rem 0.5rem; text-decoration: underline;">U</button>
-                    <span style="border-left: 1px solid var(--pico-border-color); margin: 0 0.25rem;"></span>
-                    <button type="button" onclick="formatText('h1')" title="Heading 1" style="padding: 0.25rem 0.5rem;">H1</button>
-                    <button type="button" onclick="formatText('h2')" title="Heading 2" style="padding: 0.25rem 0.5rem;">H2</button>
-                    <button type="button" onclick="formatText('h3')" title="Heading 3" style="padding: 0.25rem 0.5rem;">H3</button>
-                    <span style="border-left: 1px solid var(--pico-border-color); margin: 0 0.25rem;"></span>
-                    <button type="button" onclick="formatText('insertUnorderedList')" title="Bullet List" style="padding: 0.25rem 0.5rem;">•</button>
-                    <button type="button" onclick="formatText('insertOrderedList')" title="Numbered List" style="padding: 0.25rem 0.5rem;">1.</button>
-                    <button type="button" onclick="formatText('blockquote')" title="Quote" style="padding: 0.25rem 0.5rem;">"</button>
-                    <span style="border-left: 1px solid var(--pico-border-color); margin: 0 0.25rem;"></span>
-                    <button type="button" onclick="insertLink()" title="Link" style="padding: 0.25rem 0.5rem;">🔗</button>
-                    <button type="button" onclick="insertImage()" title="Insert Image" style="padding: 0.25rem 0.5rem;">🖼️</button>
-                </div>
-                
-                <div 
-                    id="text_content_editor" 
-                    contenteditable="true"
-                    style="border: 1px solid var(--pico-border-color); border-radius: 0 0 var(--pico-border-radius) var(--pico-border-radius); padding: 0.5rem; min-height: 150px; background: var(--pico-background-color);"
-                    placeholder="Tell us about your workout, share motivation, or just say hi!"
-                ></div>
-                
-                <textarea 
-                    id="text_content" 
-                    name="text_content" 
-                    style="display: none;"
-                ></textarea>
-                <small>What's on your mind? Share your fitness journey! Use the toolbar above to format your text.</small>
-            </label>
-            
-            <label for="images">
-                Add pictures (optional)
-                <input 
-                    type="file" 
-                    id="images" 
-                    name="image1" 
-                    accept="image/*"
-                >
-                <div id="additional-images"></div>
-                <small>Upload photos from your workout or anything fitness-related.</small>
-                <button type="button" onclick="addImageInput()" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.9rem;">+ Add another image</button>
-            </label>
-            
-            <button type="submit" onclick="updateHiddenTextarea()">Post</button>
-        </form>
-        <div id="post-response"></div>
-    </div>
+	<!-- Create Post Form -->
+	<div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius); margin-bottom: 2rem;">
+		<h3>Create a Post</h3>
+		<form hx-post="/post" hx-target="#post-response" hx-swap="innerHTML" hx-encoding="multipart/form-data" id="post-form">
+			<label for="text_content">
+				Share your thoughts
+				
+				<!-- WYSIWYG Toolbar -->
+				<div id="wysiwyg-toolbar" style="border: 1px solid var(--pico-border-color); border-bottom: none; border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0; padding: 0.5rem; background: var(--pico-background-color); display: flex; flex-wrap: wrap; gap: 0.25rem;">
+					<button type="button" onclick="formatText('bold')" title="Bold" style="padding: 0.25rem 0.5rem; font-weight: bold;">B</button>
+					<button type="button" onclick="formatText('italic')" title="Italic" style="padding: 0.25rem 0.5rem; font-style: italic;">I</button>
+					<button type="button" onclick="formatText('underline')" title="Underline" style="padding: 0.25rem 0.5rem; text-decoration: underline;">U</button>
+					<span style="border-left: 1px solid var(--pico-border-color); margin: 0 0.25rem;"></span>
+					<button type="button" onclick="formatText('h1')" title="Heading 1" style="padding: 0.25rem 0.5rem;">H1</button>
+					<button type="button" onclick="formatText('h2')" title="Heading 2" style="padding: 0.25rem 0.5rem;">H2</button>
+					<button type="button" onclick="formatText('h3')" title="Heading 3" style="padding: 0.25rem 0.5rem;">H3</button>
+					<span style="border-left: 1px solid var(--pico-border-color); margin: 0 0.25rem;"></span>
+					<button type="button" onclick="formatText('insertUnorderedList')" title="Bullet List" style="padding: 0.25rem 0.5rem;">•</button>
+					<button type="button" onclick="formatText('insertOrderedList')" title="Numbered List" style="padding: 0.25rem 0.5rem;">1.</button>
+					<button type="button" onclick="formatText('blockquote')" title="Quote" style="padding: 0.25rem 0.5rem;">"</button>
+					<span style="border-left: 1px solid var(--pico-border-color); margin: 0 0.25rem;"></span>
+					<button type="button" onclick="insertLink()" title="Link" style="padding: 0.25rem 0.5rem;">🔗</button>
+					<button type="button" onclick="insertImage()" title="Insert Image" style="padding: 0.25rem 0.5rem;">🖼️</button>
+				</div>
+				
+				<div 
+					id="text_content_editor" 
+					contenteditable="true"
+					style="border: 1px solid var(--pico-border-color); border-radius: 0 0 var(--pico-border-radius) var(--pico-border-radius); padding: 0.5rem; min-height: 150px; background: var(--pico-background-color);"
+					placeholder="Tell us about your workout, share motivation, or just say hi!"
+				></div>
+				
+				<textarea 
+					id="text_content" 
+					name="text_content" 
+					style="display: none;"
+				></textarea>
+				<small>What's on your mind? Share your fitness journey! Use the toolbar above to format your text.</small>
+			</label>
+			
+			<label for="images">
+				Add pictures (optional)
+				<input 
+					type="file" 
+					id="images" 
+					name="image1" 
+					accept="image/*"
+				>
+				<div id="additional-images"></div>
+				<small>Upload photos from your workout or anything fitness-related.</small>
+				<button type="button" onclick="addImageInput()" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.9rem;">+ Add another image</button>
+			</label>
+			
+			<button type="submit" onclick="updateHiddenTextarea()">Post</button>
+		</form>
+		<div id="post-response"></div>
+	</div>
 
-    <!-- Posts Feed -->
-    <div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
-        <h3>Recent Posts</h3>
-        {% if posts.len > 0 %}
-            <div id="posts-feed">
-                {% for post in posts %}
-                    <article style="border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
-                        <header style="margin-bottom: 0.5rem;">
-                            <strong>{{post.user_name}}</strong>
-                            <small style="color: var(--pico-muted-color); margin-left: 0.5rem;">{{post.created_at}}</small>
-                        </header>
-                        
-                        <div style="margin-bottom: 0.5rem;" data-html-content="{{post.text_content}}"></div>
-                        
-                        {% if post.image_filename != "" %}
-                            <div style="margin: 0.5rem 0;">
-                                <img 
-                                    src="/pictures/{{post.image_filename}}" 
-                                    alt="Post image" 
-                                    style="max-width: 100%; height: auto; border-radius: var(--pico-border-radius);"
-                                >
-                            </div>
-                        {% endif %}
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>No posts yet. Be the first to share something!</p>
-        {% endif %}
-    </div>
+	<!-- Posts Feed -->
+	<div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
+		<h3>Recent Posts</h3>
+		{% if posts.len > 0 %}
+			<div id="posts-feed">
+				{% for post in posts %}
+					<article style="border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+						<header style="margin-bottom: 0.5rem;">
+							<strong>{{post.user_name}}</strong>
+							<small style="color: var(--pico-muted-color); margin-left: 0.5rem;">{{post.created_at}}</small>
+						</header>
+						
+						<div style="margin-bottom: 0.5rem;" data-html-content="{{post.text_content}}"></div>
+						
+						{% if post.image_filename != "" %}
+							<div style="margin: 0.5rem 0;">
+								<img 
+									src="/pictures/{{post.image_filename}}" 
+									alt="Post image" 
+									style="max-width: 100%; height: auto; border-radius: var(--pico-border-radius);"
+								>
+							</div>
+						{% endif %}
+					</article>
+				{% endfor %}
+			</div>
+		{% else %}
+			<p>No posts yet. Be the first to share something!</p>
+		{% endif %}
+	</div>
 </article>
 {% endblock %}
 
@@ -104,135 +104,135 @@
 <script>
 // WYSIWYG Editor functionality
 function formatText(command) {
-    document.execCommand(command, false, null);
-    document.getElementById('text_content_editor').focus();
+	document.execCommand(command, false, null);
+	document.getElementById('text_content_editor').focus();
 }
 
 function insertLink() {
-    const url = prompt('Enter the link URL:');
-    if (url) {
-        document.execCommand('createLink', false, url);
-        document.getElementById('text_content_editor').focus();
-    }
+	const url = prompt('Enter the link URL:');
+	if (url) {
+		document.execCommand('createLink', false, url);
+		document.getElementById('text_content_editor').focus();
+	}
 }
 
 function insertImage() {
-    const url = prompt('Enter the image URL:');
-    if (url) {
-        document.execCommand('insertImage', false, url);
-        document.getElementById('text_content_editor').focus();
-    }
+	const url = prompt('Enter the image URL:');
+	if (url) {
+		document.execCommand('insertImage', false, url);
+		document.getElementById('text_content_editor').focus();
+	}
 }
 
 function updateHiddenTextarea() {
-    const editor = document.getElementById('text_content_editor');
-    const hiddenTextarea = document.getElementById('text_content');
-    hiddenTextarea.value = editor.innerHTML;
+	const editor = document.getElementById('text_content_editor');
+	const hiddenTextarea = document.getElementById('text_content');
+	hiddenTextarea.value = editor.innerHTML;
 }
 
 // Handle multiple file uploads
 let imageInputCounter = 2;
 
 function addImageInput() {
-    const container = document.getElementById('additional-images');
-    const div = document.createElement('div');
-    div.style.marginTop = '0.5rem';
-    
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.name = 'image' + imageInputCounter;
-    input.accept = 'image/*';
-    input.style.marginRight = '0.5rem';
-    
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.textContent = '×';
-    removeBtn.style.padding = '0.25rem 0.5rem';
-    removeBtn.style.marginLeft = '0.5rem';
-    removeBtn.style.fontSize = '1rem';
-    removeBtn.onclick = function() {
-        container.removeChild(div);
-    };
-    
-    div.appendChild(input);
-    div.appendChild(removeBtn);
-    container.appendChild(div);
-    
-    imageInputCounter++;
+	const container = document.getElementById('additional-images');
+	const div = document.createElement('div');
+	div.style.marginTop = '0.5rem';
+	
+	const input = document.createElement('input');
+	input.type = 'file';
+	input.name = 'image' + imageInputCounter;
+	input.accept = 'image/*';
+	input.style.marginRight = '0.5rem';
+	
+	const removeBtn = document.createElement('button');
+	removeBtn.type = 'button';
+	removeBtn.textContent = '×';
+	removeBtn.style.padding = '0.25rem 0.5rem';
+	removeBtn.style.marginLeft = '0.5rem';
+	removeBtn.style.fontSize = '1rem';
+	removeBtn.onclick = function() {
+		container.removeChild(div);
+	};
+	
+	div.appendChild(input);
+	div.appendChild(removeBtn);
+	container.appendChild(div);
+	
+	imageInputCounter++;
 }
 
 // Handle placeholder for contenteditable div
 const editor = document.getElementById('text_content_editor');
 editor.addEventListener('focus', function() {
-    if (this.innerHTML === '') {
-        this.innerHTML = '';
-    }
+	if (this.innerHTML === '') {
+		this.innerHTML = '';
+	}
 });
 
 editor.addEventListener('blur', function() {
-    if (this.innerHTML === '') {
-        this.innerHTML = '';
-    }
+	if (this.innerHTML === '') {
+		this.innerHTML = '';
+	}
 });
 
 // Add placeholder styling
 const style = document.createElement('style');
 style.textContent = `
-    #text_content_editor:empty:before {
-        content: attr(placeholder);
-        color: var(--pico-muted-color);
-        font-style: italic;
-        pointer-events: none;
-    }
-    #text_content_editor:focus:before {
-        content: '';
-    }
-    #wysiwyg-toolbar button {
-        background: var(--pico-background-color);
-        border: 1px solid var(--pico-border-color);
-        border-radius: var(--pico-border-radius);
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    #wysiwyg-toolbar button:hover {
-        background: var(--pico-muted-background-color);
-    }
+	#text_content_editor:empty:before {
+		content: attr(placeholder);
+		color: var(--pico-muted-color);
+		font-style: italic;
+		pointer-events: none;
+	}
+	#text_content_editor:focus:before {
+		content: '';
+	}
+	#wysiwyg-toolbar button {
+		background: var(--pico-background-color);
+		border: 1px solid var(--pico-border-color);
+		border-radius: var(--pico-border-radius);
+		cursor: pointer;
+		transition: background-color 0.2s;
+	}
+	#wysiwyg-toolbar button:hover {
+		background: var(--pico-muted-background-color);
+	}
 `;
 document.head.appendChild(style);
 
 // Reload posts after successful post creation
 document.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.target.id === 'post-response') {
-        // Check if the response contains success message
-        if (event.detail.target.innerHTML.includes('successfully')) {
-            // Clear the editor
-            document.getElementById('text_content_editor').innerHTML = '';
-            document.getElementById('text_content').value = '';
-            document.getElementById('images').value = '';
-            document.getElementById('additional-images').innerHTML = '';
-            imageInputCounter = 2;
-            
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
-        }
-    }
+	if (event.detail.target.id === 'post-response') {
+		// Check if the response contains success message
+		if (event.detail.target.innerHTML.includes('successfully')) {
+			// Clear the editor
+			document.getElementById('text_content_editor').innerHTML = '';
+			document.getElementById('text_content').value = '';
+			document.getElementById('images').value = '';
+			document.getElementById('additional-images').innerHTML = '';
+			imageInputCounter = 2;
+			
+			setTimeout(() => {
+				window.location.reload();
+			}, 1000);
+		}
+	}
 });
 
 // Ensure content is updated before form submission
 document.getElementById('post-form').addEventListener('htmx:configRequest', function(event) {
-    updateHiddenTextarea();
+	updateHiddenTextarea();
 });
 
 // Process HTML content in posts
 document.addEventListener('DOMContentLoaded', function() {
-    const posts = document.querySelectorAll('[data-html-content]');
-    posts.forEach(function(post) {
-        const htmlContent = post.getAttribute('data-html-content');
-        if (htmlContent) {
-            post.innerHTML = htmlContent;
-        }
-    });
+	const posts = document.querySelectorAll('[data-html-content]');
+	posts.forEach(function(post) {
+		const htmlContent = post.getAttribute('data-html-content');
+		if (htmlContent) {
+			post.innerHTML = htmlContent;
+		}
+	});
 });
 </script>
 {% endblock %}

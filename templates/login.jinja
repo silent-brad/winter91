@@ -3,71 +3,59 @@
 {% block title %}Log In{% endblock %}
 
 {% block content %}
-<article style="max-width: 400px; margin: 0 auto;">
-    <header>
-        <h1>Log In</h1>
-        <p>Welcome back to Winter 100!</p>
-    </header>
-    
-    {% if error_message.isSome() %}
-        <div class="error" style="
-            background-color: var(--pico-del-background-color); 
-            color: var(--pico-del-color); 
-            padding: 1rem; 
-            border-radius: var(--pico-border-radius); 
-            margin-bottom: 1rem;
-        ">
-            {{error_message.get()}}
-        </div>
-    {% endif %}
-    
-    {% if success_message.isSome() %}
-        <div class="success" style="
-            background-color: var(--pico-ins-background-color); 
-            color: var(--pico-ins-color); 
-            padding: 1rem; 
-            border-radius: var(--pico-border-radius); 
-            margin-bottom: 1rem;
-        ">
-            {{success_message.get()}}
-        </div>
-    {% endif %}
-    
-    <div id="message-container"></div>
-    
-    <form method="post" action="/login" hx-post="/login" hx-target="#message-container" hx-swap="innerHTML">
-        <label for="email">
-            Email
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                placeholder="Enter your email"
-                {% if email.isSome() %}value="{{email.get()}}"{% endif %}
-                required
-                autofocus
-            >
-        </label>
-        
-        <label for="password">
-            Password
-            <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                placeholder="Enter your password"
-                required
-            >
-        </label>
-        
-        <button type="submit">Log In</button>
-    </form>
-    
-    <footer style="text-align: center; margin-top: 2rem;">
-        <p>
-            Don't have an account? 
-            <a href="/signup">Sign up here</a>
-        </p>
-    </footer>
+<article class="form-container">
+  <header>
+	<h1>Log In</h1>
+	<p>Welcome back to Winter 100!</p>
+  </header>
+
+  {% if error_message.is_some() %}
+	<div class="error">
+	  {{error_message.get()}}
+	</div>
+  {% endif %}
+
+  {% if success_message.is_some() %}
+	<div class="success">
+	  {{success_message.get()}}
+	</div>
+  {% endif %}
+
+  <div id="message-container"></div>
+
+  <form method="post" action="/login" hx-post="/login" hx-target="#message-container" hx-swap="innerHTML">
+	<label for="email">
+	  Email
+	  <input 
+		type="email" 
+		id="email" 
+		name="email" 
+		placeholder="Enter your email"
+		{% if email.is_some() %}value="{{email.get()}}"{% endif %}
+		required
+		autofocus
+	  >
+	</label>
+
+	<label for="password">
+	  Password
+	  <input 
+		type="password" 
+		id="password" 
+		name="password" 
+		placeholder="Enter your password"
+		required
+	  >
+	</label>
+
+	<button type="submit">Log In</button>
+  </form>
+
+  <footer class="text-center">
+	<p>
+	  Don't have an account? 
+	  <a href="/signup">Sign up here</a>
+	</p>
+  </footer>
 </article>
 {% endblock %}

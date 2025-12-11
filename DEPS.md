@@ -2,7 +2,6 @@
 ## Frontend Libraries
 - [HTMX](https://htmx.org)
 - [Chart.js](https://chartjs.org)
-- [Pico.css](https://picocss.com) (<- Only temporary)
 
 ## Nix Packages
 - [Nim v2 (nim-2_0)](https://nim-lang.org)

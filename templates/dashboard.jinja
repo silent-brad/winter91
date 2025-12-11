@@ -4,114 +4,114 @@
 
 {% block content %}
 <article style="max-width: 800px; margin: 0 auto;">
-    <header>
-        <h1>Dashboard</h1>
-        <p>Track your progress towards the Winter 100 goal!</p>
-    </header>
-    
-    {% if error_message.isSome() %}
-        <div class="error" style="
-            background-color: var(--pico-del-background-color); 
-            color: var(--pico-del-color); 
-            padding: 1rem; 
-            border-radius: var(--pico-border-radius); 
-            margin-bottom: 1rem;
-        ">
-            {{error_message.get()}}
-        </div>
-    {% endif %}
-    
-    {% if success_message.isSome() %}
-        <div class="success" style="
-            background-color: var(--pico-ins-background-color); 
-            color: var(--pico-ins-color); 
-            padding: 1rem; 
-            border-radius: var(--pico-border-radius); 
-            margin-bottom: 1rem;
-        ">
-            {{success_message.get()}}
-        </div>
-    {% endif %}
-    
-    <!-- Progress Overview -->
-    {% if current_total.isSome() %}
-        <div style="margin-bottom: 2rem; text-align: center; padding: 1.5rem; background-color: var(--pico-card-background-color); border-radius: var(--pico-border-radius);">
-            <h2>Your Progress</h2>
-            <h3 style="font-size: 2rem; color: var(--pico-primary);">{{current_total.get()}}</h3>
-            <p style="margin: 0;">out of 100 miles</p>
-            {% let progress_percent = (current_total.get().float / 100.0 * 100.0).min(100.0) %}
-            {% let width = "300px" %}
-            {% importnimja "partials/_progress_bar.jinja" %}
-            <small style="color: var(--pico-muted-color); margin-top: 0.5rem; display: block;">
-                {{progress_percent.int}}% complete
-            </small>
-        </div>
-    {% endif %}
-    
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-        <!-- Log Miles Form -->
-        <div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
-            <h3>Log Miles</h3>
-            <form method="post" action="/log" hx-post="/log" hx-target="#log-response" hx-swap="innerHTML">
-                <label for="miles">
-                    Miles
-                    <input 
-                        type="number" 
-                        id="miles" 
-                        name="miles" 
-                        step="0.1" 
-                        min="0.1" 
-                        max="50" 
-                        placeholder="Enter miles walked/run"
-                        {% if miles.isSome() %}value="{{miles.get()}}"{% endif %}
-                        required
-                        autofocus
-                    >
-                    <small>Enter the number of miles you walked or ran today.</small>
-                </label>
-                
-                <div style="display: flex; gap: 0.5rem; align-items: center; margin: 1rem 0;">
-                    <button type="button" onclick="decrementMiles()" class="secondary" style="width: 40px;">−</button>
-                    <button type="button" onclick="incrementMiles()" class="secondary" style="width: 40px;">+</button>
-                </div>
-                
-                <button type="submit">Log Miles</button>
-            </form>
-            <div id="log-response"></div>
-        </div>
-        
-        <!-- Miles Graph -->
-        <div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
-            <h3>Miles Progress</h3>
-            <canvas id="milesChart" width="300" height="200"></canvas>
-        </div>
-    </div>
-    
-    <!-- Daily Miles List -->
-    <div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
-        <h3>Recent Activity</h3>
-        <div id="daily-miles-list">
-            <p>Loading daily miles...</p>
-        </div>
-    </div>
+	<header>
+		<h1>Dashboard</h1>
+		<p>Track your progress towards the Winter 100 goal!</p>
+	</header>
+	
+	{% if error_message.isSome() %}
+		<div class="error" style="
+			background-color: var(--pico-del-background-color); 
+			color: var(--pico-del-color); 
+			padding: 1rem; 
+			border-radius: var(--pico-border-radius); 
+			margin-bottom: 1rem;
+		">
+			{{error_message.get()}}
+		</div>
+	{% endif %}
+	
+	{% if success_message.isSome() %}
+		<div class="success" style="
+			background-color: var(--pico-ins-background-color); 
+			color: var(--pico-ins-color); 
+			padding: 1rem; 
+			border-radius: var(--pico-border-radius); 
+			margin-bottom: 1rem;
+		">
+			{{success_message.get()}}
+		</div>
+	{% endif %}
+	
+	<!-- Progress Overview -->
+	{% if current_total.isSome() %}
+		<div style="margin-bottom: 2rem; text-align: center; padding: 1.5rem; background-color: var(--pico-card-background-color); border-radius: var(--pico-border-radius);">
+			<h2>Your Progress</h2>
+			<h3 style="font-size: 2rem; color: var(--pico-primary);">{{current_total.get()}}</h3>
+			<p style="margin: 0;">out of 100 miles</p>
+			{% let progress_percent = (current_total.get().float / 100.0 * 100.0).min(100.0) %}
+			{% let width = "300px" %}
+			{% importnimja "partials/_progress_bar.jinja" %}
+			<small style="color: var(--pico-muted-color); margin-top: 0.5rem; display: block;">
+				{{progress_percent.int}}% complete
+			</small>
+		</div>
+	{% endif %}
+	
+	<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+		<!-- Log Miles Form -->
+		<div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
+			<h3>Log Miles</h3>
+			<form method="post" action="/log" hx-post="/log" hx-target="#log-response" hx-swap="innerHTML">
+				<label for="miles">
+					Miles
+					<input 
+						type="number" 
+						id="miles" 
+						name="miles" 
+						step="0.1" 
+						min="0.1" 
+						max="50" 
+						placeholder="Enter miles walked/run"
+						{% if miles.isSome() %}value="{{miles.get()}}"{% endif %}
+						required
+						autofocus
+					>
+					<small>Enter the number of miles you walked or ran today.</small>
+				</label>
+				
+				<div style="display: flex; gap: 0.5rem; align-items: center; margin: 1rem 0;">
+					<button type="button" onclick="decrementMiles()" class="secondary" style="width: 40px;">−</button>
+					<button type="button" onclick="incrementMiles()" class="secondary" style="width: 40px;">+</button>
+				</div>
+				
+				<button type="submit">Log Miles</button>
+			</form>
+			<div id="log-response"></div>
+		</div>
+		
+		<!-- Miles Graph -->
+		<div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
+			<h3>Miles Progress</h3>
+			<canvas id="milesChart" width="300" height="200"></canvas>
+		</div>
+	</div>
+	
+	<!-- Daily Miles List -->
+	<div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
+		<h3>Recent Activity</h3>
+		<div id="daily-miles-list">
+			<p>Loading daily miles...</p>
+		</div>
+	</div>
 </article>
 {% endblock %}
 
 {% block extra_js %}
-<script src="/static/chart.js"></script>
+<script src="/static/js/chart.js"></script>
 <script>
 function incrementMiles() {
-    const input = document.getElementById('miles');
-    const currentValue = parseFloat(input.value) || 0;
-    input.value = (currentValue + 0.5).toFixed(1);
+	const input = document.getElementById('miles');
+	const currentValue = parseFloat(input.value) || 0;
+	input.value = (currentValue + 0.5).toFixed(1);
 }
 
 function decrementMiles() {
-    const input = document.getElementById('miles');
-    const currentValue = parseFloat(input.value) || 0;
-    if (currentValue > 0.1) {
-        input.value = (currentValue - 0.5).toFixed(1);
-    }
+	const input = document.getElementById('miles');
+	const currentValue = parseFloat(input.value) || 0;
+	if (currentValue > 0.1) {
+		input.value = (currentValue - 0.5).toFixed(1);
+	}
 }
 
 // Chart setup
@@ -122,81 +122,81 @@ const ctx = document.getElementById('milesChart').getContext('2d');
 new Chart(ctx, {
   type: 'line',
   data: {
-    labels: data.dates,
-    datasets: [{
-      label: 'Daily Miles',
-      data: data.miles, // Will be populated with miles data
-      borderColor: 'rgb(59, 130, 246)',
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
-      //tension: 0.1,
-      fill: true
-    }],
+	labels: data.dates,
+	datasets: [{
+	  label: 'Daily Miles',
+	  data: data.miles, // Will be populated with miles data
+	  borderColor: 'rgb(59, 130, 246)',
+	  backgroundColor: 'rgba(59, 130, 246, 0.1)',
+	  //tension: 0.1,
+	  fill: true
+	}],
   },
   options: {
-    responsive: false,
+	responsive: false,
   },
 });*/
 
 const milesChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: [], // Will be populated with dates
-        datasets: [{
-            label: 'Daily Miles',
-            data: [], // Will be populated with miles data
-            borderColor: 'rgb(59, 130, 246)',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            tension: 0.1,
-            fill: true
-        }]
-    },
-    options: {
-      responsive: false,
-      scales: {
-          y: {
-              beginAtZero: true,
-              title: {
-                  display: true,
-                  text: 'Miles'
-              }
-          },
-          x: {
-              title: {
-                  display: true,
-                  text: 'Date'
-              }
-          }
-      },
-    },
+	type: 'line',
+	data: {
+		labels: [], // Will be populated with dates
+		datasets: [{
+			label: 'Daily Miles',
+			data: [], // Will be populated with miles data
+			borderColor: 'rgb(59, 130, 246)',
+			backgroundColor: 'rgba(59, 130, 246, 0.1)',
+			tension: 0.1,
+			fill: true
+		}]
+	},
+	options: {
+	  responsive: false,
+	  scales: {
+		  y: {
+			  beginAtZero: true,
+			  title: {
+				  display: true,
+				  text: 'Miles'
+			  }
+		  },
+		  x: {
+			  title: {
+				  display: true,
+				  text: 'Date'
+			  }
+		  }
+	  },
+	},
 });
 
 // Load chart data and daily miles list
 function loadDashboardData() {
-    fetch('/api/user-miles-data')
-        .then(response => response.json())
-        .then(data => {
-            // Update chart
-            milesChart.data.labels = data.dates;
-            milesChart.data.datasets[0].data = data.miles;
-            milesChart.update();
-            
-            // Update daily miles list
-            const listContainer = document.getElementById('daily-miles-list');
-            if (data.entries && data.entries.length > 0) {
-                let html = '<table><thead><tr><th>Date</th><th>Miles</th></tr></thead><tbody>';
-                data.entries.forEach(entry => {
-                    html += `<tr><td>${entry.date}</td><td>${entry.miles}</td></tr>`;
-                });
-                html += '</tbody></table>';
-                listContainer.innerHTML = html;
-            } else {
-                listContainer.innerHTML = '<p>No miles logged yet. Log your first miles above!</p>';
-            }
-        })
-        .catch(error => {
-            console.error('Error loading dashboard data:', error);
-            document.getElementById('daily-miles-list').innerHTML = '<p>Error loading data.</p>';
-        });
+	fetch('/api/user-miles-data')
+		.then(response => response.json())
+		.then(data => {
+			// Update chart
+			milesChart.data.labels = data.dates;
+			milesChart.data.datasets[0].data = data.miles;
+			milesChart.update();
+			
+			// Update daily miles list
+			const listContainer = document.getElementById('daily-miles-list');
+			if (data.entries && data.entries.length > 0) {
+				let html = '<table><thead><tr><th>Date</th><th>Miles</th></tr></thead><tbody>';
+				data.entries.forEach(entry => {
+					html += `<tr><td>${entry.date}</td><td>${entry.miles}</td></tr>`;
+				});
+				html += '</tbody></table>';
+				listContainer.innerHTML = html;
+			} else {
+				listContainer.innerHTML = '<p>No miles logged yet. Log your first miles above!</p>';
+			}
+		})
+		.catch(error => {
+			console.error('Error loading dashboard data:', error);
+			document.getElementById('daily-miles-list').innerHTML = '<p>Error loading data.</p>';
+		});
 }
 
 // Load data when page loads
@@ -204,16 +204,16 @@ document.addEventListener('DOMContentLoaded', loadDashboardData);
 
 // Reload data after successful mile logging
 document.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.target.id === 'log-response') {
-        // Check if the response contains success message
-        if (event.detail.target.innerHTML.includes('successfully')) {
-            setTimeout(() => {
-                loadDashboardData();
-                // Reload the page to update progress bar
-                window.location.reload();
-            }, 1000);
-        }
-    }
+	if (event.detail.target.id === 'log-response') {
+		// Check if the response contains success message
+		if (event.detail.target.innerHTML.includes('successfully')) {
+			setTimeout(() => {
+				loadDashboardData();
+				// Reload the page to update progress bar
+				window.location.reload();
+			}, 1000);
+		}
+	}
 });
 </script>
 {% endblock %}
