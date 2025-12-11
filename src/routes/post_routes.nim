@@ -115,7 +115,14 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         
         # Check if an image file was uploaded
         if multipart_data.files.hasKey("image"):
-          image_filename = multipart_data.files["image"][0]  # filename
+          let (orig_filename, content_type, file_size) = multipart_data.files["image"]
+          # Read the uploaded file from uploads directory and save to pictures
+          let upload_path = "uploads" / orig_filename
+          if file_exists(upload_path):
+            let file_data = read_file(upload_path)
+            image_filename = save_uploaded_file(file_data, orig_filename, "pictures")
+            # Clean up the temporary file
+            remove_file(upload_path)
         
         if text_content.strip() == "" and image_filename == "":
           response_body = """<p style="color: red;">Please provide text content or an image</p>"""
@@ -133,143 +140,120 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to upload avatar</p>"""
     else:
-      response_body = """<p style="color: red;">Not implemented</p>"""
-    #[  # Handle multipart form data for avatar upload using stator
-      if req.headers.has_key("content-type"):
-        let content_type = req.headers["content-type"]
-        if content_type.contains("multipart/form-data"):
-          try:
-            let form_parts = parse_multipart_binary(body, content_type)
-            for part in form_parts:
-              if part.name == "avatar" and part.filename.len > 0 and part.content.len > 0:
-                let avatar_filename = save_uploaded_file(part.content, "avatar_" & part.filename, "pictures")
-                try:
-                  update_user_avatar(db_conn, session.get().user_id, avatar_filename)
-                  response_body = """<p style="color: green;">Avatar updated successfully!</p>"""
-                except Exception as e:
-                  echo "Error updating avatar: ", e.msg
-                  response_body = """<p style="color: red;">Error updating avatar</p>"""
-                break
-            if response_body == "":
-              response_body = """<p style="color: red;">No avatar file uploaded</p>"""
-          except Exception as e:
-            echo "Error parsing avatar upload: ", e.msg
-            response_body = """<p style="color: red;">Error parsing uploaded file</p>"""
-        else:
-          response_body = """<p style="color: red;">Invalid file upload format</p>"""
+      # Parse multipart form data for file upload
+      let multipart_data = await parseMultipart(req)
+      
+      if multipart_data.error != "":
+        response_body = &"""<p style="color: red;">Error parsing form data: {multipart_data.error}</p>"""
       else:
-        response_body = """<p style="color: red;">Invalid file upload format</p>"""
-    ]#
+        var avatar_filename = ""
+        
+        # Check if an avatar file was uploaded
+        if multipart_data.files.hasKey("avatar"):
+          let (orig_filename, content_type, file_size) = multipart_data.files["avatar"]
+          # Read the uploaded file from uploads directory and save to pictures
+          let upload_path = "uploads" / orig_filename
+          if file_exists(upload_path):
+            let file_data = read_file(upload_path)
+            avatar_filename = save_uploaded_file(file_data, "avatar_" & orig_filename, "pictures")
+            # Clean up the temporary file
+            remove_file(upload_path)
+        
+        if avatar_filename == "":
+          response_body = """<p style="color: red;">No avatar file uploaded</p>"""
+        else:
+          try:
+            update_user_avatar(db_conn, session.get().user_id, avatar_filename)
+            response_body = """<p style="color: green;">Avatar updated successfully!</p>"""
+          except Exception as e:
+            echo "Error updating avatar: ", e.msg
+            response_body = """<p style="color: red;">Error updating avatar</p>"""
 
   of "/settings":
     if session.is_none:
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to update settings</p>"""
     else:
-      response_body = """<p style="color: red;">Not implemented</p>"""
-      #[# Handle multipart form data using stator
-      var name = ""
-      var color = "#3b82f6"
-      var current_password = ""
-      var new_password = ""
-      var confirm_password = ""
-      var profile_picture_content = ""
-      var profile_picture_filename = ""
+      # Parse multipart form data for file upload
+      let multipart_data = await parseMultipart(req)
       
-      if req.headers.has_key("content-type"):
-        let content_type = req.headers["content-type"]
-        if content_type.contains("multipart/form-data"):
-          try:
-            let form_parts = parse_multipart_binary(body, content_type)
-            for part in form_parts:
-              case part.name:
-                of "name":
-                  name = part.content
-                of "color":
-                  color = part.content
-                of "current_password":
-                  current_password = part.content
-                of "new_password":
-                  new_password = part.content
-                of "confirm_password":
-                  confirm_password = part.content
-                of "profile_picture":
-                  if part.filename.len > 0 and part.content.len > 0:
-                    profile_picture_content = part.content
-                    profile_picture_filename = part.filename
-          except Exception as e:
-            echo "Error parsing settings form: ", e.msg
-        else:
-          # Fallback to regular form data parsing
-          name = form_data.get_or_default("name", "")
-          color = form_data.get_or_default("color", "#3b82f6")
-          current_password = form_data.get_or_default("current_password", "")
-          new_password = form_data.get_or_default("new_password", "")
-          confirm_password = form_data.get_or_default("confirm_password", "")
+      if multipart_data.error != "":
+        response_body = &"""<p style="color: red;">Error parsing form data: {multipart_data.error}</p>"""
       else:
-        # Fallback to regular form data parsing
-        name = form_data.get_or_default("name", "")
-        color = form_data.get_or_default("color", "#3b82f6")
-        current_password = form_data.get_or_default("current_password", "")
-        new_password = form_data.get_or_default("new_password", "")
-        confirm_password = form_data.get_or_default("confirm_password", "")
-      
-      if name == "":
-        response_body = """<p style="color: red;">Name is required</p>"""
-      else:
-        let user_opt = get_user_by_email(db_conn, session.get().email)
-        if user_opt.is_none:
-          response_body = """<p style="color: red;">User not found</p>"""
+        # Extract form fields
+        let name = multipart_data.fields.getOrDefault("name", "")
+        let color = multipart_data.fields.getOrDefault("color", "#3b82f6")
+        let current_password = multipart_data.fields.getOrDefault("current_password", "")
+        let new_password = multipart_data.fields.getOrDefault("new_password", "")
+        let confirm_password = multipart_data.fields.getOrDefault("confirm_password", "")
+        
+        var profile_picture_filename = ""
+        
+        # Check if a profile picture file was uploaded
+        if multipart_data.files.hasKey("profile_picture"):
+          let (orig_filename, content_type, file_size) = multipart_data.files["profile_picture"]
+          # Read the uploaded file from uploads directory and save to pictures
+          let upload_path = "uploads" / orig_filename
+          if file_exists(upload_path):
+            let file_data = read_file(upload_path)
+            profile_picture_filename = save_uploaded_file(file_data, "avatar_" & orig_filename, "pictures")
+            # Clean up the temporary file
+            remove_file(upload_path)
+        
+        if name == "":
+          response_body = """<p style="color: red;">Name is required</p>"""
         else:
-          let user = user_opt.get()
-          var success = true
-          var error_msg = ""
-          
-          # Handle profile picture upload (already parsed above)
-          if profile_picture_content.len > 0 and profile_picture_filename.len > 0:
-            let avatar_filename = save_uploaded_file(profile_picture_content, "avatar_" & profile_picture_filename, "pictures")
-            try:
-              update_user_avatar(db_conn, session.get().user_id, avatar_filename)
-            except Exception as e:
-              echo "Error updating profile picture: ", e.msg
-              success = false
-              error_msg = "Error updating profile picture"
-          
-          # Update basic info
-          if success:
-            try:
-              update_user(db_conn, user.id, name, color)
-            except:
-              success = false
-              error_msg = "Error updating profile"
-          
-          # Handle password change if provided
-          if success and (current_password != "" or new_password != "" or confirm_password != ""):
-            if current_password == "":
-              success = false
-              error_msg = "Current password is required"
-            elif new_password == "":
-              success = false
-              error_msg = "New password is required"
-            elif new_password != confirm_password:
-              success = false
-              error_msg = "New passwords don't match"
-            elif not verify_password(current_password, user.password_hash):
-              success = false
-              error_msg = "Current password is incorrect"
-            else:
+          let user_opt = get_user_by_email(db_conn, session.get().email)
+          if user_opt.is_none:
+            response_body = """<p style="color: red;">User not found</p>"""
+          else:
+            let user = user_opt.get()
+            var success = true
+            var error_msg = ""
+            
+            # Handle profile picture upload if one was provided
+            if profile_picture_filename != "":
               try:
-                let new_hash = hash_password(new_password)
-                update_user_password(db_conn, user.id, new_hash)
+                update_user_avatar(db_conn, session.get().user_id, profile_picture_filename)
+              except Exception as e:
+                echo "Error updating profile picture: ", e.msg
+                success = false
+                error_msg = "Error updating profile picture"
+            
+            # Update basic info
+            if success:
+              try:
+                update_user(db_conn, user.id, name, color)
               except:
                 success = false
-                error_msg = "Error updating password"
-          
-          if success:
-            response_body = """<p style="color: green;">Settings updated successfully!</p>"""
-          else:
-            response_body = &"""<p style="color: red;">{error_msg}</p>"""
-            ]#
+                error_msg = "Error updating profile"
+            
+            # Handle password change if provided
+            if success and (current_password != "" or new_password != "" or confirm_password != ""):
+              if current_password == "":
+                success = false
+                error_msg = "Current password is required"
+              elif new_password == "":
+                success = false
+                error_msg = "New password is required"
+              elif new_password != confirm_password:
+                success = false
+                error_msg = "New passwords don't match"
+              elif not verify_password(current_password, user.password_hash):
+                success = false
+                error_msg = "Current password is incorrect"
+              else:
+                try:
+                  let new_hash = hash_password(new_password)
+                  update_user_password(db_conn, user.id, new_hash)
+                except:
+                  success = false
+                  error_msg = "Error updating password"
+            
+            if success:
+              response_body = """<p style="color: green;">Settings updated successfully!</p>"""
+            else:
+              response_body = &"""<p style="color: red;">{error_msg}</p>"""
 
   else:
     status = Http404

@@ -9,9 +9,10 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
   # Extract extension from original filename
   let ext = if filename.contains("."): "." & filename.split(".")[^1] else: ".jpg"
   
-  # Generate unique filename with timestamp
+  # Generate unique filename with timestamp (remove extension from filename first)
   let timestamp = $now().format("yyyy-MM-dd")# _HH-mm-ss")
-  let unique_filename = &"{timestamp}_{filename.replace(\" \", \"_\")}{ext}"
+  let name_without_ext = if filename.contains("."): filename.split(".")[0..^2].join(".") else: filename
+  let unique_filename = &"{timestamp}_{name_without_ext.replace(\" \", \"_\")}{ext}"
   
   # Ensure directory exists
   if not dir_exists(directory):
