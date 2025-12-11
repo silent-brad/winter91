@@ -5,6 +5,7 @@ import strformat
 import tables
 import os
 import sequtils
+import ../utils
 
 type
   MultipartData* = object
@@ -90,10 +91,21 @@ proc parseMultipart*(req: Request): Future[MultipartData] {.async.} =
     let ctype = partHeaders.getOrDefault("content-type", "application/octet-stream")
 
     if filename.len > 0:
-      # File upload - save to disk
+      # File upload - save to disk with proper security checks
       let uploadDir = "uploads"
       if not dirExists(uploadDir): createDir(uploadDir)
-      let safeFilename = filename.replace("/", "").replace("\\", "")  # Basic sanitization
+      
+      # Sanitize filename and validate file extension
+      let safeFilename = sanitize_filename(filename)
+      if not is_safe_file_extension(safeFilename):
+        result.error = "File type not allowed"
+        return
+      
+      # Limit file size (10MB)
+      if partBody.len > 10_485_760:
+        result.error = "File too large"
+        return
+        
       let path = uploadDir / safeFilename
       writeFile(path, partBody)
       result.files[name] = (safeFilename, ctype, partBody.len)

@@ -7,11 +7,12 @@
 - [ ] Fix graph in dashboard to work correctly
 
 - [x] Add 404 page
+- [x] Prevent server-side injection
 
-- [ ] Prevent server-side injection
-
-- [.] Add pictures/text sharing
+- [x] Add pictures/text sharing
+  - [ ] Add ability to post multiple pictures??
   - [ ] Add notifications?
+  - [x] Add minimal WYSIWYG editor formatting to text in "post" route
 
 - [ ] Add custom CSS (winter theme with light/dark mode)
 

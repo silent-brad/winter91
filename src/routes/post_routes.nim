@@ -22,13 +22,15 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
   
   case req.url.path:
   of "/login":
-    let email = form_data.get_or_default("email", "")
-    let password = form_data.get_or_default("password", "")
+    let email = form_data.get_or_default("email", "").strip()
+    let password = form_data.get_or_default("password", "").strip()
     
     if email == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email is required</div>"""
     elif password == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Password is required</div>"""
+    elif not validate_email(email):
+      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email format</div>"""
     else:
       let user_opt = get_user_by_email(db_conn, email)
       if user_opt.is_some and verify_password(password, user_opt.get().password_hash):
@@ -44,22 +46,26 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email or password</div>"""
 
   of "/signup":
-    let passkey = to_upper_ascii(form_data.get_or_default("passkey", ""))
-    if passkey == "":
-      echo "Passkey is required"
-    let name = form_data.get_or_default("name", "")
-    let email = form_data.get_or_default("email", "")
-    let password = form_data.get_or_default("password", "")
-    let color = form_data.get_or_default("color", "#3b82f6")
+    let passkey = to_upper_ascii(form_data.get_or_default("passkey", "")).strip()
+    let name = form_data.get_or_default("name", "").strip()
+    let email = form_data.get_or_default("email", "").strip()
+    let password = form_data.get_or_default("password", "").strip()
+    let color = form_data.get_or_default("color", "#3b82f6").strip()
     
     if passkey == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Passkey is required</div>"""
     elif name == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Name is required</div>"""
+    elif not validate_name(name):
+      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid name format</div>"""
     elif email == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email is required</div>"""
+    elif not validate_email(email):
+      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email format</div>"""
     elif password == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Password is required</div>"""
+    elif not validate_color(color):
+      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid color format</div>"""
     elif not (passkey == PASSKEY):
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid passkey</div>"""
     elif get_user_by_email(db_conn, email).is_some:
@@ -110,19 +116,22 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
       if multipart_data.error != "":
         response_body = &"""<p style="color: red;">Error parsing form data: {multipart_data.error}</p>"""
       else:
-        let text_content = multipart_data.fields.getOrDefault("text_content", "")
-        var image_filename = ""
+        let text_content = sanitize_html(multipart_data.fields.getOrDefault("text_content", "").strip())
+        var image_filenames: seq[string] = @[]
         
-        # Check if an image file was uploaded
-        if multipart_data.files.hasKey("image"):
-          let (orig_filename, content_type, file_size) = multipart_data.files["image"]
-          # Read the uploaded file from uploads directory and save to pictures
-          let upload_path = "uploads" / orig_filename
-          if file_exists(upload_path):
-            let file_data = read_file(upload_path)
-            image_filename = save_uploaded_file(file_data, orig_filename, "pictures")
-            # Clean up the temporary file
-            remove_file(upload_path)
+        # Check for multiple image files
+        for key, (orig_filename, content_type, file_size) in multipart_data.files:
+          if key.startsWith("image"):
+            let upload_path = "uploads" / orig_filename
+            if file_exists(upload_path):
+              let file_data = read_file(upload_path)
+              let saved_filename = save_uploaded_file(file_data, orig_filename, "pictures")
+              image_filenames.add(saved_filename)
+              # Clean up the temporary file
+              remove_file(upload_path)
+        
+        # For backwards compatibility, store first image in image_filename field
+        let image_filename = if image_filenames.len > 0: image_filenames[0] else: ""
         
         if text_content.strip() == "" and image_filename == "":
           response_body = """<p style="color: red;">Please provide text content or an image</p>"""
@@ -180,12 +189,12 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
       if multipart_data.error != "":
         response_body = &"""<p style="color: red;">Error parsing form data: {multipart_data.error}</p>"""
       else:
-        # Extract form fields
-        let name = multipart_data.fields.getOrDefault("name", "")
-        let color = multipart_data.fields.getOrDefault("color", "#3b82f6")
-        let current_password = multipart_data.fields.getOrDefault("current_password", "")
-        let new_password = multipart_data.fields.getOrDefault("new_password", "")
-        let confirm_password = multipart_data.fields.getOrDefault("confirm_password", "")
+        # Extract form fields with validation
+        let name = multipart_data.fields.getOrDefault("name", "").strip()
+        let color = multipart_data.fields.getOrDefault("color", "#3b82f6").strip()
+        let current_password = multipart_data.fields.getOrDefault("current_password", "").strip()
+        let new_password = multipart_data.fields.getOrDefault("new_password", "").strip()
+        let confirm_password = multipart_data.fields.getOrDefault("confirm_password", "").strip()
         
         var profile_picture_filename = ""
         
@@ -202,6 +211,10 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         
         if name == "":
           response_body = """<p style="color: red;">Name is required</p>"""
+        elif not validate_name(name):
+          response_body = """<p style="color: red;">Invalid name format</p>"""
+        elif not validate_color(color):
+          response_body = """<p style="color: red;">Invalid color format</p>"""
         else:
           let user_opt = get_user_by_email(db_conn, session.get().email)
           if user_opt.is_none:

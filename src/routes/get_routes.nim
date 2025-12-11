@@ -144,9 +144,14 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
   else:
     # Check if it's a static file request
     if req.url.path.starts_with("/static/"):
-      let file_path = req.url.path[1..^1]  # Remove leading slash
-      let full_path = file_path
-      if file_exists(full_path):
+      let file_path = sanitize_path(req.url.path[8..^1])  # Remove "/static/" and sanitize
+      let full_path = "static" / file_path
+      
+      # Ensure the file is within the static directory
+      if file_path.contains("..") or not full_path.starts_with("static/"):
+        status = Http403
+        response_body = "Access denied"
+      elif file_exists(full_path):
         let ext = split_file(full_path).ext.to_lower_ascii()
         let content_type = case ext:
           of ".js": "application/javascript"
@@ -166,9 +171,18 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
         response_body = "File not found"
     # Check if it's a picture file request
     elif req.url.path.starts_with("/pictures/"):
-      let file_path = req.url.path[1..^1]  # Remove leading slash
-      if file_exists(file_path):
-        let ext = split_file(file_path).ext.to_lower_ascii()
+      let file_path = sanitize_path(req.url.path[10..^1])  # Remove "/pictures/" and sanitize
+      let full_path = "pictures" / file_path
+      
+      # Ensure the file is within the pictures directory and has safe extension
+      if file_path.contains("..") or not full_path.starts_with("pictures/"):
+        status = Http403
+        response_body = "Access denied"
+      elif not is_safe_file_extension(file_path):
+        status = Http403
+        response_body = "File type not allowed"
+      elif file_exists(full_path):
+        let ext = split_file(full_path).ext.to_lower_ascii()
         let content_type = case ext:
           of ".png": "image/png"
           of ".jpg", ".jpeg": "image/jpeg"
@@ -177,7 +191,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
           else: "application/octet-stream"
         
         headers = new_http_headers([("Content-Type", content_type)])
-        response_body = read_file(file_path)
+        response_body = read_file(full_path)
       else:
         status = Http404
         response_body = "File not found"
