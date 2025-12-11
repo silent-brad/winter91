@@ -1,19 +1,28 @@
 import asyncdispatch
 import asynchttpserver
 import strutils
+import strformat
 import tables
 import os
 import sequtils
 
-proc parseMultipart(req: Request) {.async.} =
+type
+  MultipartData* = object
+    fields*: Table[string, string]
+    files*: Table[string, (string, string, int)]  # (filename, contentType, size)
+    error*: string
+
+proc parseMultipart*(req: Request): Future[MultipartData] {.async.} =
+  result = MultipartData(fields: initTable[string, string](), files: initTable[string, (string, string, int)](), error: "")
+  
   if not req.headers.hasKey("content-type"):
-    await req.respond(Http400, "Missing Content-Type")
+    result.error = "Missing Content-Type"
     return
 
   let ctHeader = req.headers["content-type"]
-  let contentType = if ctHeader.len > 0: ctHeader[0] else: ""
+  let contentType = ctHeader
   if not contentType.startsWith("multipart/form-data"):
-    await req.respond(Http400, "Invalid Content-Type")
+    result.error = "Invalid Content-Type"
     return
 
   # Extract boundary more robustly by parsing parameters
@@ -25,7 +34,7 @@ proc parseMultipart(req: Request) {.async.} =
       boundary = if boundaryRaw.startsWith('"') and boundaryRaw.endsWith('"'): boundaryRaw[1 .. ^2] else: boundaryRaw
       break
   if boundary == "":
-    await req.respond(Http400, "Missing boundary")
+    result.error = "Missing boundary"
     return
 
   let fullBoundary = "--" & boundary
@@ -36,11 +45,8 @@ proc parseMultipart(req: Request) {.async.} =
   # Split into parts (parts[0] is preamble, last is epilogue)
   let parts = body.split(fullBoundary)
   if parts.len < 3 or not parts[^1].startsWith("--"):  # At least preamble, one part, epilogue; check final '--' for validity
-    await req.respond(Http400, "Malformed multipart body")
+    result.error = "Malformed multipart body"
     return
-
-  var fields: Table[string, string]
-  var files: Table[string, (string, string, int)]  # (filename, contentType, size)
 
   for i in 1 ..< parts.len - 1:
     var part = parts[i].strip(leading = true, chars = {'\r', '\n'})
@@ -90,24 +96,7 @@ proc parseMultipart(req: Request) {.async.} =
       let safeFilename = filename.replace("/", "").replace("\\", "")  # Basic sanitization
       let path = uploadDir / safeFilename
       writeFile(path, partBody)
-      files[name] = (filename, ctype, partBody.len)
+      result.files[name] = (safeFilename, ctype, partBody.len)
     else:
       # Regular field
-      fields[name] = partBody
-
-  # Example: Process parsed data (echo for demo)
-  #echo "Fields: ", fields
-  #echo "Files: ", files
-
-  # Clean up or process further here...
-
-  await req.respond(Http200, "Multipart parsed successfully")
-
-#[proc handler(req: Request) {.async.} =
-  if req.reqMethod == HttpPost:
-    await parseMultipart(req)
-  else:
-    await req.respond(Http405, "Only POST allowed")
-
-let server = newAsyncHttpServer()
-waitFor server.serve(Port(8080), handler)]#
+      result.fields[name] = partBody

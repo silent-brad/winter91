@@ -104,50 +104,37 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to create posts</p>"""
     else:
-      # Handle multipart form data using stator
-      await parseMultipart(req)
-      #[
-      var text_content = ""
-      var image_filename = ""
+      # Parse multipart form data for file upload
+      let multipart_data = await parseMultipart(req)
       
-      if req.headers.has_key("content-type"):
-        let content_type = req.headers["content-type"]
-        if content_type.contains("multipart/form-data"):
-          try:
-            let form_parts = parse_multipart_binary(body, content_type)
-            for part in form_parts:
-              if part.name == "text_content":
-                text_content = part.content
-              elif part.name == "image":
-                if part.filename.len > 0 and part.content.len > 0:
-                  image_filename = save_uploaded_file(part.content, part.filename, "pictures")
-          except Exception as e:
-            echo "Error parsing multipart data: ", e.msg
-            response_body = """<p style="color: red;">Error parsing uploaded data</p>"""
-        else:
-          # For non-multipart forms (text-only posts without files)
-          text_content = form_data.get_or_default("text_content", "")
+      if multipart_data.error != "":
+        response_body = &"""<p style="color: red;">Error parsing form data: {multipart_data.error}</p>"""
       else:
-        text_content = form_data.get_or_default("text_content", "")
-      
-      if response_body == "" and (text_content.strip() == "" and image_filename == ""):
-        response_body = """<p style="color: red;">Please provide text content or an image</p>"""
-      elif response_body == "":
-        try:
-          discard create_post(db_conn, session.get().user_id, text_content, image_filename)
-          headers = new_http_headers([("HX-Redirect", "/post")])
-          response_body = """<p style="color: green;">Post created successfully!</p>"""
-        except Exception as e:
-          echo "Error creating post: ", e.msg
-          response_body = """<p style="color: red;">Error creating post</p>"""
-          ]#
+        let text_content = multipart_data.fields.getOrDefault("text_content", "")
+        var image_filename = ""
+        
+        # Check if an image file was uploaded
+        if multipart_data.files.hasKey("image"):
+          image_filename = multipart_data.files["image"][0]  # filename
+        
+        if text_content.strip() == "" and image_filename == "":
+          response_body = """<p style="color: red;">Please provide text content or an image</p>"""
+        else:
+          try:
+            discard create_post(db_conn, session.get().user_id, text_content, image_filename)
+            headers = new_http_headers([("HX-Redirect", "/post")])
+            response_body = """<p style="color: green;">Post created successfully!</p>"""
+          except Exception as e:
+            echo "Error creating post: ", e.msg
+            response_body = """<p style="color: red;">Error creating post</p>"""
 
   of "/upload-avatar":
     if session.is_none:
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to upload avatar</p>"""
     else:
-      # Handle multipart form data for avatar upload using stator
+      response_body = """<p style="color: red;">Not implemented</p>"""
+    #[  # Handle multipart form data for avatar upload using stator
       if req.headers.has_key("content-type"):
         let content_type = req.headers["content-type"]
         if content_type.contains("multipart/form-data"):
@@ -172,13 +159,15 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           response_body = """<p style="color: red;">Invalid file upload format</p>"""
       else:
         response_body = """<p style="color: red;">Invalid file upload format</p>"""
+    ]#
 
   of "/settings":
     if session.is_none:
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to update settings</p>"""
     else:
-      # Handle multipart form data using stator
+      response_body = """<p style="color: red;">Not implemented</p>"""
+      #[# Handle multipart form data using stator
       var name = ""
       var color = "#3b82f6"
       var current_password = ""
@@ -280,6 +269,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             response_body = """<p style="color: green;">Settings updated successfully!</p>"""
           else:
             response_body = &"""<p style="color: red;">{error_msg}</p>"""
+            ]#
 
   else:
     status = Http404
