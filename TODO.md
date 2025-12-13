@@ -9,12 +9,17 @@
 - [x] Add 404 page
 - [x] Prevent server-side injection
 
+- [ ] Remove email as username and add username and optional email
+
+- [ ] Convert images to WebP?
+
 - [x] Add pictures/text sharing
   - [ ] Add ability to post multiple pictures??
   - [ ] Add notifications?
   - [x] Add minimal WYSIWYG editor formatting to text in "post" route
 
 - [ ] Create brand identity
+  - [x] Create logo
 - [ ] Add custom CSS (winter theme with light/dark mode)
   - [ ] Add neumorphism
 

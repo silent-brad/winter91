@@ -10,6 +10,34 @@
 }
 
 @font-face {
+  font-family: 'Larken';
+  src: url('/static/fonts/larken/Larken-Regular.otf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Larken';
+  src: url('/static/fonts/larken/Larken-Bold.otf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Larken';
+  src: url('/static/fonts/larken/Larken-Italic.otf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Larken';
+  src: url('/static/fonts/larken/Larken-BoldItalic.otf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
   font-family: 'Charm';
   src: url('/static/fonts/charm/Charm-Bold.ttf') format('truetype');
   font-weight: 700;
@@ -83,6 +111,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text);
   margin-bottom: 0.75rem;
   margin-top: 2rem;
+  font-family: Larken;
 }
 
 h1:first-child, h2:first-child, h3:first-child,

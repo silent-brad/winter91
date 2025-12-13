@@ -5,15 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Winter 100{% endblock %} | Winter 100 Challenge</title>
 
+  <!-- Preload images -->
+  <link rel="preload" as="image" href="/static/images/logo.svg"/>
+
+  <!-- Preload Larken fonts -->
+  <link rel="preload" href="/static/fonts/larken/Larken-Regular.otf" as="font" type="font/opentype" crossorigin>
+  <link rel="preload" href="/static/fonts/larken/Larken-Bold.otf" as="font" type="font/opentype" crossorigin>
+  <link rel="preload" href="/static/fonts/larken/Larken-Italic.otf" as="font" type="font/opentype" crossorigin>
+  <link rel="preload" href="/static/fonts/larken/Larken-BoldItalic.otf" as="font" type="font/opentype" crossorigin>
+
   <!-- Preload Charm fonts -->
   <link rel="preload" href="/static/fonts/charm/Charm-Bold.ttf" as="font" type="font/truetype" crossorigin>
   <link rel="preload" href="/static/fonts/charm/Charm-Regular.ttf" as="font" type="font/truetype" crossorigin>
   
   <!-- Preload Athelas fonts -->
-  <link rel="preload" href="/static/fonts/athelas/Athelas-Regular.ttf" as="font" type="font/truetype" crossorigin>
-  <link rel="preload" href="/static/fonts/athelas/Athelas-Bold.ttf" as="font" type="font/truetype" crossorigin>
-  <link rel="preload" href="/static/fonts/athelas/Athelas-Italic.ttf" as="font" type="font/truetype" crossorigin>
-  <link rel="preload" href="/static/fonts/athelas/Athelas-BoldItalic.ttf" as="font" type="font/truetype" crossorigin>
+  <link rel="preload" href="/static/fonts/athelas/Athelas-Regular.ttf" as="font" type="font/opentype" crossorigin>
+  <link rel="preload" href="/static/fonts/athelas/Athelas-Bold.ttf" as="font" type="font/opentype" crossorigin>
+  <link rel="preload" href="/static/fonts/athelas/Athelas-Italic.ttf" as="font" type="font/opentype" crossorigin>
+  <link rel="preload" href="/static/fonts/athelas/Athelas-BoldItalic.ttf" as="font" type="font/opentype" crossorigin>
   
   <!-- CSS files -->
   <link rel="stylesheet" href="/static/css/theme-colors.css">

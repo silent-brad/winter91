@@ -5,6 +5,8 @@ src/result
 !README.md
 !TODO.md
 !DEPS.md
+!logo/
+!logo/**
 
 !flake.nix
 !flake.lock
