@@ -1,5 +1,5 @@
 {
-  description = "Winter 100 Challenge";
+  description = "Winter91 Challenge";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

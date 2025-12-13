@@ -1,7 +1,7 @@
 import db_connector/db_sqlite
 
 proc init_database*(): DbConn =
-  let db = open("winter100.db", "", "", "")
+  let db = open("winter91.db", "", "", "")
   
   db.exec(sql"""
     CREATE TABLE IF NOT EXISTS users (

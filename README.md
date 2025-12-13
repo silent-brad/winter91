@@ -1,4 +1,4 @@
-# Winter 100 Challenge
+# ![Winter91 Logo](./static/images/logo.svg) Winter 91 Challenge
 
 Read the [DEPS.md](DEPS.md) file for the (small) list of dependencies.
 
