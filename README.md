@@ -2,6 +2,7 @@
 
 Made with:
 <code><img width="30" height="30" src="https://api.iconify.design/devicon:nim.svg"></code>&nbsp;
+<code><img width="30" height="30" src="https://api.iconify.design/devicon:htmx.svg"></code>&nbsp;
 <code><img width="30" height="30" src="https://api.iconify.design/vscode-icons:file-type-nix.svg"></code>&nbsp;
 <code><img width="30" height="30" src="https://api.iconify.design/vscode-icons:file-type-sqlite.svg"></code>&nbsp;
 <code><img width="30" height="30" src="https://api.iconify.design/devicon:html5.svg"></code>&nbsp;
