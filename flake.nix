@@ -17,6 +17,7 @@
           src = ./.;
 
           buildInputs = with pkgs; [ nim-2_0 sqlite openssl imagemagick ];
+          nativeBuildInputs = with pkgs; [ makeWrapper ];
 
           buildPhase = ''
             mkdir -p $out/bin
@@ -37,6 +38,9 @@
 
             ${pkgs.nim-2_0}/bin/nim c -d:release -d:ssl --mm:none --path:../packages -o:$out/bin/app src/main.nim
           '';
+
+          # Make imagemagick available at runtime
+          makeWrapperArgs = [ "--prefix" "PATH" ":" "${pkgs.imagemagick}/bin" ];
         };
 
         devShells.default = pkgs.mkShell {

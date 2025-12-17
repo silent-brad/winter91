@@ -24,25 +24,13 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       status = Http302
       headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
     else:
-      let leaderboard = get_leaderboard(db_conn)
-      var user_stats: seq[Entry] = @[]
-      for db_entry in leaderboard:
-        var name: string = db_entry.runner.name
-        var runner: Runner_Info = Runner_Info(name: name)
-        var entry: Entry = Entry(
-          runner: runner,
-          total_miles: db_entry.total_miles,
-        )
-        user_stats.add(entry)
-        # Check for success parameter
-        var success_msg: Option[string] = none(string)
-        if req.url.query.len > 0:
-          if "success=signup" in req.url.query:
-            success_msg = some("Account created successfully! Welcome to Winter 100!")
-          elif "success=login" in req.url.query:
-            success_msg = some("Login successful! Welcome back to Winter 100!")
-        
-        response_body = render_leaderboard(user_stats, session, success_msg)
+      var success_msg: Option[string] = none(string)
+      if req.url.query.len > 0:
+        if "success=signup" in req.url.query:
+          success_msg = some("Welcome to Winter 100!")
+        elif "success=login" in req.url.query:
+          success_msg = some("Welcome back to Winter 100!")
+      response_body = render_leaderboard(session, success_msg)
 
   of "/dashboard":
     if session.is_none or session.get().is_family_session:
@@ -146,8 +134,9 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       let leaderboard = get_leaderboard(db_conn)
       var user_stats: seq[Entry] = @[]
       for db_entry in leaderboard:
+        var id: int64 = db_entry.runner.id
         var name: string = db_entry.runner.name
-        var runner: Runner_Info = Runner_Info(name: name)
+        var runner: Runner_Info = Runner_Info(id: id, name: name)
         var entry: Entry = Entry(
           runner: runner,
           total_miles: db_entry.total_miles,

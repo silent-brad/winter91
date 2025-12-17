@@ -32,10 +32,10 @@ proc sanitize_html*(html: string): string =
     if script_start == -1: break
     let script_end = result.find("</script>", script_start)
     if script_end != -1:
-      result.delete(script_start, script_end + 8)
+      result.delete(script_start..script_end + 8)
       start_pos = script_start
     else:
-      result.delete(script_start, result.len - 1)
+      result.delete(script_start..result.len - 1)
       break
   
   # Remove dangerous event handlers (onclick, onload, etc.)
@@ -74,7 +74,7 @@ proc sanitize_html*(html: string): string =
     # Check if tag is allowed
     if tag_name.toLowerAscii() notin allowed_tags and tag_name != "":
       # Remove the entire tag
-      result.delete(open_bracket, close_bracket)
+      result.delete(open_bracket..close_bracket)
       tag_start = open_bracket
     else:
       # For allowed tags, sanitize attributes
