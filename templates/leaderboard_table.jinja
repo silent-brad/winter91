@@ -10,11 +10,13 @@
 		</thead>
 		<tbody>
 			{% for (rank, user_stat) in user_stats.pairs() %}
-        {% let user = user_stat.runner %}
+        {% let runner = user_stat.runner %}
 				<tr>
 					<td>{{rank + 1}}</td>
 					<td>
-            {% importnimja "partials/_user_avatar.jinja" %}
+            {% let id = runner.id %}
+            {% let name = runner.name %}
+            {% importnimja "partials/_runner_avatar.jinja" %}
 					</td>
 					<td><strong>{{user_stat.total_miles}}</strong></td>
 					<td>

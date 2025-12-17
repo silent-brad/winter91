@@ -5,13 +5,13 @@ type
     family_id*: int64
     runner_id*: int64
     email*: string
+    name*: string
     is_family_session*: bool  # true if logged into family account, false if in runner
   
   Runner_Info* = object
     id*: int64
     name*: string
     family_id*: int64
-    avatar*: string
     has_custom_avatar*: bool
     created_at*: string
 

@@ -14,7 +14,7 @@ proc render_leaderboard*(user_stats: seq[Entry], session: Option[Session] = none
 proc render_leaderboard_table*(user_stats: seq[Entry]): string {.gcsafe.} =
   compile_template_file("leaderboard_table.jinja", base_dir)
 
-proc render_settings*(user: Option[Runner_Info], session: Option[Session] = none(Session), error_message: Option[string] = none(string), success_message: Option[string] = none(string)): string {.gcsafe.} =
+proc render_settings*(runner: Option[Runner_Info], session: Option[Session] = none(Session), error_message: Option[string] = none(string), success_message: Option[string] = none(string)): string {.gcsafe.} =
   compile_template_file("settings.jinja", base_dir)
 
 proc render_posts_page*(posts: seq[Post], session: Option[Session] = none(Session)): string {.gcsafe.} =
@@ -25,6 +25,3 @@ proc render_post_feed*(posts: seq[Post]): string {.gcsafe.} =
 
 proc render_runner_selection*(runners: seq[Runner_Info], session: Option[Session] = none(Session), success_message: Option[string] = none(string), error_message: Option[string] = none(string)): string {.gcsafe.} =
   compile_template_file("select-runner.jinja", base_dir)
-
-# proc render_family_dashboard*(runners: seq[Runner_Info], session: Option[Session] = none(Session), error_message: Option[string] = none(string), success_message: Option[string] = none(string)): string {.gcsafe.} =
-#   compile_template_file("family_dashboard.jinja", base_dir)

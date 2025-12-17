@@ -99,8 +99,9 @@
             {% if runners.len > 0 %}
             {% for runner in runners %}
             <a href="/switch-runner/{{ runner.id }}" class="runner-card">
-              {% let user = runner %}
-              {% importnimja "partials/_user_avatar.jinja" %}
+              {% let id = runner.id %}
+              {% let name = runner.name %}
+              {% importnimja "partials/_runner_avatar.jinja" %}
               <div style="font-size: 1.5rem; opacity: 0.5;">→</div>
             </a>
             {% endfor %}

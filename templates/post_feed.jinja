@@ -2,7 +2,9 @@
 	{% for post in posts %}
 		<article style="border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
 			<header style="margin-bottom: 0.5rem;">
-				<strong>{{post.name}}</strong>
+        {% let id = post.runner_id %}
+        {% let name = post.name %}
+        {% importnimja "partials/_runner_avatar.jinja" %}
 				<small style="color: var(--pico-muted-color); margin-left: 0.5rem;">{{post.created_at}}</small>
 			</header>
 			

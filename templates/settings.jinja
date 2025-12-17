@@ -37,10 +37,10 @@
 		<div style="text-align: center; margin-bottom: 2rem;">
 			<h3>Profile Avatar</h3>
 			<div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 1rem 0;">
-				{% if user.isSome() %}
-					{% let user = user.get() %}
+				{% if runner.isSome() %}
+					{% let runner = runner.get() %}
 					<div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">
-						{{ user.name }}
+						{{ runner.name }}
 					</div>
 				{% endif %}
 			</div>
@@ -64,7 +64,7 @@
 				id="name" 
 				name="name" 
 				placeholder="Enter your name"
-				{% if user.isSome() %}value="{{user.get().name}}"{% endif %}
+				{% if runner.isSome() %}value="{{runner.get().name}}"{% endif %}
 				required
 			>
 		</label>

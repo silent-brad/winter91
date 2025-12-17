@@ -28,9 +28,9 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       var user_stats: seq[Entry] = @[]
       for db_entry in leaderboard:
         var name: string = db_entry.runner.name
-        var user: Runner_Info = Runner_Info(name: name, avatar: "/avatars/" & name.replace(" ", "_") & ".webp")
+        var runner: Runner_Info = Runner_Info(name: name)
         var entry: Entry = Entry(
-          runner: user,
+          runner: runner,
           total_miles: db_entry.total_miles,
         )
         user_stats.add(entry)
@@ -89,14 +89,6 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
     let user_id_opt = if session.isSome: some(session.get().runner_id) else: none(int64)
     response_body = render_template("about.jinja", session, runner_id = user_id_opt)
 
-  # of "/family-dashboard":
-  #   if session.is_none or not session.get().is_family_account:
-  #     status = Http302
-  #     headers = new_http_headers([("Location", "/login")])
-  #   else:
-  #     let runners = get_runners_by_family(db_conn, session.get().family_id)
-  #     response_body = render_family_dashboard(runners, session)
-
   of "/add-runner":
     if session.is_none or not session.get().is_family_session:
       status = Http302
@@ -139,8 +131,8 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
     else:
       let user_opt = get_runner_by_id(db_conn, session.get().runner_id)
       if user_opt.is_some:
-        let user = user_opt.get()
-        var user_info: Runner_Info = Runner_Info(name: user.name)
+        let runner = user_opt.get()
+        var user_info: Runner_Info = Runner_Info(name: runner.name)
         response_body = render_settings(some(user_info), session, none(string), none(string))
       else:
         status = Http302
@@ -155,9 +147,9 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       var user_stats: seq[Entry] = @[]
       for db_entry in leaderboard:
         var name: string = db_entry.runner.name
-        var user: Runner_Info = Runner_Info(name: name, avatar: "/avatars/" & name.replace(" ", "_") & ".webp")
+        var runner: Runner_Info = Runner_Info(name: name)
         var entry: Entry = Entry(
-          runner: user,
+          runner: runner,
           total_miles: db_entry.total_miles,
         )
         user_stats.add(entry)
@@ -226,6 +218,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
             family_id: session.get().family_id,
             runner_id: runner_id,
             email: session.get().email,
+            name: session.get().name,
             is_family_session: false
           )
           
