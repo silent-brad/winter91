@@ -11,4 +11,8 @@ Made with:
 Read the [DEPS.md](DEPS.md) file for the (small) list of dependencies.
 
 ## Setup Commands
-- Set the `PASSKEY` environment variable in the `.env` file before starting
+- Enable flakes in your Nix config (`/etc/nixos/configuration.nix`): `nix.settings.experimental-features = [ "nix-command" "flakes" ];`
+- Run `nix develop` to enter the shell
+- Create a file named `.PASSKEY.txt` which contains the passkey
+- Run `nix build`
+- Run `./result/bin/app`

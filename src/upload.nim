@@ -33,8 +33,13 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
     let webp_filepath = directory / webp_filename
     
     # Use imagemagick to convert to webp
-    let cmd = &"magick \"{temp_filepath}\" \"{webp_filepath}\""
-    let result = exec_cmd(cmd)
+    var cmd = &"magick \"{temp_filepath}\" \"{webp_filepath}\""
+    var result = exec_cmd(cmd)
+    
+    # Fallback to convert command if magick fails
+    if result != 0:
+      cmd = &"convert \"{temp_filepath}\" \"{webp_filepath}\""
+      result = exec_cmd(cmd)
     
     # Remove temporary file
     if file_exists(temp_filepath):

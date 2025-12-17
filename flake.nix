@@ -44,7 +44,7 @@
         };
 
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [ nim-2_0 sqlite openssl ];
+          packages = with pkgs; [ nim-2_0 sqlite openssl imagemagick ];
           shellHook = ''
             echo "Nimrod: $(${pkgs.nim-2_0}/bin/nim -v)"
             echo "Run './result/bin/app'."
