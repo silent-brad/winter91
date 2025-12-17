@@ -32,22 +32,6 @@
         "type": "github"
       }
     },
-    "dotenv": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1716497473,
-        "narHash": "sha256-TE7xIVyuVPCUPxe2xy1Gw9qp2t9uKBHcFF/Vfl+PYDY=",
-        "owner": "euantorano",
-        "repo": "dotenv.nim",
-        "rev": "a3c6726147276ea1447dee292fd27bb036242b78",
-        "type": "github"
-      },
-      "original": {
-        "owner": "euantorano",
-        "repo": "dotenv.nim",
-        "type": "github"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -102,7 +86,6 @@
       "inputs": {
         "checksums": "checksums",
         "db_connector": "db_connector",
-        "dotenv": "dotenv",
         "flake-utils": "flake-utils",
         "nimja": "nimja",
         "nixpkgs": "nixpkgs"

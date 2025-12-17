@@ -3,15 +3,13 @@ import strutils, options
 import db_connector/db_sqlite
 import locks
 import database, types, auth, routes, utils
-import os, std/envvars, dotenv
+import os
 
 var db_conn: DbConn
 var PASSKEY: string
-
-# Add passkey from environment if provided
-load()
-if exists_env("PASSKEY"):
-  PASSKEY = get_env("PASSKEY")
+# Read passkey from passkey file (`.PASSKEY.txt`)
+if file_exists(".PASSKEY.txt"):
+  PASSKEY = read_file(".PASSKEY.txt")
 else:
   echo "No passkey provided"
   quit(1)

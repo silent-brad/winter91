@@ -20,11 +20,6 @@
       #rev = "master";
       flake = false;
     };
-
-    dotenv = {
-      url = "github:euantorano/dotenv.nim";
-      flake = false;
-    };
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:

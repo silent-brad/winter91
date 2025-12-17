@@ -2,6 +2,7 @@
 pictures/
 avatars/
 winter91.db
+.PASSKEY.txt
 src/result
 !.gitignore
 !LICENSE

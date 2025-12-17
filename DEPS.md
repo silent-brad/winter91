@@ -11,8 +11,7 @@
 - [checksums: Hash algorithms](https://github.com/nim-lang/checksums)
 - [db_connector: Unified db connector in Nim](https://github.com/nim-lang/db_connector)
 - [Nimja: typed and compiled template engine inspired by jinja2, twig and onionhammer/nim-templates.](https://github.com/enthus1ast/nimja)
-- [Dotenv.nim: dotenv implementation for Nim. Loads environment variables from `.env`](https://github.com/euantorano/dotenv.nim)
 
 ## Serverless Provider
 - [ngrok](https://ngrok.com/)
-- My old laptop running [nixos-anywhere](https://github.com/nix-community/nixos-anywhere)
+- My old laptop running [NixOS](https://nixos.org)
