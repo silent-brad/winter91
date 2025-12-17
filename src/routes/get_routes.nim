@@ -28,7 +28,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       var user_stats: seq[Entry] = @[]
       for db_entry in leaderboard:
         var name: string = db_entry.runner.name
-        var user: Runner_Info = Runner_Info(name: name, avatar: "/pictures/" & name.replace(" ", "_") & ".webp")
+        var user: Runner_Info = Runner_Info(name: name, avatar: "/avatars/" & name.replace(" ", "_") & ".webp")
         var entry: Entry = Entry(
           runner: user,
           total_miles: db_entry.total_miles,
@@ -155,7 +155,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       var user_stats: seq[Entry] = @[]
       for db_entry in leaderboard:
         var name: string = db_entry.runner.name
-        var user: Runner_Info = Runner_Info(name: name, avatar: "/pictures/" & name.replace(" ", "_") & ".webp")
+        var user: Runner_Info = Runner_Info(name: name, avatar: "/avatars/" & name.replace(" ", "_") & ".webp")
         var entry: Entry = Entry(
           runner: user,
           total_miles: db_entry.total_miles,
@@ -302,10 +302,10 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
 
     # Check if it's a avatar file request
     elif req.url.path.starts_with("/avatars/"):
-      let file_path = sanitize_path(req.url.path[10..^1])  # Remove "/avatars/" and sanitize
+      let file_path = sanitize_path(req.url.path[9..^1])  # Remove "/avatars/" and sanitize
       let full_path = "avatars" / file_path
       
-      # Ensure the file is within the pictures directory and has safe extension
+      # Ensure the file is within the avatars directory and has safe extension
       if file_path.contains("..") or not full_path.starts_with("avatars/"):
         status = Http403
         response_body = "Access denied"
