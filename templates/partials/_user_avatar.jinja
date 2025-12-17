@@ -1,13 +1,8 @@
-<div class="avatar" style="
-	width: 40px; 
-	height: 40px; 
-	border-radius: 50%; 
-	color: white; 
-	display: flex; 
-	align-items: center; 
-	justify-content: center; 
-	font-weight: bold; 
-	font-size: 14px;
-">
-	{{ user.name }}
+<div style="display: flex; align-items: center; gap: 0.5rem;">
+  <img
+    width="40px" height="40px" style="border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;"
+    src="{{ user.avatar }}"
+    alt="{{ user.name }} Avatar"
+  />
+  <span>{{user.name}}</span>
 </div>

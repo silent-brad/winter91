@@ -10,18 +10,11 @@
 		</thead>
 		<tbody>
 			{% for (rank, user_stat) in user_stats.pairs() %}
+        {% let user = user_stat.runner %}
 				<tr>
 					<td>{{rank + 1}}</td>
 					<td>
-						<div style="display: flex; align-items: center; gap: 0.5rem;">
-							{% let user = user_stat.runner %}
-							<img
-                width="40px" height="40px" style="border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;"
-								src="{{ user.avatar }}"
-                alt="{{ user.name }} Avatar"
-              />
-							<span>{{user.name}}</span>
-						</div>
+            {% importnimja "partials/_user_avatar.jinja" %}
 					</td>
 					<td><strong>{{user_stat.total_miles}}</strong></td>
 					<td>
