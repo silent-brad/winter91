@@ -39,7 +39,7 @@ proc create_generic_avatar(runner_id: int64, name: string) =
   let client = new_http_client()
   try:
     let avatar_data = client.get_content(avatar_url)
-    let avatar_filename = avatar_data.save_uploaded_file(runner_id.int_to_str() & "-" & name & ".webp", "avatars")
+    let avatar_filename = avatar_data.save_uploaded_file(int_to_str(runner_id) & "_" & name.replace(" ", "_") & ".webp", "avatars")
   finally:
     client.close()
 
@@ -60,7 +60,7 @@ proc update_runner_name*(db: DbConn, runner_id: int64, name: string) =
     # If the user hasn't uploaded a custom avatar, keep the existing filename for now
     create_generic_avatar(runner.id, runner.name)
     # Delete the old avatar file
-    remove_file("avatars/" & runner.id.int_to_str() & "-" & runner.name & ".webp")
+    remove_file("avatars/" & int_to_str(runner.id) & "_" & runner.name.replace(" ", "_") & ".webp")
 
 proc update_runner_avatar*(db: DbConn, runner_id: int64, avatar_filename: string) =
   db.exec(sql"UPDATE runner SET has_custom_avatar = true WHERE id = ?", runner_id)

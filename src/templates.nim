@@ -2,6 +2,7 @@ import options
 import nimja/parser
 import os
 import types
+import strutils
 
 const base_dir = get_script_dir() & "/../templates/"
 

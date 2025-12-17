@@ -10,11 +10,11 @@
 - [x] Prevent server-side injection
 
 ## Fix accounts
-- [ ] Add avatar component (avatar icon on left, Name on right)
+- [x] Add avatar component (avatar icon on left, Name on right)
 - [x] Make email username for family account
   - [x] Make family account create runner (user) accounts (Name, avatar)
   - [x] Generate default avatar with initials of name (just make `Name-avatar.webp`) (use this link: `https://ui-avatars.com/api/?background=random&name=Elijah%20White&format=png`)
-- [ ] Add text in login page: "If you need to change your password, email brad@knightoffaith.systems."
+- [x] Add text in login page: "If you need to change your password, email brad@knightoffaith.systems."
 - [ ] Add avatar change
 - [ ] Add remove family member
 - [ ] Add account deletion
@@ -26,7 +26,7 @@
 - [x] On landing page, don't show buttons when logged in
 - Make chart in dashboard show miles ran per day and make it not filled
 
-- [ ] Convert images to WebP?
+- [x] Convert images to WebP?
 
 - [x] Add pictures/text sharing
   - [ ] Add ability to post multiple pictures??

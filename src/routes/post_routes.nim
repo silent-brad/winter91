@@ -172,7 +172,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         else:
           try:
             discard create_post(db_conn, session.get().runner_id, text_content, image_filename)
-            headers = new_http_headers([("HX-Redirect", "/post")])
+            headers = new_http_headers([("HX-Redirect", "/posts")])
             response_body = """<p style="color: green;">Post created successfully!</p>"""
           except Exception as e:
             echo "Error creating post: ", e.msg

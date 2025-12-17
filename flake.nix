@@ -23,6 +23,7 @@
 
             # Setup nim package path
             export HOME=$(pwd)
+            export PATH=$PATH:${pkgs.imagemagick}/bin
             mkdir -p packages
 
             for pkg in ${nim-pkgs.packages.${system}.default}/pkgs/*; do

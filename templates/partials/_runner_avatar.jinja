@@ -1,7 +1,7 @@
 <div style="display: flex; align-items: center; gap: 0.5rem;">
   <img
     width="40px" height="40px" style="border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;"
-    src="{{ id }}-{{ name }}"
+    src="/avatars/{{ id }}_{{ name.replace(" ", "_") }}.webp"
     alt="{{ name }} Avatar"
   />
   <strong>{{ name }}</strong>
