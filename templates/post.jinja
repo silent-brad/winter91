@@ -75,7 +75,7 @@
 				{% for post in posts %}
 					<article style="border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
 						<header style="margin-bottom: 0.5rem;">
-							<strong>{{post.user_name}}</strong>
+							<strong>{{post.name}}</strong>
 							<small style="color: var(--pico-muted-color); margin-left: 0.5rem;">{{post.created_at}}</small>
 						</header>
 						
@@ -84,7 +84,7 @@
 						{% if post.image_filename != "" %}
 							<div style="margin: 0.5rem 0;">
 								<img 
-									src="/pictures/{{post.image_filename}}" 
+									src="/pictures/{{post.image_filename}}"
 									alt="Post image" 
 									style="max-width: 100%; height: auto; border-radius: var(--pico-border-radius);"
 								>

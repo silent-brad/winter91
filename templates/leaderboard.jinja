@@ -30,8 +30,6 @@
 						<th>Runner</th>
 						<th>Miles</th>
 						<th>Progress</th>
-						<th>Last Log</th>
-						<th>Streak</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -40,41 +38,25 @@
 							<td>{{rank + 1}}</td>
 							<td>
 								<div style="display: flex; align-items: center; gap: 0.5rem;">
-									{% let user = user_stat.user %}
-									{% importnimja "partials/_user_avatar.jinja" %}
+									{% let user = user_stat.runner %}
+									<img
+                    width="40px" height="40px" style="border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;"
+										src="{{ user.avatar }}"
+                    alt="{{ user.name }} Avatar"
+                  />
 									<span>{{user.name}}</span>
 								</div>
 							</td>
 							<td><strong>{{user_stat.total_miles}}</strong></td>
 							<td>
 								<div style="display: flex; align-items: center; gap: 0.5rem;">
-									{% let progress_percent = (user_stat.total_miles.float / 100.0 * 100.0).min(100.0) %}
-									{% let width = "100px" %}
-									{% importnimja "partials/_progress_bar.jinja" %}
+									{% let progress_percent = (user_stat.total_miles.float / 91.0 * 91.0).min(91.0) %}
+									{% let width = "91px" %}
+									<div class="progress-bar" style="background-color: var(--pico-muted-border-color); border-radius: 6px; height: 8px; overflow: hidden; width: {{width}};">
+										<div class="progress-fill" style="background-color: var(--pico-primary); height: 100%; width: {{progress_percent}}%; transition: width 0.3s ease; border-radius: 6px;"></div>
+									</div>
 									<small>{{progress_percent.int}}%</small>
 								</div>
-							</td>
-							<td>
-								{% if user_stat.last_miles > 0 %}
-									<span style="color: var(--pico-primary); font-weight: bold;">
-										+{{user_stat.last_miles}}
-									</span>
-									<br>
-									<small style="color: var(--pico-muted-color);">
-										{{user_stat.last_logged}}
-									</small>
-								{% else %}
-									<span style="color: var(--pico-muted-color);">No logs yet</span>
-								{% endif %}
-							</td>
-							<td>
-								{% if user_stat.current_streak > 0 %}
-									<span style="color: var(--pico-primary); font-weight: bold;">
-										{{user_stat.current_streak}} day{% if user_stat.current_streak != 1 %}s{% endif %}
-									</span>
-								{% else %}
-									<span style="color: var(--pico-muted-color);">No streak</span>
-								{% endif %}
 							</td>
 						</tr>
 					{% endfor %}

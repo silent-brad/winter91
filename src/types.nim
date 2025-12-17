@@ -2,31 +2,27 @@ import tables
 
 type
   Session* = object
-    user_id*: int64
+    family_id*: int64
+    runner_id*: int64
     email*: string
-
-  User_Info* = object
+    is_family_session*: bool  # true if logged into family account, false if in runner
+  
+  Runner_Info* = object
+    id*: int64
     name*: string
-    color*: string
-    initials*: string
-
-  User_Info_2* = object
-    name*: string
-    email*: string
-    color*: string
-    initials*: string
+    family_id*: int64
+    avatar*: string
+    has_custom_avatar*: bool
+    created_at*: string
 
   Entry* = object
-    user*: User_Info
+    runner*: Runner_Info
     total_miles*: float
-    last_miles*: float
-    last_logged*: string
-    current_streak*: int
 
   Post* = object
     id*: int64
-    user_id*: int64
-    user_name*: string
+    runner_id*: int64
+    name*: string
     text_content*: string
     image_filename*: string
     created_at*: string

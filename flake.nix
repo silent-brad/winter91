@@ -16,7 +16,7 @@
           version = "0.0.1";
           src = ./.;
 
-          buildInputs = with pkgs; [ nim-2_0 sqlite ];
+          buildInputs = with pkgs; [ nim-2_0 sqlite openssl ];
 
           buildPhase = ''
             mkdir -p $out/bin
@@ -34,12 +34,12 @@
               fi
             done
 
-            ${pkgs.nim-2_0}/bin/nim c -d:release --mm:none --path:../packages -o:$out/bin/app src/main.nim
+            ${pkgs.nim-2_0}/bin/nim c -d:release -d:ssl --mm:none --path:../packages -o:$out/bin/app src/main.nim
           '';
         };
 
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [ nim-2_0 sqlite ];
+          packages = with pkgs; [ nim-2_0 sqlite openssl ];
           shellHook = ''
             echo "Nimrod: $(${pkgs.nim-2_0}/bin/nim -v)"
             echo "Run './result/bin/app'."

@@ -1,4 +1,7 @@
 *
+pictures/
+avatars/
+winter91.db
 src/result
 !.gitignore
 !LICENSE

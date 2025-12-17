@@ -24,31 +24,31 @@
   <div id="message-container"></div>
 
   <form method="post" action="/login" hx-post="/login" hx-target="#message-container" hx-swap="innerHTML">
-	<label for="email">
-	  Email
-	  <input 
-		type="email" 
-		id="email" 
-		name="email" 
-		placeholder="Enter your email"
-		{% if email.is_some() %}value="{{email.get()}}"{% endif %}
-		required
-		autofocus
-	  >
-	</label>
+    <label for="email">
+      Email
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        placeholder="Enter your email"
+        {% if email.is_some() %}value="{{email.get()}}"{% endif %}
+        required
+        autofocus
+      >
+    </label>
 
-	<label for="password">
-	  Password
-	  <input 
-		type="password" 
-		id="password" 
-		name="password" 
-		placeholder="Enter your password"
-		required
-	  >
-	</label>
+    <label for="password">
+      Password
+      <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        placeholder="Enter your password"
+        required
+      >
+    </label>
 
-	<button type="submit">Log In</button>
+    <button type="submit">Log In</button>
   </form>
 
   <footer class="text-center">

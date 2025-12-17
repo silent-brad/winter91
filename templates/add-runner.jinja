@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Runner - Winter 100</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    <link rel="icon" type="image/svg+xml" href="/static/images/logo.svg">
+    <style>
+        .welcome-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--pico-border-radius);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .color-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="container">
+        <ul>
+            <li><strong><a href="/"><img src="/static/images/logo.svg" alt="Winter100 Logo" style="height:2rem;width:2rem;"> Winter 100</a></strong></li>
+        </ul>
+        <ul>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="welcome-section">
+            <h1>Welcome to Winter 100!</h1>
+            <p>Your family account has been created successfully. Now let's create your first runner account.</p>
+        </div>
+
+        <div class="grid">
+            <div></div>
+            <div>
+                <h2>Create Your Runner Account</h2>
+                <p>A runner account tracks your individual miles and progress. You can create multiple runner accounts for each family member.</p>
+                
+                <form hx-post="/create-runner" hx-target="#runner-response">
+                    <div>
+                        <label for="name">Runner Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required maxlength="50">
+                        <small>This is the name that will appear on the leaderboard.</small>
+                    </div>
+                    
+
+                    
+                    <button type="submit">Create Runner Account</button>
+                </form>
+                
+                <div id="runner-response"></div>
+                
+                <hr>
+                
+                <p><small>After creating your runner account, you'll be taken to your dashboard where you can start logging miles!</small></p>
+            </div>
+            <div></div>
+        </div>
+    </main>
+
+
+</body>
+</html>

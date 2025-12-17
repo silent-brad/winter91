@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Runner - Winter 100</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    <link rel="icon" type="image/svg+xml" href="/static/images/logo.svg">
+    <style>
+        .runner-card {
+            border: 2px solid var(--pico-border-color);
+            border-radius: var(--pico-border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        .runner-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--pico-primary-color);
+        }
+        .runner-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .runner-info {
+            flex-grow: 1;
+        }
+        .runner-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0 0 0.5rem 0;
+        }
+        .runner-stats {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .add-runner-btn {
+            border: 2px dashed var(--pico-border-color);
+            border-radius: var(--pico-border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .add-runner-btn:hover {
+            border-color: var(--pico-primary-color);
+            background-color: var(--pico-background-color);
+        }
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="container">
+        <ul>
+            <li><strong><a href="/"><img src="/static/images/logo.svg" alt="Winter100 Logo" style="height:2rem;width:2rem;"> Winter 100</a></strong></li>
+        </ul>
+        <ul>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="welcome-text">
+            <h1>Choose Your Runner</h1>
+            <p>Select which runner account you'd like to use for this session.</p>
+        </div>
+
+        {% if success_message.is_some() %}
+        <div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">
+            {{ success_message.get() }}
+        </div>
+        {% endif %}
+
+        {% if error_message.is_some() %}
+        <div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">
+            {{ error_message.get() }}
+        </div>
+        {% endif %}
+
+        <div class="grid">
+            <div></div>
+            <div>
+                {% if runners.len > 0 %}
+                {% for runner in runners %}
+                <a href="/switch-runner/{{ runner.id }}" class="runner-card">
+                    {% if runner.has_custom_avatar %}
+                    <img src="/avatars/{{ runner.id }}.png" alt="{{ runner.name }}" class="runner-avatar">
+                    {% else %}
+                    <div class="runner-avatar" style="background-color: #3b82f6;">
+                        {{ runner.name[0..0] }}
+                    </div>
+                    {% endif %}
+                    <div class="runner-info">
+                        <h3 class="runner-name">{{ runner.name }}</h3>
+                        <div class="runner-stats">
+                            <br>Member since {{ runner.created_at[0..<10] }}
+                        </div>
+                    </div>
+                    <div style="font-size: 1.5rem; opacity: 0.5;">→</div>
+                </a>
+                {% endfor %}
+
+                <a href="/add-runner" class="add-runner-btn">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">+</div>
+                    <strong>Add New Runner</strong>
+                    <br>
+                    <small>Create a new runner account for another family member</small>
+                </a>
+                {% else %}
+                <p>No runner accounts found. Let's create your first one!</p>
+                <a href="/add-runner" class="add-runner-btn">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">+</div>
+                    <strong>Create Your First Runner</strong>
+                    <br>
+                    <small>Start tracking your miles by creating a runner account</small>
+                </a>
+                {% endif %}
+            </div>
+            <div></div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,6 +1,6 @@
 import asynchttpserver, asyncdispatch
 import strutils, uri, tables, json, options, strformat
-import ../database/[models, users, miles, posts]
+import ../database/[models, families, runners, miles, posts]
 import db_connector/db_sqlite
 import locks
 import os
@@ -32,14 +32,17 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
     elif not validate_email(email):
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email format</div>"""
     else:
-      let user_opt = get_user_by_email(db_conn, email)
-      if user_opt.is_some and verify_password(password, user_opt.get().password_hash):
+      # Check family account
+      let family_opt = get_family_by_email(db_conn, email)
+      if family_opt.is_some and verify_password(password, family_opt.get().password_hash):
+        let family = family_opt.get()
         let session_id = generate_session_id()
-        with_lock sessions_lock:
-          sessions[session_id] = Session(user_id: user_opt.get().id, email: email)
+        {.cast(gcsafe).}:
+          with_lock sessions_lock:
+            sessions[session_id] = Session(family_id: family.id, runner_id: 0, email: email, is_family_session: true)
         headers = new_http_headers([
           ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
-          ("HX-Redirect", "/dashboard?success=login")
+          ("HX-Redirect", "/select-runner?success=login")
         ])
         response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Login successful! Redirecting...</div>"""
       else:
@@ -47,45 +50,76 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
 
   of "/signup":
     let passkey = to_upper_ascii(form_data.get_or_default("passkey", "")).strip()
-    let name = form_data.get_or_default("name", "").strip()
     let email = form_data.get_or_default("email", "").strip()
     let password = form_data.get_or_default("password", "").strip()
-    let color = form_data.get_or_default("color", "#3b82f6").strip()
     
     if passkey == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Passkey is required</div>"""
-    elif name == "":
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Name is required</div>"""
-    elif not validate_name(name):
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid name format</div>"""
     elif email == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email is required</div>"""
     elif not validate_email(email):
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email format</div>"""
     elif password == "":
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Password is required</div>"""
-    elif not validate_color(color):
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid color format</div>"""
     elif not (passkey == PASSKEY):
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid passkey</div>"""
-    elif get_user_by_email(db_conn, email).is_some:
+    elif get_family_by_email(db_conn, email).is_some:
       response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email already registered</div>"""
     else:
       try:
         let password_hash = hash_password(password)
-        let user_id = create_user(db_conn, email, password_hash, name, color)
+        let family_id = create_family_account(db_conn, email, password_hash)
         
         let session_id = generate_session_id()
-        withLock sessions_lock:
-          sessions[session_id] = Session(user_id: user_id, email: email)
+        {.cast(gcsafe).}:
+          with_lock sessions_lock:
+            sessions[session_id] = Session(family_id: family_id, runner_id: 0, email: email, is_family_session: true)
         
         headers = new_http_headers([
           ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
-          ("HX-Redirect", "/dashboard?success=signup")
+          ("HX-Redirect", "/add-runner?success=signup")
         ])
         response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Account created successfully!</div>"""
       except:
         response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Error creating account</div>"""
+
+  of "/create-runner":
+    if session.is_none or not session.get().is_family_session:
+      status = Http401
+      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">You must be logged into a family account to create runners</div>"""
+    else:
+      let name = form_data.get_or_default("name", "").strip()
+      
+      if name == "":
+        response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Name is required</div>"""
+      elif not validate_name(name):
+        response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid name format</div>"""
+      else:
+        try:
+          let runner_id = create_runner_account(db_conn, session.get().family_id, name)
+          
+          # Switch to the new runner
+          let new_session = Session(
+            family_id: session.get().family_id,
+            runner_id: runner_id,
+            email: session.get().email,
+            is_family_session: false
+          )
+          
+          # Update session
+          let session_id = generate_session_id()
+          {.cast(gcsafe).}:
+            with_lock sessions_lock:
+              sessions[session_id] = new_session
+            
+          headers = new_http_headers([
+            ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
+            ("HX-Redirect", "/dashboard?success=runner-created")
+          ])
+          response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Runner account created successfully!</div>"""
+        except Exception as e:
+          echo "Error creating runner: ", e.msg
+          response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Error creating runner account</div>"""
 
   of "/log":
     if session.is_none:
@@ -100,7 +134,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         elif miles > 50:
           response_body = """<p style="color: red;">Miles cannot exceed 50 per entry</p>"""
         else:
-          log_miles(db_conn, session.get().user_id, miles)
+          log_miles(db_conn, session.get().runner_id, miles)
           response_body = &"""<p style="color: green;">Logged {miles:.1f} miles successfully!</p>"""
       except:
         response_body = """<p style="color: red;">Invalid miles value</p>"""
@@ -137,7 +171,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           response_body = """<p style="color: red;">Please provide text content or an image</p>"""
         else:
           try:
-            discard create_post(db_conn, session.get().user_id, text_content, image_filename)
+            discard create_post(db_conn, session.get().runner_id, text_content, image_filename)
             headers = new_http_headers([("HX-Redirect", "/post")])
             response_body = """<p style="color: green;">Post created successfully!</p>"""
           except Exception as e:
@@ -172,7 +206,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           response_body = """<p style="color: red;">No avatar file uploaded</p>"""
         else:
           try:
-            update_user_avatar(db_conn, session.get().user_id, avatar_filename)
+            update_runner_avatar(db_conn, session.get().runner_id, avatar_filename)
             response_body = """<p style="color: green;">Avatar updated successfully!</p>"""
           except Exception as e:
             echo "Error updating avatar: ", e.msg
@@ -190,11 +224,11 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         response_body = &"""<p style="color: red;">Error parsing form data: {multipart_data.error}</p>"""
       else:
         # Extract form fields with validation
-        let name = multipart_data.fields.getOrDefault("name", "").strip()
-        let color = multipart_data.fields.getOrDefault("color", "#3b82f6").strip()
-        let current_password = multipart_data.fields.getOrDefault("current_password", "").strip()
-        let new_password = multipart_data.fields.getOrDefault("new_password", "").strip()
-        let confirm_password = multipart_data.fields.getOrDefault("confirm_password", "").strip()
+        let name = multipart_data.fields.get_or_default("name", "").strip()
+        let color = multipart_data.fields.get_or_default("color", "#3b82f6").strip()
+        let current_password = multipart_data.fields.get_or_default("current_password", "").strip()
+        let new_password = multipart_data.fields.get_or_default("new_password", "").strip()
+        let confirm_password = multipart_data.fields.get_or_default("confirm_password", "").strip()
         
         var profile_picture_filename = ""
         
@@ -216,18 +250,18 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         elif not validate_color(color):
           response_body = """<p style="color: red;">Invalid color format</p>"""
         else:
-          let user_opt = get_user_by_email(db_conn, session.get().email)
-          if user_opt.is_none:
-            response_body = """<p style="color: red;">User not found</p>"""
+          let runner_opt = get_runner_by_id(db_conn, session.get().runner_id)
+          if runner_opt.is_none:
+            response_body = """<p style="color: red;">Runner not found</p>"""
           else:
-            let user = user_opt.get()
+            let runner = runner_opt.get()
             var success = true
             var error_msg = ""
             
             # Handle profile picture upload if one was provided
             if profile_picture_filename != "":
               try:
-                update_user_avatar(db_conn, session.get().user_id, profile_picture_filename)
+                update_runner_avatar(db_conn, session.get().runner_id, profile_picture_filename)
               except Exception as e:
                 echo "Error updating profile picture: ", e.msg
                 success = false
@@ -236,32 +270,12 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             # Update basic info
             if success:
               try:
-                update_user(db_conn, user.id, name, color)
+                update_runner_name(db_conn, runner.id, name)
               except:
                 success = false
                 error_msg = "Error updating profile"
             
-            # Handle password change if provided
-            if success and (current_password != "" or new_password != "" or confirm_password != ""):
-              if current_password == "":
-                success = false
-                error_msg = "Current password is required"
-              elif new_password == "":
-                success = false
-                error_msg = "New password is required"
-              elif new_password != confirm_password:
-                success = false
-                error_msg = "New passwords don't match"
-              elif not verify_password(current_password, user.password_hash):
-                success = false
-                error_msg = "Current password is incorrect"
-              else:
-                try:
-                  let new_hash = hash_password(new_password)
-                  update_user_password(db_conn, user.id, new_hash)
-                except:
-                  success = false
-                  error_msg = "Error updating password"
+            # Note: Password changes are handled at the family account level, not for individual runners
             
             if success:
               response_body = """<p style="color: green;">Settings updated successfully!</p>"""

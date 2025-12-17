@@ -39,19 +39,10 @@
 			<div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 1rem 0;">
 				{% if user.isSome() %}
 					{% let user = user.get() %}
-					{% importnimja "partials/_user_avatar.jinja" %}
+					<div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">
+						{{ user.name }}
+					</div>
 				{% endif %}
-				<div>
-					<label for="color">
-						Avatar Color
-						<input 
-							type="color" 
-							id="color" 
-							name="color" 
-							{% if current_color.isSome() %}value="{{current_color.get()}}"{% else %}value="#007bff"{% endif %}
-						>
-					</label>
-				</div>
 			</div>
 		</div>
 		
@@ -74,18 +65,6 @@
 				name="name" 
 				placeholder="Enter your name"
 				{% if user.isSome() %}value="{{user.get().name}}"{% endif %}
-				required
-			>
-		</label>
-		
-		<label for="email">
-			Email
-			<input 
-				type="email" 
-				id="email" 
-				name="email" 
-				placeholder="Enter your email"
-				{% if email.isSome() %}value="{{email.get()}}"{% endif %}
 				required
 			>
 		</label>
