@@ -1,0 +1,45 @@
+{% if user_stats.len() > 0 %}
+	<table>
+		<thead>
+			<tr>
+				<th>Rank</th>
+				<th>Runner</th>
+				<th>Miles</th>
+				<th>Progress</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for (rank, user_stat) in user_stats.pairs() %}
+				<tr>
+					<td>{{rank + 1}}</td>
+					<td>
+						<div style="display: flex; align-items: center; gap: 0.5rem;">
+							{% let user = user_stat.runner %}
+							<img
+                width="40px" height="40px" style="border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;"
+								src="{{ user.avatar }}"
+                alt="{{ user.name }} Avatar"
+              />
+							<span>{{user.name}}</span>
+						</div>
+					</td>
+					<td><strong>{{user_stat.total_miles}}</strong></td>
+					<td>
+						<div style="display: flex; align-items: center; gap: 0.5rem;">
+							{% let progress_percent = (user_stat.total_miles.float / 91.0 * 91.0).min(91.0) %}
+							{% let width = "91px" %}
+							<div class="progress-bar" style="background-color: var(--pico-muted-border-color); border-radius: 6px; height: 8px; overflow: hidden; width: {{width}};">
+								<div class="progress-fill" style="background-color: var(--pico-primary); height: 100%; width: {{progress_percent}}%; transition: width 0.3s ease; border-radius: 6px;"></div>
+							</div>
+							<small>{{progress_percent.int}}%</small>
+						</div>
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<p style="text-align: center; color: var(--pico-muted-color); margin: 2rem 0;">
+		No runners yet. Be the first to <a href="/signup">sign up</a>!
+	</p>
+{% endif %}

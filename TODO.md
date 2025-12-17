@@ -11,18 +11,19 @@
 
 ## Fix accounts
 - [ ] Add avatar component (avatar icon on left, Name on right)
-- [ ] Make email username for family account
-  - [ ] Make family account create runner (user) accounts (Name, avatar)
-  - [ ] Generate default avatar with initials of name (just make `Name-avatar.webp`) (use this link: `https://ui-avatars.com/api/?background=random&name=Elijah%20White&format=png`)
+- [x] Make email username for family account
+  - [x] Make family account create runner (user) accounts (Name, avatar)
+  - [x] Generate default avatar with initials of name (just make `Name-avatar.webp`) (use this link: `https://ui-avatars.com/api/?background=random&name=Elijah%20White&format=png`)
 - [ ] Add text in login page: "If you need to change your password, email brad@knightoffaith.systems."
 - [ ] Add avatar change
+- [ ] Add remove family member
 - [ ] Add account deletion
 
 ## Fix editor/sharing
 - [ ] Fix WYSIWYG editor to only include B,I,U,Quote,Link
   - [ ] ? Add ability to post multiple pictures??
-- [ ] In leaderboard, remove fields past progress bar and fix he htmx:swaperror that causes refetch to fetch header/footer
-- [ ] On landing page, don't show buttons when logged in
+- [x] In leaderboard, remove fields past progress bar and fix he htmx:swaperror that causes refetch to fetch header/footer
+- [x] On landing page, don't show buttons when logged in
 - Make chart in dashboard show miles ran per day and make it not filled
 
 - [ ] Convert images to WebP?

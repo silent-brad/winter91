@@ -34,32 +34,30 @@
 					<button type="button" onclick="insertImage()" title="Insert Image" style="padding: 0.25rem 0.5rem;">🖼️</button>
 				</div>
 				
-				<div 
-					id="text_content_editor" 
+				<div
+					id="text_content_editor"
 					contenteditable="true"
 					style="border: 1px solid var(--pico-border-color); border-radius: 0 0 var(--pico-border-radius) var(--pico-border-radius); padding: 0.5rem; min-height: 150px; background: var(--pico-background-color);"
 					placeholder="Tell us about your workout, share motivation, or just say hi!"
 				></div>
 				
-				<textarea 
-					id="text_content" 
-					name="text_content" 
+				<textarea
+					id="text_content"
+					name="text_content"
 					style="display: none;"
 				></textarea>
 				<small>What's on your mind? Share your fitness journey! Use the toolbar above to format your text.</small>
 			</label>
 			
-			<label for="images">
-				Add pictures (optional)
-				<input 
-					type="file" 
-					id="images" 
-					name="image1" 
+			<label for="image">
+				Add picture (optional)
+				<input
+					type="file"
+					id="image"
+					name="image"
 					accept="image/*"
 				>
-				<div id="additional-images"></div>
 				<small>Upload photos from your workout or anything fitness-related.</small>
-				<button type="button" onclick="addImageInput()" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.9rem;">+ Add another image</button>
 			</label>
 			
 			<button type="submit" onclick="updateHiddenTextarea()">Post</button>
@@ -67,35 +65,12 @@
 		<div id="post-response"></div>
 	</div>
 
-	<!-- Posts Feed -->
+	<!-- Post Feed -->
 	<div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
 		<h3>Recent Posts</h3>
-		{% if posts.len > 0 %}
-			<div id="posts-feed">
-				{% for post in posts %}
-					<article style="border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
-						<header style="margin-bottom: 0.5rem;">
-							<strong>{{post.name}}</strong>
-							<small style="color: var(--pico-muted-color); margin-left: 0.5rem;">{{post.created_at}}</small>
-						</header>
-						
-						<div style="margin-bottom: 0.5rem;" data-html-content="{{post.text_content}}"></div>
-						
-						{% if post.image_filename != "" %}
-							<div style="margin: 0.5rem 0;">
-								<img 
-									src="/pictures/{{post.image_filename}}"
-									alt="Post image" 
-									style="max-width: 100%; height: auto; border-radius: var(--pico-border-radius);"
-								>
-							</div>
-						{% endif %}
-					</article>
-				{% endfor %}
-			</div>
-		{% else %}
-			<p>No posts yet. Be the first to share something!</p>
-		{% endif %}
+		<div id="post-feed" hx-get="/api/post-feed" hx-trigger="load" hx-swap="innerHTML">
+			<p>Loading posts...</p>
+		</div>
 	</div>
 </article>
 {% endblock %}
@@ -208,13 +183,13 @@ document.addEventListener('htmx:afterSwap', function(event) {
 			// Clear the editor
 			document.getElementById('text_content_editor').innerHTML = '';
 			document.getElementById('text_content').value = '';
-			document.getElementById('images').value = '';
-			document.getElementById('additional-images').innerHTML = '';
+			document.getElementById('image').value = '';
 			imageInputCounter = 2;
 			
+			// Refresh posts feed instead of reloading the entire page
 			setTimeout(() => {
-				window.location.reload();
-			}, 1000);
+        htmx.trigger('#posts-feed', 'load');
+			}, 500);
 		}
 	}
 });
@@ -222,17 +197,6 @@ document.addEventListener('htmx:afterSwap', function(event) {
 // Ensure content is updated before form submission
 document.getElementById('post-form').addEventListener('htmx:configRequest', function(event) {
 	updateHiddenTextarea();
-});
-
-// Process HTML content in posts
-document.addEventListener('DOMContentLoaded', function() {
-	const posts = document.querySelectorAll('[data-html-content]');
-	posts.forEach(function(post) {
-		const htmlContent = post.getAttribute('data-html-content');
-		if (htmlContent) {
-			post.innerHTML = htmlContent;
-		}
-	});
 });
 </script>
 {% endblock %}

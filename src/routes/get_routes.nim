@@ -67,13 +67,12 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       let current_total = get_user_total_miles(db_conn, session.get().runner_id)
       response_body = render_template("dashboard.jinja", session, current_total = some(current_total))
 
-  of "/post":
+  of "/posts":
     if session.is_none or session.get().is_family_session:
       status = Http302
       headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
     else:
-      let posts = get_all_posts(db_conn)
-      response_body = render_post_page(posts, session)
+      response_body = render_posts_page(@[], session)
 
   of "/logout":
     if session.is_some:
@@ -147,6 +146,24 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
         status = Http302
         headers = new_http_headers([("Location", "/login")])
 
+  of "/api/leaderboard-table":
+    if session.is_none or session.get().is_family_session:
+      status = Http302
+      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
+    else:
+      let leaderboard = get_leaderboard(db_conn)
+      var user_stats: seq[Entry] = @[]
+      for db_entry in leaderboard:
+        var name: string = db_entry.runner.name
+        var user: Runner_Info = Runner_Info(name: name, avatar: "/pictures/" & name.replace(" ", "_") & ".webp")
+        var entry: Entry = Entry(
+          runner: user,
+          total_miles: db_entry.total_miles,
+        )
+        user_stats.add(entry)
+      
+      response_body = render_leaderboard_table(user_stats)
+
   of "/api/user-miles-data":
     if session.is_none or session.get().is_family_session:
       status = Http401
@@ -180,6 +197,14 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       entries_json.add("]")
       
       response_body = &"""{{"dates": {dates_json}, "miles": {miles_json}, "entries": {entries_json}}}"""
+
+  of "/api/post-feed":
+    if session.is_none or session.get().is_family_session:
+      status = Http302
+      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
+    else:
+      let posts = get_all_posts(db_conn)
+      response_body = render_post_feed(posts)
   
   # Handle switch-runner/ID routes
   elif req.url.path.starts_with("/switch-runner/"):

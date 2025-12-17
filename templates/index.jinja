@@ -10,8 +10,13 @@
   </blockquote>
   
   <div class="mt-3">
-	<a href="/signup" role="button">Sign up</a>
-	<a href="/login" role="button" class="secondary">Log in</a>
+    {% if session.is_some() %}
+    <a href="/dashboard" role="button">Dashboard</a>
+    <a href="/leaderboard" role="button">Leaderboard</a>
+    {% else %}
+    <a href="/signup" role="button">Sign up</a>
+    <a href="/login" role="button" class="secondary">Log in</a>
+    {% endif %}
   </div>
 </section>
 {% endblock %}
