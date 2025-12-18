@@ -26,10 +26,10 @@
   <form method="post" action="/login" hx-post="/login" hx-target="#message-container" hx-swap="innerHTML">
     <label for="email">
       Email
-      <input 
-        type="email" 
-        id="email" 
-        name="email" 
+      <input
+        type="email"
+        id="email"
+        name="email"
         placeholder="Enter your email"
         {% if email.is_some() %}value="{{email.get()}}"{% endif %}
         required
@@ -39,10 +39,10 @@
 
     <label for="password">
       Password
-      <input 
-        type="password" 
-        id="password" 
-        name="password" 
+      <input
+        type="password"
+        id="password"
+        name="password"
         placeholder="Enter your password"
         required
       >

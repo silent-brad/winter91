@@ -9,75 +9,79 @@
 		<p>Customize your Winter 100 profile</p>
 	</header>
 	
-	{% if error_message.isSome() %}
+  <div id="settings-messages">
+	{% if error_message.is_some() %}
 		<div class="error" style="
-			background-color: var(--pico-del-background-color); 
-			color: var(--pico-del-color); 
-			padding: 1rem; 
-			border-radius: var(--pico-border-radius); 
+			background-color: var(--pico-del-background-color);
+			color: var(--pico-del-color);
+			padding: 1rem;
+			border-radius: var(--pico-border-radius);
 			margin-bottom: 1rem;
 		">
 			{{error_message.get()}}
 		</div>
 	{% endif %}
 	
-	{% if success_message.isSome() %}
+	{% if success_message.is_some() %}
 		<div class="success" style="
-			background-color: var(--pico-ins-background-color); 
-			color: var(--pico-ins-color); 
-			padding: 1rem; 
-			border-radius: var(--pico-border-radius); 
+			background-color: var(--pico-ins-background-color);
+			color: var(--pico-ins-color);
+			padding: 1rem;
+			border-radius: var(--pico-border-radius);
 			margin-bottom: 1rem;
 		">
 			{{success_message.get()}}
 		</div>
 	{% endif %}
+  </div>
 	
-	<form method="post" action="/settings" enctype="multipart/form-data">
+	<form method="post" action="/settings" enctype="multipart/form-data"
+		hx-post="/settings"
+		hx-target="#settings-messages"
+		hx-swap="innerHTML">
 		<div style="text-align: center; margin-bottom: 2rem;">
-			<h3>Profile Avatar</h3>
 			<div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 1rem 0;">
-				{% if walker.isSome() %}
-					{% let walker = walker.get() %}
-					<div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">
-						{{ walker.name }}
-					</div>
+				{% if walker.is_some() %}
+          {% let walker = walker.get() %}
+          {% let id = walker.id %}
+          {% let name = walker.name %}
+          {% importnimja "partials/_walker_avatar.jinja" %}
 				{% endif %}
 			</div>
 		</div>
 		
-		<label for="profile_picture">
-			Profile Picture (Optional)
-			<input 
-				type="file" 
-				id="profile_picture" 
-				name="profile_picture" 
+		<label for="avatar">
+			Change Profile Picture
+			<input
+				type="file"
+				id="avatar"
+				name="avatar"
 				accept="image/*"
 			>
 			<small>Upload a custom profile picture, or leave empty to use avatar with your initials.</small>
 		</label>
 		
 		<label for="name">
-			Name
-			<input 
-				type="text" 
-				id="name" 
-				name="name" 
+			Change Name
+			<input
+				type="text"
+				id="name"
+				name="name"
 				placeholder="Enter your name"
-				{% if walker.isSome() %}value="{{walker.get().name}}"{% endif %}
+				{% if walker.is_some() %}value="{{walker.get().name}}"{% endif %}
 				required
 			>
 		</label>
 		
 		<fieldset>
-			<legend>Change Password (Optional)</legend>
+			<legend>Change Password (for family account)</legend>
 			
 			<label for="current_password">
 				Current Password
-				<input 
-					type="password" 
-					id="current_password" 
-					name="current_password" 
+				<input
+					type="password"
+					id="current_password"
+					name="current_password"
 					placeholder="Enter current password"
 				>
 				<small>Required only if changing password.</small>
@@ -85,10 +89,10 @@
 			
 			<label for="new_password">
 				New Password
-				<input 
-					type="password" 
-					id="new_password" 
-					name="new_password" 
+				<input
+					type="password"
+					id="new_password"
+					name="new_password"
 					placeholder="Enter new password"
 					minlength="8"
 				>
@@ -97,10 +101,10 @@
 			
 			<label for="confirm_new_password">
 				Confirm New Password
-				<input 
-					type="password" 
-					id="confirm_new_password" 
-					name="confirm_new_password" 
+				<input
+					type="password"
+					id="confirm_new_password"
+					name="confirm_new_password"
 					placeholder="Confirm new password"
 					minlength="8"
 				>
@@ -114,14 +118,6 @@
 
 {% block extra_js %}
 <script>
-// Update avatar preview when color changes
-document.getElementById('color').addEventListener('input', function() {
-	const avatar = document.querySelector('.avatar');
-	if (avatar) {
-		avatar.style.backgroundColor = this.value;
-	}
-});
-
 // Password confirmation validation
 document.getElementById('confirm_new_password').addEventListener('input', function() {
 	const newPassword = document.getElementById('new_password').value;

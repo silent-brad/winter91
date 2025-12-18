@@ -120,7 +120,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       let user_opt = get_walker_by_id(db_conn, session.get().walker_id)
       if user_opt.is_some:
         let walker = user_opt.get()
-        var user_info: Walker_Info = Walker_Info(name: walker.name)
+        var user_info: Walker_Info = Walker_Info(id: walker.id, name: walker.name)
         response_body = render_settings(some(user_info), session, none(string), none(string))
       else:
         status = Http302

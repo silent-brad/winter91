@@ -50,19 +50,22 @@ proc create_walker_account*(db: DbConn, family_id: int64, name: string): int64 =
   return walker_id
 
 proc update_walker_name*(db: DbConn, walker_id: int64, name: string) =
-  let walker_opt = get_walker_by_id(db, walker_id)
+  let walker_opt = db.get_walker_by_id(walker_id)
   if walker_opt.is_some:
     let walker = walker_opt.get()
     
     # Update the name
     db.exec(sql"UPDATE walker SET name = ? WHERE id = ?", name, walker_id)
     
-    # If the user hasn't uploaded a custom avatar, keep the existing filename for now
-    create_generic_avatar(walker.id, walker.name)
-    # Delete the old avatar file
-    remove_file("avatars/" & int_to_str(walker.id) & "_" & walker.name.replace(" ", "_") & ".webp")
+    if walker.has_custom_avatar:
+      # move avatar file to new name
+      move_file("avatars/" & walker.id.int_to_str() & "_" & walker.name.replace(" ", "_") & ".webp", "avatars/" & walker.id.int_to_str() & "_" & name.replace(" ", "_") & ".webp")
+    else:
+      create_generic_avatar(walker.id, name)
+      # Delete the old avatar file
+      remove_file("avatars/" & int_to_str(walker.id) & "_" & walker.name.replace(" ", "_") & ".webp")
 
-proc update_walker_avatar*(db: DbConn, walker_id: int64, avatar_filename: string) =
+proc update_walker_avatar*(db: DbConn, walker_id: int64) =
   db.exec(sql"UPDATE walker SET has_custom_avatar = true WHERE id = ?", walker_id)
 
 proc delete_walker_account*(db: DbConn, walker_id: int64) =

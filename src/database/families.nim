@@ -30,3 +30,6 @@ proc get_family_by_id*(db: DbConn, family_id: int64): Option[Family] =
     password_hash: row[2],
     created_at: parse(row[3], "yyyy-MM-dd HH:mm:ss")
   ))
+
+proc update_family_password*(db: DbConn, family_id: int64, new_password_hash: string): void =
+  db.exec(sql"UPDATE family SET password_hash = ? WHERE id = ?", new_password_hash, family_id)

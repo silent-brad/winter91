@@ -11,27 +11,27 @@
   <div id="signup-messages">
 	{% if error_message.is_some() %}
 	  <div class="error">
-		{{error_message.get()}}
+      {{error_message.get()}}
 	  </div>
 	{% endif %}
 	
 	{% if success_message.is_some() %}
 	  <div class="success">
-		{{success_message.get()}}
+      {{success_message.get()}}
 	  </div>
 	{% endif %}
   </div>
   
-  <form id="family-form" method="post" action="/signup" 
+  <form id="family-form" method="post" action="/signup"
 		hx-post="/signup"
 		hx-target="#signup-messages"
 		hx-swap="innerHTML">
     <label for="family-passkey">
       Passkey Code
-      <input 
-      type="text" 
-      id="family-passkey" 
-      name="passkey" 
+      <input
+      type="text"
+      id="family-passkey"
+      name="passkey"
       placeholder="Enter invitation code"
       required
       >

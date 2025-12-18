@@ -145,27 +145,21 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
       response_body = """<p style="color: red;">You must be logged in to create posts</p>"""
     else:
       # Parse multipart form data for file upload
-      let multipart_data = await parseMultipart(req)
+      let multipart_data = await parse_multipart(req)
       
       if multipart_data.error != "":
         response_body = &"""<p style="color: red;">Error parsing form data: {multipart_data.error}</p>"""
       else:
         let text_content = sanitize_html(multipart_data.fields.getOrDefault("text_content", "").strip())
-        var image_filenames: seq[string] = @[]
-        
-        # Check for multiple image files
-        for key, (orig_filename, content_type, file_size) in multipart_data.files:
-          if key.startsWith("image"):
-            let upload_path = "uploads" / orig_filename
-            if file_exists(upload_path):
-              let file_data = read_file(upload_path)
-              let saved_filename = save_uploaded_file(file_data, orig_filename, "pictures")
-              image_filenames.add(saved_filename)
-              # Clean up the temporary file
-              remove_file(upload_path)
-        
-        # For backwards compatibility, store first image in image_filename field
-        let image_filename = if image_filenames.len > 0: image_filenames[0] else: ""
+        var image_filename = ""
+        if multipart_data.files.has_key("image"):
+          let (orig_filename, content_type, file_size) = multipart_data.files["image"]
+          let upload_path = "uploads" / orig_filename
+          if file_exists(upload_path):
+            let file_data = read_file(upload_path)
+            image_filename = save_uploaded_file(file_data, orig_filename, "pictures")
+            # Clean up the temporary file
+            remove_file(upload_path)
         
         if text_content.strip() == "" and image_filename == "":
           response_body = """<p style="color: red;">Please provide text content or an image</p>"""
@@ -178,77 +172,27 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             echo "Error creating post: ", e.msg
             response_body = """<p style="color: red;">Error creating post</p>"""
 
-  of "/upload-avatar":
-    if session.is_none:
-      status = Http401
-      response_body = """<p style="color: red;">You must be logged in to upload avatar</p>"""
-    else:
-      # Parse multipart form data for file upload
-      let multipart_data = await parseMultipart(req)
-      
-      if multipart_data.error != "":
-        response_body = &"""<p style="color: red;">Error parsing form data: {multipart_data.error}</p>"""
-      else:
-        var avatar_filename = ""
-        
-        # Check if an avatar file was uploaded
-        if multipart_data.files.hasKey("avatar"):
-          let (orig_filename, content_type, file_size) = multipart_data.files["avatar"]
-          # Read the uploaded file from uploads directory and save to pictures
-          let upload_path = "uploads" / orig_filename
-          if file_exists(upload_path):
-            let file_data = read_file(upload_path)
-            avatar_filename = save_uploaded_file(file_data, "avatar_" & orig_filename, "pictures")
-            # Clean up the temporary file
-            remove_file(upload_path)
-        
-        if avatar_filename == "":
-          response_body = """<p style="color: red;">No avatar file uploaded</p>"""
-        else:
-          try:
-            update_walker_avatar(db_conn, session.get().walker_id, avatar_filename)
-            response_body = """<p style="color: green;">Avatar updated successfully!</p>"""
-          except Exception as e:
-            echo "Error updating avatar: ", e.msg
-            response_body = """<p style="color: red;">Error updating avatar</p>"""
-
   of "/settings":
     if session.is_none:
       status = Http401
       response_body = """<p style="color: red;">You must be logged in to update settings</p>"""
     else:
       # Parse multipart form data for file upload
-      let multipart_data = await parseMultipart(req)
+      let multipart_data = await parse_multipart(req)
       
       if multipart_data.error != "":
         response_body = &"""<p style="color: red;">Error parsing form data: {multipart_data.error}</p>"""
       else:
         # Extract form fields with validation
         let name = multipart_data.fields.get_or_default("name", "").strip()
-        let color = multipart_data.fields.get_or_default("color", "#3b82f6").strip()
         let current_password = multipart_data.fields.get_or_default("current_password", "").strip()
         let new_password = multipart_data.fields.get_or_default("new_password", "").strip()
-        let confirm_password = multipart_data.fields.get_or_default("confirm_password", "").strip()
-        
-        var profile_picture_filename = ""
-        
-        # Check if a profile picture file was uploaded
-        if multipart_data.files.hasKey("profile_picture"):
-          let (orig_filename, content_type, file_size) = multipart_data.files["profile_picture"]
-          # Read the uploaded file from uploads directory and save to pictures
-          let upload_path = "uploads" / orig_filename
-          if file_exists(upload_path):
-            let file_data = read_file(upload_path)
-            profile_picture_filename = save_uploaded_file(file_data, "avatar_" & orig_filename, "pictures")
-            # Clean up the temporary file
-            remove_file(upload_path)
+        let confirm_password = multipart_data.fields.get_or_default("confirm_new_password", "").strip()
         
         if name == "":
           response_body = """<p style="color: red;">Name is required</p>"""
         elif not validate_name(name):
           response_body = """<p style="color: red;">Invalid name format</p>"""
-        elif not validate_color(color):
-          response_body = """<p style="color: red;">Invalid color format</p>"""
         else:
           let walker_opt = get_walker_by_id(db_conn, session.get().walker_id)
           if walker_opt.is_none:
@@ -258,15 +202,6 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             var success = true
             var error_msg = ""
             
-            # Handle profile picture upload if one was provided
-            if profile_picture_filename != "":
-              try:
-                update_walker_avatar(db_conn, session.get().walker_id, profile_picture_filename)
-              except Exception as e:
-                echo "Error updating profile picture: ", e.msg
-                success = false
-                error_msg = "Error updating profile picture"
-            
             # Update basic info
             if success:
               try:
@@ -275,10 +210,57 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
                 success = false
                 error_msg = "Error updating profile"
             
-            # Note: Password changes are handled at the family account level, not for individual walkers
+            # Handle avatar upload if provided
+            if success and multipart_data.files.has_key("avatar"):
+              let (orig_filename, content_type, file_size) = multipart_data.files["avatar"]
+              let upload_path = "uploads" / orig_filename
+              if file_exists(upload_path):
+                try:
+                  let file_data = read_file(upload_path)
+                  # Extract extension from original filename
+                  let original_ext = if orig_filename.contains("."): orig_filename.split(".")[^1].to_lower_ascii() else: "jpg"
+                  # Generate walker-specific filename that can be overwritten
+                  let name_with_underscore = walker.name.replace(" ", "_")
+                  let walker_filename = $session.get().walker_id & "_" & name_with_underscore & "." & original_ext
+                  # Save to avatars directory, allowing overwrite of existing file
+                  discard save_uploaded_file(file_data, walker_filename, "avatars")
+                  # Clean up the temporary file
+                  remove_file(upload_path)
+                  # Update walker avatar flag in database
+                  update_walker_avatar(db_conn, session.get().walker_id)
+                except Exception as e:
+                  echo "Error updating avatar: ", e.msg
+                  success = false
+                  error_msg = "Error updating avatar"
+            
+            # Handle password change if provided
+            if success and current_password != "" and new_password != "":
+              if new_password != confirm_password:
+                success = false
+                error_msg = "New passwords do not match"
+              elif new_password.len < 8:
+                success = false
+                error_msg = "Password must be at least 8 characters"
+              else:
+                # Verify current family password
+                let family_opt = get_family_by_id(db_conn, session.get().family_id)
+                if family_opt.is_none:
+                  success = false
+                  error_msg = "Family account not found"
+                elif not verify_password(current_password, family_opt.get().password_hash):
+                  success = false
+                  error_msg = "Current password is incorrect"
+                else:
+                  try:
+                    let new_password_hash = hash_password(new_password)
+                    update_family_password(db_conn, session.get().family_id, new_password_hash)
+                  except:
+                    success = false
+                    error_msg = "Error updating password"
             
             if success:
-              response_body = """<p style="color: green;">Settings updated successfully!</p>"""
+              headers = new_http_headers([("HX-Redirect", "/dashboard?success=settings")])
+              response_body = &"<p style=\"color: green;\">Settings updated successfully!</p>"
             else:
               response_body = &"""<p style="color: red;">{error_msg}</p>"""
 

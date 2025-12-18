@@ -25,13 +25,3 @@ proc get_user_from_session*(session_id: string): Option[Session] {.gcsafe.} =
       if session_id in sessions:
         return some(sessions[session_id])
       return none(Session)
-
-proc get_initials*(name: string): string =
-  var initials = ""
-  let parts = name.split()
-  for part in parts:
-    if part.len > 0:
-      initials.add(part[0].to_upper_ascii())
-      if initials.len >= 2:
-        break
-  return if initials.len > 0: initials else: "??"

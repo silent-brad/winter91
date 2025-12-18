@@ -61,18 +61,18 @@ proc parseMultipart*(req: Request): Future[MultipartData] {.async.} =
     var partBody = part[headerEnd + 4 .. ^1].strip(trailing = true, chars = {'\r', '\n'})
 
     # Parse part headers
-    var partHeaders = newTable[string, string]()
+    var part_headers = newTable[string, string]()
     for line in headerStr.split("\r\n"):
       if line.len == 0: continue
       let colonPos = line.find(':')
       if colonPos != -1:
         let key = line[0 ..< colonPos].strip().toLowerAscii()
         let val = line[colonPos + 1 .. ^1].strip()
-        partHeaders[key] = val
+        part_headers[key] = val
 
     # Parse Content-Disposition
-    if not partHeaders.hasKey("content-disposition"): continue
-    let disp = partHeaders["content-disposition"]
+    if not part_headers.hasKey("content-disposition"): continue
+    let disp = part_headers["content-disposition"]
     if not disp.startsWith("form-data"): continue
 
     let dispParams = disp.split(';').mapIt(it.strip())
@@ -88,27 +88,27 @@ proc parseMultipart*(req: Request): Future[MultipartData] {.async.} =
 
     if name.len == 0: continue
 
-    let ctype = partHeaders.getOrDefault("content-type", "application/octet-stream")
+    let ctype = part_headers.get_or_default("content-type", "application/octet-stream")
 
     if filename.len > 0:
       # File upload - save to disk with proper security checks
-      let uploadDir = "uploads"
-      if not dirExists(uploadDir): createDir(uploadDir)
+      let upload_dir = "uploads"
+      if not dir_exists(upload_dir): create_dir(upload_dir)
       
       # Sanitize filename and validate file extension
-      let safeFilename = sanitize_filename(filename)
-      if not is_safe_file_extension(safeFilename):
+      let safe_filename = sanitize_filename(filename)
+      if not is_safe_file_extension(safe_filename):
         result.error = "File type not allowed"
         return
       
       # Limit file size (10MB)
-      if partBody.len > 10_485_760:
+      if part_body.len > 10_485_760:
         result.error = "File too large"
         return
         
-      let path = uploadDir / safeFilename
-      writeFile(path, partBody)
-      result.files[name] = (safeFilename, ctype, partBody.len)
+      let path = upload_dir / safe_filename
+      write_file(path, part_body)
+      result.files[name] = (safe_filename, ctype, part_body.len)
     else:
       # Regular field
-      result.fields[name] = partBody
+      result.fields[name] = part_body

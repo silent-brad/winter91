@@ -4,13 +4,17 @@
 - [ ] Fix graph in dashboard to work correctly
 
 - [x] Resize pictures
+- [x] Fix WYSIWYG editor to only include B,I,U,Quote,Link
 
-- [ ] Fix WYSIWYG editor to only include B,I,U,Quote,Link
-
-- [ ] Add avatar change
+- [x] Finalize Settings
+  - [x] Make name change (in settings) redirect after change
+  - [x] Add avatar change
 
 - [ ] Add styling (Basecoat)
+  - [ ] Make password fields viewable
 - [ ] Add custom color scheme/css
+
+- [ ] Write About page
 
 - [ ] Make PWA
 - [ ] Redo logo
@@ -71,3 +75,4 @@
 
 - [ ] Add Rive animations?
 
+- [ ] Add keyboard shortcuts?
