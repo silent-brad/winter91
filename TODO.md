@@ -3,7 +3,7 @@
 ## Big ones
 - [ ] Fix graph in dashboard to work correctly
 
-- [ ] Make sure text is added in posts
+- [x] Resize pictures
 
 - [ ] Fix WYSIWYG editor to only include B,I,U,Quote,Link
 
