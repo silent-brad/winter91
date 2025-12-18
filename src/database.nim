@@ -3,11 +3,11 @@ import database/miles
 import database/models
 import database/posts
 import database/families
-import database/runners
+import database/walkers
 
 export init_database
 export log_miles, get_user_total_miles, get_user_miles_by_date, get_leaderboard
-export MileEntry, Family, Runner
+export MileEntry, Family, Walker
 export create_post, get_all_posts
 export get_family_by_email, create_family_account, get_family_by_id
-export get_runner_by_id, get_runners_by_family, create_runner_account, update_runner_name, update_runner_avatar, delete_runner_account
+export get_walker_by_id, get_walkers_by_family, create_walker_account, update_walker_name, update_walker_avatar, delete_walker_account

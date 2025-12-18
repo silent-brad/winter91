@@ -1,6 +1,6 @@
 {% extends "partials/_master.jinja" %}
 
-{% block title %}Add Runner{% endblock %}
+{% block title %}Add Walker{% endblock %}
 
 {% block content %}
 <style>
@@ -22,32 +22,32 @@
 </style>
 <main class="container">
     <div class="welcome-section">
-      <h2>Your family account has been created successfully. Now let's create your first runner account.</h2>
+      <h2>Your family account has been created successfully. Now let's create your first walker account.</h2>
     </div>
 
     <div class="grid">
         <div></div>
         <div>
-            <h2>Create Your Runner Account</h2>
-            <p>A runner account tracks your individual miles and progress. You can create multiple runner accounts for each family member.</p>
+            <h2>Create Your Walker Account</h2>
+            <p>A walker account tracks your individual miles and progress. You can create multiple walker accounts for each family member.</p>
             
-            <form hx-post="/create-runner" hx-target="#runner-response">
+            <form hx-post="/create-walker" hx-target="#walker-response">
                 <div>
-                    <label for="name">Runner Name</label>
+                    <label for="name">Walker Name</label>
                     <input type="text" id="name" name="name" placeholder="Enter your name" required maxlength="50">
                     <small>This is the name that will appear on the leaderboard.</small>
                 </div>
                 
 
                 
-                <button type="submit">Create Runner Account</button>
+                <button type="submit">Create Walker Account</button>
             </form>
             
-            <div id="runner-response"></div>
+            <div id="walker-response"></div>
             
             <hr>
             
-            <p><small>After creating your runner account, you'll be taken to your dashboard where you can start logging miles!</small></p>
+            <p><small>After creating your walker account, you'll be taken to your dashboard where you can start logging miles!</small></p>
         </div>
         <div></div>
     </div>

@@ -3,6 +3,8 @@
 ## Big ones
 - [ ] Fix graph in dashboard to work correctly
 
+- [ ] Make sure text is added in posts
+
 - [ ] Fix WYSIWYG editor to only include B,I,U,Quote,Link
 
 - [ ] Add avatar change
@@ -28,7 +30,7 @@
 ## Fix accounts
 - [x] Add avatar component (avatar icon on left, Name on right)
 - [x] Make email username for family account
-  - [x] Make family account create runner (user) accounts (Name, avatar)
+  - [x] Make family account create walker (user) accounts (Name, avatar)
   - [x] Generate default avatar with initials of name (just make `Name-avatar.webp`) (use this link: `https://ui-avatars.com/api/?background=random&name=Elijah%20White&format=png`)
 - [x] Add text in login page: "If you need to change your password, email brad@knightoffaith.systems."
 - [ ] Add avatar change

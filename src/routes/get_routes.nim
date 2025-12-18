@@ -1,6 +1,6 @@
 import asynchttpserver
 import strutils, uri, tables, json, options, strformat
-import ../database/[models, families, runners, miles, posts]
+import ../database/[models, families, walkers, miles, posts]
 import db_connector/db_sqlite
 import locks
 import os
@@ -22,7 +22,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
   of "/leaderboard":
     if session.is_none or session.get().is_family_session:
       status = Http302
-      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
+      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-walker")])
     else:
       var success_msg: Option[string] = none(string)
       if req.url.query.len > 0:
@@ -35,9 +35,9 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
   of "/dashboard":
     if session.is_none or session.get().is_family_session:
       status = Http302
-      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
+      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-walker")])
     else:
-      let current_total = get_user_total_miles(db_conn, session.get().runner_id)
+      let current_total = get_user_total_miles(db_conn, session.get().walker_id)
       # Check for success parameter
       var success_msg: Option[string] = none(string)
       if req.url.query.len > 0:
@@ -50,15 +50,15 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
   of "/log":
     if session.is_none or session.get().is_family_session:
       status = Http302
-      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
+      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-walker")])
     else:
-      let current_total = get_user_total_miles(db_conn, session.get().runner_id)
+      let current_total = get_user_total_miles(db_conn, session.get().walker_id)
       response_body = render_template("dashboard.jinja", session, current_total = some(current_total))
 
   of "/posts":
     if session.is_none or session.get().is_family_session:
       status = Http302
-      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
+      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-walker")])
     else:
       response_body = render_posts_page(@[], session)
 
@@ -74,10 +74,10 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       headers = new_http_headers([("Location", "/")])
 
   of "/about":
-    let user_id_opt = if session.isSome: some(session.get().runner_id) else: none(int64)
-    response_body = render_template("about.jinja", session, runner_id = user_id_opt)
+    let user_id_opt = if session.isSome: some(session.get().walker_id) else: none(int64)
+    response_body = render_template("about.jinja", session, walker_id = user_id_opt)
 
-  of "/add-runner":
+  of "/add-walker":
     if session.is_none or not session.get().is_family_session:
       status = Http302
       headers = new_http_headers([("Location", "/login")])
@@ -86,41 +86,41 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       var success_msg: Option[string] = none(string)
       if req.url.query.len > 0:
         if "success=signup" in req.url.query:
-          success_msg = some("Family account created successfully! Now create your first runner.")
-      response_body = render_template("add-runner.jinja", session, none(string), success_msg)
+          success_msg = some("Family account created successfully! Now create your first walker.")
+      response_body = render_template("add-walker.jinja", session, none(string), success_msg)
 
-  of "/select-runner":
+  of "/select-walker":
     if session.is_none or not session.get().is_family_session:
       status = Http302
       headers = new_http_headers([("Location", "/login")])
     else:
-      let db_runners = get_runners_by_family(db_conn, session.get().family_id)
-      var runners: seq[Runner_Info] = @[]
-      for runner in db_runners:
-        let runner_info = Runner_Info(
-          id: runner.id,
-          name: runner.name,
-          family_id: runner.family_id,
-          has_custom_avatar: runner.has_custom_avatar,
-          created_at: $runner.created_at
+      let db_walkers = get_walkers_by_family(db_conn, session.get().family_id)
+      var walkers: seq[Walker_Info] = @[]
+      for walker in db_walkers:
+        let walker_info = Walker_Info(
+          id: walker.id,
+          name: walker.name,
+          family_id: walker.family_id,
+          has_custom_avatar: walker.has_custom_avatar,
+          created_at: $walker.created_at
         )
-        runners.add(runner_info)
+        walkers.add(walker_info)
       # Check for success parameter
       var success_msg: Option[string] = none(string)
       if req.url.query.len > 0:
         if "success=login" in req.url.query:
-          success_msg = some("Login successful! Choose a runner to continue.")
-      response_body = render_runner_selection(runners, session, success_message = success_msg)
+          success_msg = some("Login successful! Choose a walker to continue.")
+      response_body = render_walker_selection(walkers, session, success_message = success_msg)
 
   of "/settings":
     if session.is_none or session.get().is_family_session:
       status = Http302
-      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
+      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-walker")])
     else:
-      let user_opt = get_runner_by_id(db_conn, session.get().runner_id)
+      let user_opt = get_walker_by_id(db_conn, session.get().walker_id)
       if user_opt.is_some:
-        let runner = user_opt.get()
-        var user_info: Runner_Info = Runner_Info(name: runner.name)
+        let walker = user_opt.get()
+        var user_info: Walker_Info = Walker_Info(name: walker.name)
         response_body = render_settings(some(user_info), session, none(string), none(string))
       else:
         status = Http302
@@ -129,16 +129,16 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
   of "/api/leaderboard-table":
     if session.is_none or session.get().is_family_session:
       status = Http302
-      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
+      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-walker")])
     else:
       let leaderboard = get_leaderboard(db_conn)
       var user_stats: seq[Entry] = @[]
       for db_entry in leaderboard:
-        var id: int64 = db_entry.runner.id
-        var name: string = db_entry.runner.name
-        var runner: Runner_Info = Runner_Info(id: id, name: name)
+        var id: int64 = db_entry.walker.id
+        var name: string = db_entry.walker.name
+        var walker: Walker_Info = Walker_Info(id: id, name: name)
         var entry: Entry = Entry(
-          runner: runner,
+          walker: walker,
           total_miles: db_entry.total_miles,
         )
         user_stats.add(entry)
@@ -152,9 +152,9 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       response_body = "{\"error\": \"Unauthorized\"}"
     else:
       headers = new_http_headers([("Content-Type", "application/json")])
-      let runner_id = session.get().runner_id
-      let miles_by_date = get_user_miles_by_date(db_conn, runner_id)
-      let recent_entries = get_user_recent_entries(db_conn, runner_id, 10)
+      let walker_id = session.get().walker_id
+      let miles_by_date = get_user_miles_by_date(db_conn, walker_id)
+      let recent_entries = get_user_recent_entries(db_conn, walker_id, 10)
       
       var dates_json = "["
       var miles_json = "["
@@ -182,30 +182,30 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
   of "/api/post-feed":
     if session.is_none or session.get().is_family_session:
       status = Http302
-      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-runner")])
+      headers = new_http_headers([("Location", if session.is_none: "/login" else: "/select-walker")])
     else:
       let posts = get_all_posts(db_conn)
       response_body = render_post_feed(posts)
   
-  # Handle switch-runner/ID routes
-  elif req.url.path.starts_with("/switch-runner/"):
+  # Handle switch-walker/ID routes
+  elif req.url.path.starts_with("/switch-walker/"):
     if session.is_none or not session.get().is_family_session:
       status = Http302
       headers = new_http_headers([("Location", "/login")])
     else:
-      let runner_id_str = req.url.path[15..^1]  # Remove "/switch-runner/"
+      let walker_id_str = req.url.path[15..^1]  # Remove "/switch-walker/"
       try:
-        let runner_id = parse_biggest_int(runner_id_str)
-        let runner_opt = get_runner_by_id(db_conn, runner_id)
+        let walker_id = parse_biggest_int(walker_id_str)
+        let walker_opt = get_walker_by_id(db_conn, walker_id)
         
-        if runner_opt.is_none or runner_opt.get().family_id != session.get().family_id:
+        if walker_opt.is_none or walker_opt.get().family_id != session.get().family_id:
           status = Http302
-          headers = new_http_headers([("Location", "/select-runner?error=invalid-runner")])
+          headers = new_http_headers([("Location", "/select-walker?error=invalid-walker")])
         else:
-          # Switch to the runner
+          # Switch to the walker
           let new_session = Session(
             family_id: session.get().family_id,
-            runner_id: runner_id,
+            walker_id: walker_id,
             email: session.get().email,
             name: session.get().name,
             is_family_session: false
@@ -224,7 +224,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
           ])
       except:
         status = Http302
-        headers = new_http_headers([("Location", "/select-runner?error=invalid-runner")])
+        headers = new_http_headers([("Location", "/select-walker?error=invalid-walker")])
   else:
     # Check if it's a static file request
     if req.url.path.starts_with("/static/"):

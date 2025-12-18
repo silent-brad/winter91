@@ -7,7 +7,7 @@ type
     password_hash*: string
     created_at*: DateTime
 
-  Runner* = object
+  Walker* = object
     id*: int64
     family_id*: int64
     name*: string
@@ -16,6 +16,6 @@ type
 
   MileEntry* = object
     id*: int64
-    runner_id*: int64
+    walker_id*: int64
     miles*: float
     logged_at*: DateTime

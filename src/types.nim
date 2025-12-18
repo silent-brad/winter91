@@ -3,12 +3,12 @@ import tables
 type
   Session* = object
     family_id*: int64
-    runner_id*: int64
+    walker_id*: int64
     email*: string
     name*: string
-    is_family_session*: bool  # true if logged into family account, false if in runner
+    is_family_session*: bool  # true if logged into family account, false if in walker
   
-  Runner_Info* = object
+  Walker_Info* = object
     id*: int64
     name*: string
     family_id*: int64
@@ -16,12 +16,12 @@ type
     created_at*: string
 
   Entry* = object
-    runner*: Runner_Info
+    walker*: Walker_Info
     total_miles*: float
 
   Post* = object
     id*: int64
-    runner_id*: int64
+    walker_id*: int64
     name*: string
     text_content*: string
     image_filename*: string

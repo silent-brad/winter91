@@ -1,6 +1,6 @@
 import asynchttpserver, asyncdispatch
 import strutils, uri, tables, json, options, strformat
-import ../database/[models, families, runners, miles, posts]
+import ../database/[models, families, walkers, miles, posts]
 import db_connector/db_sqlite
 import locks
 import os
@@ -39,10 +39,10 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         let session_id = generate_session_id()
         {.cast(gcsafe).}:
           with_lock sessions_lock:
-            sessions[session_id] = Session(family_id: family.id, runner_id: 0, email: email, is_family_session: true)
+            sessions[session_id] = Session(family_id: family.id, walker_id: 0, email: email, is_family_session: true)
         headers = new_http_headers([
           ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
-          ("HX-Redirect", "/select-runner?success=login")
+          ("HX-Redirect", "/select-walker?success=login")
         ])
         response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Login successful! Redirecting...</div>"""
       else:
@@ -73,20 +73,20 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         let session_id = generate_session_id()
         {.cast(gcsafe).}:
           with_lock sessions_lock:
-            sessions[session_id] = Session(family_id: family_id, runner_id: 0, email: email, is_family_session: true)
+            sessions[session_id] = Session(family_id: family_id, walker_id: 0, email: email, is_family_session: true)
         
         headers = new_http_headers([
           ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
-          ("HX-Redirect", "/add-runner?success=signup")
+          ("HX-Redirect", "/add-walker?success=signup")
         ])
         response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Account created successfully!</div>"""
       except:
         response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Error creating account</div>"""
 
-  of "/create-runner":
+  of "/create-walker":
     if session.is_none or not session.get().is_family_session:
       status = Http401
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">You must be logged into a family account to create runners</div>"""
+      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">You must be logged into a family account to create walkers</div>"""
     else:
       let name = form_data.get_or_default("name", "").strip()
       
@@ -96,12 +96,12 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid name format</div>"""
       else:
         try:
-          let runner_id = create_runner_account(db_conn, session.get().family_id, name)
+          let walker_id = create_walker_account(db_conn, session.get().family_id, name)
           
-          # Switch to the new runner
+          # Switch to the new walker
           let new_session = Session(
             family_id: session.get().family_id,
-            runner_id: runner_id,
+            walker_id: walker_id,
             email: session.get().email,
             is_family_session: false
           )
@@ -114,12 +114,12 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             
           headers = new_http_headers([
             ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
-            ("HX-Redirect", "/dashboard?success=runner-created")
+            ("HX-Redirect", "/dashboard?success=walker-created")
           ])
-          response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Runner account created successfully!</div>"""
+          response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Walker account created successfully!</div>"""
         except Exception as e:
-          echo "Error creating runner: ", e.msg
-          response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Error creating runner account</div>"""
+          echo "Error creating walker: ", e.msg
+          response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Error creating walker account</div>"""
 
   of "/log":
     if session.is_none:
@@ -134,7 +134,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         elif miles > 50:
           response_body = """<p style="color: red;">Miles cannot exceed 50 per entry</p>"""
         else:
-          log_miles(db_conn, session.get().runner_id, miles)
+          log_miles(db_conn, session.get().walker_id, miles)
           response_body = &"""<p style="color: green;">Logged {miles:.1f} miles successfully!</p>"""
       except:
         response_body = """<p style="color: red;">Invalid miles value</p>"""
@@ -171,7 +171,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           response_body = """<p style="color: red;">Please provide text content or an image</p>"""
         else:
           try:
-            discard create_post(db_conn, session.get().runner_id, text_content, image_filename)
+            discard create_post(db_conn, session.get().walker_id, text_content, image_filename)
             headers = new_http_headers([("HX-Redirect", "/posts")])
             response_body = """<p style="color: green;">Post created successfully!</p>"""
           except Exception as e:
@@ -206,7 +206,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           response_body = """<p style="color: red;">No avatar file uploaded</p>"""
         else:
           try:
-            update_runner_avatar(db_conn, session.get().runner_id, avatar_filename)
+            update_walker_avatar(db_conn, session.get().walker_id, avatar_filename)
             response_body = """<p style="color: green;">Avatar updated successfully!</p>"""
           except Exception as e:
             echo "Error updating avatar: ", e.msg
@@ -250,18 +250,18 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         elif not validate_color(color):
           response_body = """<p style="color: red;">Invalid color format</p>"""
         else:
-          let runner_opt = get_runner_by_id(db_conn, session.get().runner_id)
-          if runner_opt.is_none:
-            response_body = """<p style="color: red;">Runner not found</p>"""
+          let walker_opt = get_walker_by_id(db_conn, session.get().walker_id)
+          if walker_opt.is_none:
+            response_body = """<p style="color: red;">Walker not found</p>"""
           else:
-            let runner = runner_opt.get()
+            let walker = walker_opt.get()
             var success = true
             var error_msg = ""
             
             # Handle profile picture upload if one was provided
             if profile_picture_filename != "":
               try:
-                update_runner_avatar(db_conn, session.get().runner_id, profile_picture_filename)
+                update_walker_avatar(db_conn, session.get().walker_id, profile_picture_filename)
               except Exception as e:
                 echo "Error updating profile picture: ", e.msg
                 success = false
@@ -270,12 +270,12 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             # Update basic info
             if success:
               try:
-                update_runner_name(db_conn, runner.id, name)
+                update_walker_name(db_conn, walker.id, name)
               except:
                 success = false
                 error_msg = "Error updating profile"
             
-            # Note: Password changes are handled at the family account level, not for individual runners
+            # Note: Password changes are handled at the family account level, not for individual walkers
             
             if success:
               response_body = """<p style="color: green;">Settings updated successfully!</p>"""

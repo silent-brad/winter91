@@ -9,7 +9,7 @@ var db_conn: DbConn
 var PASSKEY: string
 # Read passkey from passkey file (`.PASSKEY.txt`)
 if file_exists(".PASSKEY.txt"):
-  PASSKEY = read_file(".PASSKEY.txt")
+  PASSKEY = ".PASSKEY.txt".read_file().strip()
 else:
   echo "No passkey provided"
   quit(1)

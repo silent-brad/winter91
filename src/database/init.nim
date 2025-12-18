@@ -13,7 +13,7 @@ proc init_database*(): DbConn =
   """)
   
   db.exec(sql"""
-    CREATE TABLE IF NOT EXISTS runner (
+    CREATE TABLE IF NOT EXISTS walker (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       family_id INTEGER NOT NULL,
       name TEXT NOT NULL,
@@ -26,21 +26,21 @@ proc init_database*(): DbConn =
   db.exec(sql"""
     CREATE TABLE IF NOT EXISTS mile_entry (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      runner_id INTEGER NOT NULL,
+      walker_id INTEGER NOT NULL,
       miles REAL NOT NULL,
       logged_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (runner_id) REFERENCES runner (id)
+      FOREIGN KEY (walker_id) REFERENCES walker (id)
     )
   """)
   
   db.exec(sql"""
     CREATE TABLE IF NOT EXISTS post (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      runner_id INTEGER,
+      walker_id INTEGER,
       text_content TEXT NOT NULL,
       image_filename TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (runner_id) REFERENCES runner (id)
+      FOREIGN KEY (walker_id) REFERENCES walker (id)
     )
   """)
   

@@ -1,10 +1,10 @@
 {% extends "partials/_master.jinja" %}
 
-{% block title %}Select Runner{% endblock %}
+{% block title %}Select Walker{% endblock %}
 
 {% block content %}
 <style>
-    .runner-card {
+    .walker-card {
         border: 2px solid var(--pico-border-color);
         border-radius: var(--pico-border-radius);
         padding: 1.5rem;
@@ -17,12 +17,12 @@
         text-decoration: none;
         color: inherit;
     }
-    .runner-card:hover {
+    .walker-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         border-color: var(--pico-primary-color);
     }
-    .runner-avatar {
+    .walker-avatar {
         width: 60px;
         height: 60px;
         border-radius: 50%;
@@ -34,19 +34,19 @@
         font-weight: bold;
         font-size: 1.2rem;
     }
-    .runner-info {
+    .walker-info {
         flex-grow: 1;
     }
-    .runner-name {
+    .walker-name {
         font-size: 1.3rem;
         font-weight: bold;
         margin: 0 0 0.5rem 0;
     }
-    .runner-stats {
+    .walker-stats {
         font-size: 0.9rem;
         opacity: 0.8;
     }
-    .add-runner-btn {
+    .add-walker-btn {
         border: 2px dashed var(--pico-border-color);
         border-radius: var(--pico-border-radius);
         padding: 2rem;
@@ -57,7 +57,7 @@
         color: inherit;
         display: block;
     }
-    .add-runner-btn:hover {
+    .add-walker-btn:hover {
         border-color: var(--pico-primary-color);
         background-color: var(--pico-background-color);
     }
@@ -68,8 +68,8 @@
   </style>
 <main class="container">
     <div class="welcome-text">
-        <h1>Choose Your Runner</h1>
-        <p>Select which runner account you'd like to use for this session.</p>
+        <h1>Choose Your Walker</h1>
+        <p>Select which walker account you'd like to use for this session.</p>
     </div>
 
     {% if success_message.is_some() %}
@@ -87,29 +87,29 @@
     <div class="grid">
         <div></div>
         <div>
-            {% if runners.len > 0 %}
-            {% for runner in runners %}
-            <a href="/switch-runner/{{ runner.id }}" class="runner-card">
-              {% let id = runner.id %}
-              {% let name = runner.name %}
-              {% importnimja "partials/_runner_avatar.jinja" %}
+            {% if walkers.len > 0 %}
+            {% for walker in walkers %}
+            <a href="/switch-walker/{{ walker.id }}" class="walker-card">
+              {% let id = walker.id %}
+              {% let name = walker.name %}
+              {% importnimja "partials/_walker_avatar.jinja" %}
               <div style="font-size: 1.5rem; opacity: 0.5;">→</div>
             </a>
             {% endfor %}
 
-            <a href="/add-runner" class="add-runner-btn">
+            <a href="/add-walker" class="add-walker-btn">
                 <div style="font-size: 2rem; margin-bottom: 0.5rem;">+</div>
-                <strong>Add New Runner</strong>
+                <strong>Add New Walker</strong>
                 <br>
-                <small>Create a new runner account for another family member</small>
+                <small>Create a new walker account for another family member</small>
             </a>
             {% else %}
-            <p>No runner accounts found. Let's create your first one!</p>
-            <a href="/add-runner" class="add-runner-btn">
+            <p>No walker accounts found. Let's create your first one!</p>
+            <a href="/add-walker" class="add-walker-btn">
                 <div style="font-size: 2rem; margin-bottom: 0.5rem;">+</div>
-                <strong>Create Your First Runner</strong>
+                <strong>Create Your First Walker</strong>
                 <br>
-                <small>Start tracking your miles by creating a runner account</small>
+                <small>Start tracking your miles by creating a walker account</small>
             </a>
             {% endif %}
         </div>
