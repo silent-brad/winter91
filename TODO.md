@@ -1,8 +1,6 @@
 # TODO
 
 ## Big ones
-- [ ] Fix graph in dashboard to work correctly
-
 - [x] Resize pictures
 - [x] Fix WYSIWYG editor to only include B,I,U,Quote,Link
 
@@ -10,15 +8,19 @@
   - [x] Make name change (in settings) redirect after change
   - [x] Add avatar change
 
-- [ ] Add styling (Basecoat)
+- [ ] Fix graph in dashboard to work correctly
+
+- [ ] Add styling
   - [ ] Make password fields viewable
 - [ ] Add custom color scheme/css
 
 - [ ] Write About page
+- [ ] Write Landing page (add image of snowy mountain trail?)
 
 - [ ] Make PWA
 - [ ] Redo logo
 - [ ] Deploy
+
 
 ## Full list
 - [x] Add dashboard/progress page

@@ -1,0 +1,77 @@
+/* Font declarations */
+@font-face {
+  font-family: 'Charm';
+  src: url('/static/fonts/charm/Charm-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Larken';
+  src: url('/static/fonts/larken/Larken-Regular.otf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Larken';
+  src: url('/static/fonts/larken/Larken-Bold.otf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Larken';
+  src: url('/static/fonts/larken/Larken-Italic.otf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Larken';
+  src: url('/static/fonts/larken/Larken-BoldItalic.otf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Charm';
+  src: url('/static/fonts/charm/Charm-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Athelas';
+  src: url('/static/fonts/athelas/Athelas-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Athelas';
+  src: url('/static/fonts/athelas/Athelas-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Athelas';
+  src: url('/static/fonts/athelas/Athelas-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Athelas';
+  src: url('/static/fonts/athelas/Athelas-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
