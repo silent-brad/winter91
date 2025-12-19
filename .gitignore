@@ -1,9 +1,11 @@
 *
+result
+**/result
 pictures/
 avatars/
+uploads/
 winter91.db
 .PASSKEY.txt
-src/result
 !.gitignore
 !LICENSE
 !README.md

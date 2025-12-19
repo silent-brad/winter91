@@ -3,116 +3,51 @@
 {% block title %}Select Walker{% endblock %}
 
 {% block content %}
-<style>
-    .walker-card {
-        border: 2px solid var(--pico-border-color);
-        border-radius: var(--pico-border-radius);
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        color: inherit;
-    }
-    .walker-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        border-color: var(--pico-primary-color);
-    }
-    .walker-avatar {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        border: 2px solid;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: 1.2rem;
-    }
-    .walker-info {
-        flex-grow: 1;
-    }
-    .walker-name {
-        font-size: 1.3rem;
-        font-weight: bold;
-        margin: 0 0 0.5rem 0;
-    }
-    .walker-stats {
-        font-size: 0.9rem;
-        opacity: 0.8;
-    }
-    .add-walker-btn {
-        border: 2px dashed var(--pico-border-color);
-        border-radius: var(--pico-border-radius);
-        padding: 2rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        color: inherit;
-        display: block;
-    }
-    .add-walker-btn:hover {
-        border-color: var(--pico-primary-color);
-        background-color: var(--pico-background-color);
-    }
-      .welcome-text {
-          text-align: center;
-          margin-bottom: 2rem;
-      }
-  </style>
 <main class="container">
-    <div class="welcome-text">
-        <h1>Choose Your Walker</h1>
-        <p>Select which walker account you'd like to use for this session.</p>
-    </div>
+  <div class="welcome-text">
+    <h1>Choose Your Walker</h1>
+    <p>Select which walker account you'd like to use for this session.</p>
+  </div>
 
-    {% if success_message.is_some() %}
-    <div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">
-        {{ success_message.get() }}
-    </div>
-    {% endif %}
+  {% if success_message.is_some() %}
+  <div class="success" style="background-color: var(--success-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+    {{ success_message.get() }}
+  </div>
+  {% endif %}
 
-    {% if error_message.is_some() %}
-    <div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">
-        {{ error_message.get() }}
-    </div>
-    {% endif %}
+  {% if error_message.is_some() %}
+  <div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+    {{ error_message.get() }}
+  </div>
+  {% endif %}
 
-    <div class="grid">
-        <div></div>
-        <div>
-            {% if walkers.len > 0 %}
-            {% for walker in walkers %}
-            <a href="/switch-walker/{{ walker.id }}" class="walker-card">
-              {% let id = walker.id %}
-              {% let name = walker.name %}
-              {% importnimja "partials/_walker_avatar.jinja" %}
-              <div style="font-size: 1.5rem; opacity: 0.5;">→</div>
-            </a>
-            {% endfor %}
+  <div class="grid">
+    <div>
+      {% if walkers.len > 0 %}
+      {% for walker in walkers %}
+      <a href="/switch-walker/{{ walker.id }}" class="walker-card">
+        {% let id = walker.id %}
+        {% let name = walker.name %}
+        {% importnimja "partials/_walker_avatar.jinja" %}
+        <div style="font-size: 1.5rem; opacity: 0.5;">→</div>
+      </a>
+      {% endfor %}
 
-            <a href="/add-walker" class="add-walker-btn">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">+</div>
-                <strong>Add New Walker</strong>
-                <br>
-                <small>Create a new walker account for another family member</small>
-            </a>
-            {% else %}
-            <p>No walker accounts found. Let's create your first one!</p>
-            <a href="/add-walker" class="add-walker-btn">
-                <div style="font-size: 2rem; margin-bottom: 0.5rem;">+</div>
-                <strong>Create Your First Walker</strong>
-                <br>
-                <small>Start tracking your miles by creating a walker account</small>
-            </a>
-            {% endif %}
-        </div>
-        <div></div>
+      <a href="/add-walker" class="add-walker-btn">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">+</div>
+        <strong>Add New Walker</strong>
+        <br>
+        <small>Create a new walker account for another family member</small>
+      </a>
+      {% else %}
+      <p>No walker accounts found. Let's create your first one!</p>
+      <a href="/add-walker" class="add-walker-btn">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">+</div>
+        <strong>Create Your First Walker</strong>
+        <br>
+        <small>Start tracking your miles by creating a walker account</small>
+      </a>
+      {% endif %}
     </div>
+  </div>
 </main>

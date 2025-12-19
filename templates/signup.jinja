@@ -6,7 +6,7 @@
 <article class="form-container">
   <header>
 	<h1>Sign Up</h1>
-	<p>Join the Winter 100 challenge!</p>
+	<p>Join the Winter 91 challenge!</p>
   
   <div id="signup-messages">
 	{% if error_message.is_some() %}
@@ -27,7 +27,7 @@
 		hx-target="#signup-messages"
 		hx-swap="innerHTML">
     <label for="family-passkey">
-      Passkey Code
+      Invitation Code
       <input
       type="text"
       id="family-passkey"
@@ -51,27 +51,37 @@
     
     <label for="family-password">
       Password
-      <input 
-      type="password" 
-      id="family-password" 
-      name="password" 
-      placeholder="Create a password"
-      minlength="8"
-      required
-      >
+      <div class="password-field">
+        <input 
+        type="password" 
+        id="family-password" 
+        name="password" 
+        placeholder="Create a password"
+        minlength="8"
+        required
+        >
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('family-password')">
+          <span class="toggle-icon">👁️</span>
+        </button>
+      </div>
       <small>Password must be at least 8 characters long.</small>
     </label>
     
     <label for="family-confirm_password">
       Confirm Password
-      <input 
-      type="password" 
-      id="family-confirm_password" 
-      name="confirm_password" 
-      placeholder="Confirm your password"
-      minlength="8"
-      required
-      >
+      <div class="password-field">
+        <input 
+        type="password" 
+        id="family-confirm_password" 
+        name="confirm_password" 
+        placeholder="Confirm your password"
+        minlength="8"
+        required
+        >
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('family-confirm_password')">
+          <span class="toggle-icon">👁️</span>
+        </button>
+      </div>
     </label>
     
     <button type="submit">Create Family Account</button>

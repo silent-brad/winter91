@@ -4,17 +4,17 @@
 
 {% block content %}
 <article>
-	<header>
-		<h1>Leaderboard</h1>
-		<p>Track everyone's progress towards the Winter 100 goal!</p>
-	</header>
+  <section>
+    <h1>Leaderboard</h1>
+    <p>Track everyone's progress towards the Winter 100 goal!</p>
+  </section>
 	
 	{% if success_message.is_some() %}
 		<div class="success" style="
-			background-color: var(--pico-ins-background-color);
-			color: var(--pico-ins-color);
+			background-color: var(--success-oklch-500);
+			color: var(--neutral-oklch-50);
 			padding: 1rem;
-			border-radius: var(--pico-border-radius);
+			border-radius: 0.375rem;
 			margin-bottom: 1rem;
 		">
 			{{success_message.get()}}
@@ -40,11 +40,11 @@
 				document.getElementById('leaderboard-table').innerHTML = html;
 			} else {
 				document.getElementById('leaderboard-table').innerHTML =
-					'<p style="text-align: center; color: var(--pico-muted-color); margin: 2rem 0;">Error loading leaderboard</p>';
+					'<p style="text-align: center; color: var(--color-text-muted); margin: 2rem 0;">Error loading leaderboard</p>';
 			}
 		} catch (error) {
 			document.getElementById('leaderboard-table').innerHTML =
-				'<p style="text-align: center; color: var(--pico-muted-color); margin: 2rem 0;">Error loading leaderboard</p>';
+				'<p style="text-align: center; color: var(--color-text-muted); margin: 2rem 0;">Error loading leaderboard</p>';
 		}
 	}
 

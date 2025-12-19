@@ -12,7 +12,7 @@
       let pkgs = import nixpkgs { inherit system; };
       in {
         packages.default = pkgs.stdenv.mkDerivation {
-          pname = "winter-100";
+          pname = "winter91";
           version = "0.0.1";
           src = ./.;
 

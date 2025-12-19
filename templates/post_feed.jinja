@@ -1,11 +1,11 @@
 {% if posts.len > 0 %}
 	{% for post in posts %}
-		<article style="border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+		<article style="border-bottom: 1px solid var(--color-border-light); padding-bottom: 1rem; margin-bottom: 1rem;">
 			<header style="margin-bottom: 0.5rem;">
         {% let id = post.walker_id %}
         {% let name = post.name %}
         {% importnimja "partials/_walker_avatar.jinja" %}
-				<small style="color: var(--pico-muted-color); margin-left: 0.5rem;">{{post.created_at}}</small>
+				<small style="color: var(--color-text-muted); margin-left: 0.5rem;">{{post.created_at}}</small>
 			</header>
 			
 			<div style="margin-bottom: 0.5rem;">{{post.text_content}}</div>
@@ -15,7 +15,7 @@
 					<img
 						src="/pictures/{{post.image_filename}}"
 						alt="Post image"
-						style="max-width: 100%; height: auto; border-radius: var(--pico-border-radius);"
+						style="max-width: 100%; height: auto; border-radius: 0.375rem;"
 					>
 				</div>
 			{% endif %}

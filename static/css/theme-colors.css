@@ -44,8 +44,8 @@ Delicate as morning mist on fresh grass, this pale green whispers of renewal, pe
 #eac4d5
 Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness and inviting innocence for all.*/
   --primary-color: #809bce;
-  --secondary-color: #95b8d1;
-  --accent-color: #b8e0d2;
+  --secondary-color: #b8e0d2;
+  --accent-color: #95b8d1;
   --neutral-color: #eac4d5 /*d6eadf*/;
 
   --warning-color: #FFD700;
@@ -53,14 +53,14 @@ Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness
   --success-color: #00FF00;
 
 
-  /* Convert the above to oklch */
-  --primary-oklch: oklch(var(--primary-color));
-  --secondary-oklch: oklch(var(--secondary-color));
-  --accent-oklch: oklch(var(--accent-color));
-  --neutral-oklch: oklch(var(--neutral-color));
-  --warning-oklch: oklch(var(--warning-color));
-  --error-oklch: oklch(var(--error-color));
-  --success-oklch: oklch(var(--success-color));
+  /* Base colors for the application */
+  --primary: var(--primary-oklch-500);
+  --secondary: var(--secondary-oklch-500);
+  --accent: var(--accent-oklch-500);
+  --neutral: var(--neutral-oklch-500);
+  --warning: var(--warning-oklch-500);
+  --error: var(--error-oklch-500);
+  --success: var(--success-oklch-500);
 
   /* Create variants for the oklch values using relative color syntax */
   --primary-oklch-50: oklch(from var(--primary-color) 0.95 c h);

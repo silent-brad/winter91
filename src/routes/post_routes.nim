@@ -26,11 +26,11 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
     let password = form_data.get_or_default("password", "").strip()
     
     if email == "":
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email is required</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Email is required</div>"""
     elif password == "":
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Password is required</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Password is required</div>"""
     elif not validate_email(email):
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email format</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Invalid email format</div>"""
     else:
       # Check family account
       let family_opt = get_family_by_email(db_conn, email)
@@ -39,14 +39,18 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         let session_id = generate_session_id()
         {.cast(gcsafe).}:
           with_lock sessions_lock:
-            sessions[session_id] = Session(family_id: family.id, walker_id: 0, email: email, is_family_session: true)
+            sessions[session_id] = Session(
+              family_id: family.id,
+              email: email,
+              is_family_session: true
+            )
         headers = new_http_headers([
           ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
           ("HX-Redirect", "/select-walker?success=login")
         ])
-        response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Login successful! Redirecting...</div>"""
+        response_body = """<div class="success" style="background-color: var(--success-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Login successful! Redirecting...</div>"""
       else:
-        response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email or password</div>"""
+        response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Invalid email or password</div>"""
 
   of "/signup":
     let passkey = to_upper_ascii(form_data.get_or_default("passkey", "")).strip()
@@ -54,17 +58,17 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
     let password = form_data.get_or_default("password", "").strip()
     
     if passkey == "":
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Passkey is required</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Passkey is required</div>"""
     elif email == "":
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email is required</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Email is required</div>"""
     elif not validate_email(email):
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid email format</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Invalid email format</div>"""
     elif password == "":
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Password is required</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Password is required</div>"""
     elif not (passkey == PASSKEY):
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid passkey</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Invalid passkey</div>"""
     elif get_family_by_email(db_conn, email).is_some:
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Email already registered</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Email already registered</div>"""
     else:
       try:
         let password_hash = hash_password(password)
@@ -79,21 +83,21 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
           ("HX-Redirect", "/add-walker?success=signup")
         ])
-        response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Account created successfully!</div>"""
+        response_body = """<div class="success" style="background-color: var(--success-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Account created successfully!</div>"""
       except:
-        response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Error creating account</div>"""
+        response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Error creating account</div>"""
 
   of "/create-walker":
     if session.is_none or not session.get().is_family_session:
       status = Http401
-      response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">You must be logged into a family account to create walkers</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">You must be logged into a family account to create walkers</div>"""
     else:
       let name = form_data.get_or_default("name", "").strip()
       
       if name == "":
-        response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Name is required</div>"""
+        response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Name is required</div>"""
       elif not validate_name(name):
-        response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Invalid name format</div>"""
+        response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Invalid name format</div>"""
       else:
         try:
           let walker_id = create_walker_account(db_conn, session.get().family_id, name)
@@ -103,6 +107,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             family_id: session.get().family_id,
             walker_id: walker_id,
             email: session.get().email,
+            name: name,
             is_family_session: false
           )
           
@@ -116,10 +121,10 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             ("Set-Cookie", "session_id=" & session_id & "; HttpOnly; Path=/"),
             ("HX-Redirect", "/dashboard?success=walker-created")
           ])
-          response_body = """<div class="success" style="background-color: var(--pico-ins-background-color); color: var(--pico-ins-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Walker account created successfully!</div>"""
+          response_body = """<div class="success" style="background-color: var(--success-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Walker account created successfully!</div>"""
         except Exception as e:
           echo "Error creating walker: ", e.msg
-          response_body = """<div class="error" style="background-color: var(--pico-del-background-color); color: var(--pico-del-color); padding: 1rem; border-radius: var(--pico-border-radius); margin-bottom: 1rem;">Error creating walker account</div>"""
+          response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Error creating walker account</div>"""
 
   of "/log":
     if session.is_none:

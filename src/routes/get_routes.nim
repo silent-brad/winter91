@@ -78,7 +78,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
     response_body = render_template("about.jinja", session, walker_id = user_id_opt)
 
   of "/add-walker":
-    if session.is_none or not session.get().is_family_session:
+    if session.is_none:
       status = Http302
       headers = new_http_headers([("Location", "/login")])
     else:
@@ -90,7 +90,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       response_body = render_template("add-walker.jinja", session, none(string), success_msg)
 
   of "/select-walker":
-    if session.is_none or not session.get().is_family_session:
+    if session.is_none:
       status = Http302
       headers = new_http_headers([("Location", "/login")])
     else:
@@ -189,7 +189,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
   
   # Handle switch-walker/ID routes
   elif req.url.path.starts_with("/switch-walker/"):
-    if session.is_none or not session.get().is_family_session:
+    if session.is_none:
       status = Http302
       headers = new_http_headers([("Location", "/login")])
     else:
@@ -207,7 +207,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
             family_id: session.get().family_id,
             walker_id: walker_id,
             email: session.get().email,
-            name: session.get().name,
+            name: walker_opt.get().name,
             is_family_session: false
           )
           

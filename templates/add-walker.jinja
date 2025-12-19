@@ -3,52 +3,31 @@
 {% block title %}Add Walker{% endblock %}
 
 {% block content %}
-<style>
-    .welcome-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: var(--pico-border-radius);
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-    .color-preview {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-left: 0.5rem;
-    }
-</style>
 <main class="container">
-    <div class="welcome-section">
-      <h2>Your family account has been created successfully. Now let's create your first walker account.</h2>
-    </div>
+  <div class="welcome-section">
+    <h2>Your family account has been created successfully. Now let's create your first walker account.</h2>
+  </div>
 
-    <div class="grid">
-        <div></div>
+  <div class="grid">
+    <div>
+      <h2>Create Your Walker Account</h2>
+      <p>A walker account tracks your individual miles and progress. You can create multiple walker accounts for each family member.</p>
+      
+      <form hx-post="/create-walker" hx-target="#walker-response">
         <div>
-            <h2>Create Your Walker Account</h2>
-            <p>A walker account tracks your individual miles and progress. You can create multiple walker accounts for each family member.</p>
-            
-            <form hx-post="/create-walker" hx-target="#walker-response">
-                <div>
-                    <label for="name">Walker Name</label>
-                    <input type="text" id="name" name="name" placeholder="Enter your name" required maxlength="50">
-                    <small>This is the name that will appear on the leaderboard.</small>
-                </div>
-                
-
-                
-                <button type="submit">Create Walker Account</button>
-            </form>
-            
-            <div id="walker-response"></div>
-            
-            <hr>
-            
-            <p><small>After creating your walker account, you'll be taken to your dashboard where you can start logging miles!</small></p>
+          <label for="name">Walker Name</label>
+          <input type="text" id="name" name="name" placeholder="Enter your name" required maxlength="50" />
+          <small>This is the name that will appear on the leaderboard.</small>
         </div>
-        <div></div>
+        
+        <button type="submit">Create Walker Account</button>
+      </form>
+      
+      <div id="walker-response"></div>
+      
+      <hr>
+      
+      <p><small>After creating your walker account, you'll be taken to your dashboard where you can start logging miles!</small></p>
     </div>
+  </div>
 </main>

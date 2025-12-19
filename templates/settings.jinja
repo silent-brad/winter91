@@ -3,19 +3,19 @@
 {% block title %}Settings{% endblock %}
 
 {% block content %}
-<article style="max-width: 500px; margin: 0 auto;">
-	<header>
+<article>
+	<section>
 		<h1>Settings</h1>
-		<p>Customize your Winter 100 profile</p>
-	</header>
+		<p>Customize your Winter91 profile</p>
+	</section>
 	
   <div id="settings-messages">
 	{% if error_message.is_some() %}
 		<div class="error" style="
-			background-color: var(--pico-del-background-color);
-			color: var(--pico-del-color);
-			padding: 1rem;
-			border-radius: var(--pico-border-radius);
+			background-color: var(--error-oklch-500);
+      color: var(--neutral-oklch-50);
+      padding: 1rem;
+      border-radius: 0.375rem;
 			margin-bottom: 1rem;
 		">
 			{{error_message.get()}}
@@ -24,10 +24,10 @@
 	
 	{% if success_message.is_some() %}
 		<div class="success" style="
-			background-color: var(--pico-ins-background-color);
-			color: var(--pico-ins-color);
+			background-color: var(--success-oklch-500);
+			color: var(--neutral-oklch-50);
 			padding: 1rem;
-			border-radius: var(--pico-border-radius);
+			border-radius: 0.375rem;
 			margin-bottom: 1rem;
 		">
 			{{success_message.get()}}
@@ -78,36 +78,51 @@
 			
 			<label for="current_password">
 				Current Password
-				<input
-					type="password"
-					id="current_password"
-					name="current_password"
-					placeholder="Enter current password"
-				>
+				<div class="password-field">
+					<input
+						type="password"
+						id="current_password"
+						name="current_password"
+						placeholder="Enter current password"
+					>
+					<button type="button" class="password-toggle" onclick="togglePasswordVisibility('current_password')">
+						<span class="toggle-icon">👁️</span>
+					</button>
+				</div>
 				<small>Required only if changing password.</small>
 			</label>
 			
 			<label for="new_password">
 				New Password
-				<input
-					type="password"
-					id="new_password"
-					name="new_password"
-					placeholder="Enter new password"
-					minlength="8"
-				>
+				<div class="password-field">
+					<input
+						type="password"
+						id="new_password"
+						name="new_password"
+						placeholder="Enter new password"
+						minlength="8"
+					>
+					<button type="button" class="password-toggle" onclick="togglePasswordVisibility('new_password')">
+						<span class="toggle-icon">👁️</span>
+					</button>
+				</div>
 				<small>Leave empty to keep current password.</small>
 			</label>
 			
 			<label for="confirm_new_password">
 				Confirm New Password
-				<input
-					type="password"
-					id="confirm_new_password"
-					name="confirm_new_password"
-					placeholder="Confirm new password"
-					minlength="8"
-				>
+				<div class="password-field">
+					<input
+						type="password"
+						id="confirm_new_password"
+						name="confirm_new_password"
+						placeholder="Confirm new password"
+						minlength="8"
+					>
+					<button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirm_new_password')">
+						<span class="toggle-icon">👁️</span>
+					</button>
+				</div>
 			</label>
 		</fieldset>
 		

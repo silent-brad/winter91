@@ -4,29 +4,29 @@
 
 {% block content %}
 <article style="max-width: 800px; margin: 0 auto;">
-	<header>
+	<section>
 		<h1>Dashboard</h1>
-		<p>Track your progress towards the Winter 100 goal!</p>
-	</header>
+		<p>Track your progress towards the Winter91 goal!</p>
+	</section>
 	
-	{% if error_message.isSome() %}
+	{% if error_message.is_some() %}
 		<div class="error" style="
-			background-color: var(--pico-del-background-color);
-			color: var(--pico-del-color);
+			background-color: var(--error-oklch-500);
+			color: var(--neutral-oklch-50);
 			padding: 1rem;
-			border-radius: var(--pico-border-radius);
+			border-radius: 0.375rem;
 			margin-bottom: 1rem;
 		">
 			{{error_message.get()}}
 		</div>
 	{% endif %}
 	
-	{% if success_message.isSome() %}
+	{% if success_message.is_some() %}
 		<div class="success" style="
-			background-color: var(--pico-ins-background-color); 
-			color: var(--pico-ins-color);
+			background-color: var(--success-oklch-500); 
+			color: var(--neutral-oklch-50);
 			padding: 1rem;
-			border-radius: var(--pico-border-radius);
+			border-radius: 0.375rem;
 			margin-bottom: 1rem;
 		">
 			{{success_message.get()}}
@@ -34,17 +34,17 @@
 	{% endif %}
 	
 	<!-- Progress Overview -->
-	{% if current_total.isSome() %}
-		<div style="margin-bottom: 2rem; text-align: center; padding: 1.5rem; background-color: var(--pico-card-background-color); border-radius: var(--pico-border-radius);">
+	{% if current_total.is_some() %}
+		<div style="margin-bottom: 2rem; text-align: center; padding: 1.5rem; background-color: var(--color-surface); border-radius: 0.375rem;">
 			<h2>Your Progress</h2>
-			<h3 style="font-size: 2rem; color: var(--pico-primary);">{{current_total.get()}}</h3>
-			<p style="margin: 0;">out of 100 miles</p>
-			{% let progress_percent = (current_total.get().float / 100.0 * 100.0).min(100.0) %}
+			<h3 style="font-size: 2rem; color: var(--color-primary);">{{current_total.get()}}</h3>
+			<p style="margin: 0;">out of 91 miles</p>
+			{% let progress_percent = (current_total.get().float / 91.0 * 91.0).min(91.0) %}
 			{% let width = "300px" %}
-			<div class="progress-bar" style="background-color: var(--pico-muted-border-color); border-radius: 6px; height: 8px; overflow: hidden; width: {{width}};">
-				<div class="progress-fill" style="background-color: var(--pico-primary); height: 100%; width: {{progress_percent}}%; transition: width 0.3s ease; border-radius: 6px;"></div>
+			<div class="progress-bar" style="background-color: var(--color-border-light); border-radius: 6px; height: 8px; overflow: hidden; width: {{width}};">
+				<div class="progress-fill" style="background-color: var(--color-primary); height: 100%; width: {{progress_percent}}%; transition: width 0.3s ease; border-radius: 6px;"></div>
 			</div>
-			<small style="color: var(--pico-muted-color); margin-top: 0.5rem; display: block;">
+			<small style="color: var(--color-text-muted); margin-top: 0.5rem; display: block;">
 				{{progress_percent.int}}% complete
 			</small>
 		</div>
@@ -52,7 +52,7 @@
 	
 	<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
 		<!-- Log Miles Form -->
-		<div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
+		<div style="background-color: var(--color-surface); padding: 1.5rem; border-radius: 0.375rem;">
 			<h3>Log Miles</h3>
 			<form method="post" action="/log" hx-post="/log" hx-target="#log-response" hx-swap="innerHTML">
 				<label for="miles">
@@ -83,14 +83,14 @@
 		</div>
 		
 		<!-- Miles Graph -->
-		<div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
+		<div style="background-color: var(--color-surface); padding: 1.5rem; border-radius: 0.375rem;">
 			<h3>Miles Progress</h3>
 			<canvas id="milesChart" width="300" height="200"></canvas>
 		</div>
 	</div>
 	
 	<!-- Daily Miles List -->
-	<div style="background-color: var(--pico-card-background-color); padding: 1.5rem; border-radius: var(--pico-border-radius);">
+	<div style="background-color: var(--color-surface); padding: 1.5rem; border-radius: 0.375rem;">
 		<h3>Recent Activity</h3>
 		<div id="daily-miles-list">
 			<p>Loading daily miles...</p>
