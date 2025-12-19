@@ -347,7 +347,7 @@ textarea::placeholder {
 }
 
 /* Buttons */
-button {
+button, input[type="file"]::file-selector-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -365,19 +365,21 @@ button {
 }
 
 button:hover,
-button:focus {
+button:focus,
+input[type="file"]::file-selector-button:hover,
+input[type="file"]::file-selector-button:focus {
   background-color: var(--color-button-primary-hover);
   border-color: var(--color-button-primary-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow);
 }
 
-button:focus-visible {
+button:focus-visible, input[type="file"]::file-selector-button:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-button:active {
+button:active, input[type="file"]::file-selector-button:active {
   transform: translateY(0);
   box-shadow: none;
 }

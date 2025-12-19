@@ -10,14 +10,16 @@
 
 - [ ] Fix graph in dashboard to work correctly
 
-- [ ] Add styling
+- [x] Add styling
   - [x] Make password fields viewable
   - [x] Add profile in header
   - [x] Remove all reference to "pico"
   - [x] Make all article tags have proper margins
   - [x] Redo "select-walker" page
-  - [ ] Add styling to "upload image" buttons
+  - [x] Add styling to "upload image" buttons
+  - [ ] Fix navbar/header style
 - [x] Add custom color scheme/css
+- [x] Remove Charm font
 
 - [ ] Write About page
 - [ ] Write Landing page (add image of snowy mountain trail?)
