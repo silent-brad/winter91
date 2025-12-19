@@ -1,75 +1,75 @@
-<header class="container">
-  <nav>
-	<ul class="nav-brand">
-	  <li>
-      <a href="/">
-        Winter <img src="/static/images/logo.svg" alt="Winter91 Logo" style="width: 5.5rem; height: 5.5rem; vertical-align: middle;"/> Challenge
-      </a>
-	  </li>
-	</ul>
-	
-	<!-- Hamburger menu toggle -->
-	<input type="checkbox" id="hamburger-toggle" class="hamburger-checkbox" aria-label="Toggle navigation menu">
-	<label for="hamburger-toggle" class="hamburger-toggle">
-	  <span class="hamburger-line"></span>
-	  <span class="hamburger-line"></span>
-	  <span class="hamburger-line"></span>
-	</label>
-	
-	<ul class="nav-links">
-	  <li><a href="/about">About</a></li>
-	  {% if session.is_some() %}
-		<li><a href="/dashboard">Dashboard</a></li>
-		<li><a href="/leaderboard">Leaderboard</a></li>
-		<li><a href="/posts">Posts</a></li>
-    <!--<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none">
-      <title>About</title>
-      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor"><path d="M17 12a5 5 0 1 1-5-5"/><path d="M14 2.2q-.97-.198-2-.2C6.477 2 2 6.477 2 12s4.477 10 10 10s10-4.477 10-10q-.002-1.03-.2-2"/><path d="m12.03 11.962l4.553-4.553m3.157-3.064l-.553-1.988a.48.48 0 0 0-.761-.24c-1.436 1.173-3 2.754-1.723 5.247c2.574 1.2 4.044-.418 5.17-1.779a.486.486 0 0 0-.248-.775z"/></g>
-    </svg>-->
-    <!--<svg width="1em" height="1em" viewBox="0 0 14 14">
-      <title>Posts</title>
-      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 9l-3 .54L5 6.5L10.73.79a1 1 0 0 1 1.42 0l1.06 1.06a1 1 0 0 1 0 1.42Z"/><path d="M12 9.5v3a1 1 0 0 1-1 1H1.5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/></g>
-    </svg>-->
-    {% if session.get().is_family_session %}
-		<li><a href="/logout" role="button" class="secondary">Log out</a></li>
-    {% endif %}
-	  {% else %}
-		<li><a href="/login" role="button" class="secondary">Log in</a></li>
-		<li><a href="/signup" role="button">Sign up</a></li>
-	  {% endif %}
-	</ul>
+<header>
+  <nav class="container">
+    <ul class="nav-brand">
+      <li>
+        <a href="/">
+          Winter <img src="/static/images/logo.svg" alt="Winter91 Logo"/> Challenge
+        </a>
+      </li>
+    </ul>
+    
+    <!-- Hamburger menu toggle -->
+    <input type="checkbox" id="hamburger-toggle" class="hamburger-checkbox" aria-label="Toggle navigation menu">
+    <label for="hamburger-toggle" class="hamburger-toggle">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </label>
+    
+    <ul class="nav-links">
+      <li><a href="/about">About</a></li>
+      {% if session.is_some() %}
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/leaderboard">Leaderboard</a></li>
+      <li><a href="/posts">Posts</a></li>
+      <!--<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none">
+        <title>About</title>
+        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor"><path d="M17 12a5 5 0 1 1-5-5"/><path d="M14 2.2q-.97-.198-2-.2C6.477 2 2 6.477 2 12s4.477 10 10 10s10-4.477 10-10q-.002-1.03-.2-2"/><path d="m12.03 11.962l4.553-4.553m3.157-3.064l-.553-1.988a.48.48 0 0 0-.761-.24c-1.436 1.173-3 2.754-1.723 5.247c2.574 1.2 4.044-.418 5.17-1.779a.486.486 0 0 0-.248-.775z"/></g>
+      </svg>-->
+      <!--<svg width="1em" height="1em" viewBox="0 0 14 14">
+        <title>Posts</title>
+        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 9l-3 .54L5 6.5L10.73.79a1 1 0 0 1 1.42 0l1.06 1.06a1 1 0 0 1 0 1.42Z"/><path d="M12 9.5v3a1 1 0 0 1-1 1H1.5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3"/></g>
+      </svg>-->
+      {% if session.get().is_family_session %}
+      <li><a href="/logout" role="button" class="secondary">Log out</a></li>
+      {% endif %}
+      {% else %}
+      <li><a href="/login" role="button" class="secondary">Log in</a></li>
+      <li><a href="/signup" role="button">Sign up</a></li>
+      {% endif %}
+    </ul>
 
-  {% if session.is_some() and not session.get().is_family_session %}
-  <div class="avatar-dropdown">
-    <div class="avatar">
-      {% let id = session.get().walker_id %}
-      {% let name = session.get().name %}
-      {% importnimja "partials/_walker_avatar.jinja" %}
+    {% if session.is_some() and not session.get().is_family_session %}
+    <div class="avatar-dropdown">
+      <div class="avatar">
+        {% let id = session.get().walker_id %}
+        {% let name = session.get().name %}
+        {% importnimja "partials/_walker_avatar.jinja" %}
+      </div>
+      <div class="dropdown-menu">
+        <a href="/settings">
+          Settings
+          <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <title>Settings</title>
+            <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </a>
+        <a href="/select-walker">
+          Change Walker
+          <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <title>Change Walker</title>
+            <path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/>
+          </svg>
+        </a>
+        <a href="/logout" class="secondary">
+          Log out
+          <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <title>Log out</title>
+            <path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          </svg>
+        </a>
+      </div>
     </div>
-    <div class="dropdown-menu">
-      <a href="/settings">
-        Settings
-        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <title>Settings</title>
-          <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/>
-        </svg>
-      </a>
-      <a href="/select-walker">
-        Change Walker
-        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <title>Change Walker</title>
-          <path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/>
-        </svg>
-      </a>
-      <a href="/logout" class="secondary">
-        Log out
-        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <title>Log out</title>
-          <path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        </svg>
-      </a>
-    </div>
-  </div>
-  {% endif %}
+    {% endif %}
   </nav>
 </header>

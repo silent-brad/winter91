@@ -8,8 +8,6 @@
   - [x] Make name change (in settings) redirect after change
   - [x] Add avatar change
 
-- [ ] Fix graph in dashboard to work correctly
-
 - [x] Add styling
   - [x] Make password fields viewable
   - [x] Add profile in header
@@ -17,13 +15,21 @@
   - [x] Make all article tags have proper margins
   - [x] Redo "select-walker" page
   - [x] Add styling to "upload image" buttons
-  - [ ] Fix navbar/header style
+  - [x] Fix navbar/header style
+  - [ ] Center progress bars (dashboard)
+  - [ ] Fix button hover text color
+  - [ ] Add spacing between buttons in signup
 - [x] Add custom color scheme/css
 - [x] Remove Charm font
 
+- [ ] Fix graph in dashboard to work correctly
+
+- [ ] In walker account, in "/add-walker" page, it does not create a new walker.
+(Failed to load resource: the server responded with a status of 401 (Unauthorized))
+- [ ] Add blockquotes to WYSIWYG editor
+
 - [ ] Write About page
-- [ ] Write Landing page (add image of snowy mountain trail?)
-- [ ] Change from "Posts" to "Messages"
+- [x] Write Landing page (add image of snowy mountain trail)
 
 - [ ] Make PWA
 - [ ] Redo logo
