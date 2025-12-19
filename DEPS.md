@@ -6,6 +6,8 @@
 ## Nix Packages
 - [Nim v2 (nim-2_0)](https://nim-lang.org)
 - [SQLite (sqlite)](https://sqlite.org)
+- [OpenSSL (openssl)](https://www.openssl.org)
+- [ImageMagick (imagemagick)](https://imagemagick.org)
 
 ## Nim Packages
 - [checksums: Hash algorithms](https://github.com/nim-lang/checksums)

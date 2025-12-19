@@ -23,6 +23,7 @@
 
 - [ ] Write About page
 - [ ] Write Landing page (add image of snowy mountain trail?)
+- [ ] Change from "Posts" to "Messages"
 
 - [ ] Make PWA
 - [ ] Redo logo

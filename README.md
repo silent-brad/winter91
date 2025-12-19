@@ -12,7 +12,7 @@ Read the [DEPS.md](DEPS.md) file for the (small) list of dependencies.
 
 ## Setup Commands
 - Enable flakes in your Nix config (`/etc/nixos/configuration.nix`): `nix.settings.experimental-features = [ "nix-command" "flakes" ];`
-- Run `nix develop` to enter the shell
+- Run `nix develop` to enter the shell (needed for image conversion (via imagemagick))
 - Create a file named `.PASSKEY.txt` which contains the passkey
 - Run `nix build`
 - Run `./result/bin/app`

@@ -5,15 +5,15 @@
 {% block content %}
 <article>
 	<section>
-		<h1>About Winter 100</h1>
+		<h1>About Winter91</h1>
 		<p>The challenge that keeps you moving through winter</p>
 	</section>
 	
 	<section>
-		<h2>What is Winter 100?</h2>
+		<h2>What is Winter91?</h2>
 		<p>
-			Winter 100 is a fitness challenge designed to help you stay active during the winter months. 
-			The goal is simple: walk or run 100 miles between the start of winter and the end of the challenge period.
+			Winter91 is a fitness challenge designed to help you stay active during the winter months. 
+			The goal is simple: walk or run 91 miles (one for every day of winter) between the start of winter and the end of the challenge period.
 		</p>
 		
 		<blockquote>
@@ -30,7 +30,7 @@
 			<li><strong>Sign Up:</strong> Get an invitation code and create your account</li>
 			<li><strong>Log Miles:</strong> Track your daily walks and runs</li>
 			<li><strong>Stay Motivated:</strong> Watch your progress and compete on the leaderboard</li>
-			<li><strong>Reach 100:</strong> Complete the challenge by hitting 100 miles!</li>
+			<li><strong>Reach 91:</strong> Complete the challenge by hitting 91 miles!</li>
 		</ol>
 	</section>
 	
@@ -48,24 +48,25 @@
 	<section>
 		<h2>Why Winter?</h2>
 		<p>
-			Winter is often the most challenging time to stay active. The days are shorter, 
-			the weather is harsh, and motivation can be hard to find. Winter 100 provides 
-			structure, accountability, and community to help you not just survive winter, 
+			Winter is often the most challenging time to stay active. The days are shorter,
+			the weather is harsh, and motivation can be hard to find. Winter 91 provides
+			structure, accountability, and community to help you not just survive winter,
 			but thrive through it.
 		</p>
 		
 		<p>
-			By the end of the challenge, you'll have built lasting habits, improved your 
+			By the end of the challenge, you'll have built lasting habits, improved your
 			fitness, and proven to yourself that you can stay committed even when things get tough.
 		</p>
 	</section>
 	
-	<footer style="text-align: center; margin-top: 3rem;">
+  <hr/>
+	<div style="text-align: center; margin-top: 3rem;">
 		{% if walker_id.isNone() %}
 			<a href="/signup" role="button">Join the Challenge</a>
 		{% else %}
 			<a href="/log" role="button">Log Your Miles</a>
 		{% endif %}
-	</footer>
+	</div>
 </article>
 {% endblock %}
