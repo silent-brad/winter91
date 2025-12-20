@@ -613,6 +613,17 @@ hr {
   border: 1px solid color-mix(in srgb, var(--success) 25%, transparent);
 }
 
+.avatar-img {
+  background-position: center center;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: bold;
+  font-size: 14px;
+}
+
 /* Avatar dropdown */
 .avatar-dropdown {
   position: relative;
@@ -1093,15 +1104,4 @@ border-radius: 0.375rem;
   border-radius: var(--radius);
   padding: 1rem;
   padding-bottom: 1rem; margin-bottom: 1rem;
-}
-
-.avatar {
-  /*background-position: center center;*/
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-weight: bold;
-  font-size: 14px;
 }
