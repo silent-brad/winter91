@@ -19,17 +19,18 @@
   - [x] Add spacing between buttons in signup
   - [x] Center progress bars (dashboard)
   - [x] Fix login container being not centered
-  - [ ] Fix button hover text color
 - [x] Add custom color scheme/css
 - [x] Remove Charm font
 
 - [?] Fix graph in dashboard to work correctly
-- [!] Edit style of WYSIWYG editor
+- [x] Make log miles and miles progress not display next to each other in small view widths
 
+- [x] In post_feed, make dates display correctly
 - [x] In walker account, in "/add-walker" page, it does not create a new walker.
 (Failed to load resource: the server responded with a status of 401 (Unauthorized))
 - [x] Add blockquotes to WYSIWYG editor
-- [!] Make blockquotes escape after 2 enters
+- [x] Edit style of WYSIWYG editor
+- [x] Make blockquotes escape after 2 enters
 
 - [?] Write About page
 - [x] Write Landing page (add image of snowy mountain trail)
@@ -37,6 +38,10 @@
 - [ ] Make PWA
 - [ ] Redo logo
 - [ ] Deploy
+
+
+- [ ] Fix button hover text color
+- [ ] Add pagination to post feed
 
 
 - [ ] Add neumorphism to buttons

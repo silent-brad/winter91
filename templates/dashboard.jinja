@@ -47,14 +47,14 @@
 		</div>
 	{% endif %}
 	
-	<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+	<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;" class="dashboard-grid">
 		<!-- Log Miles Form -->
 		<div style="background-color: var(--color-surface); padding: 1.5rem; border-radius: 0.375rem;">
 			<h3>Log Miles</h3>
 			<form method="post" action="/log" hx-post="/log" hx-target="#log-response" hx-swap="innerHTML">
 				<label for="miles">
 					Miles
-					<input 
+					<input
 						type="number"
 						id="miles"
 						name="miles"
@@ -99,6 +99,7 @@
 {% block extra_js %}
 <script src="/static/js/chart.js"></script>
 <script>
+
 function incrementMiles() {
 	const input = document.getElementById('miles');
 	const currentValue = parseFloat(input.value) || 0;

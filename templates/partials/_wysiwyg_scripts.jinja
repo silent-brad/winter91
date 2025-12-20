@@ -16,6 +16,7 @@ function initWysiwygEditor() {
 	if (editor) {
 		setupPlaceholder();
 		setupFormHandling();
+		setupBlockquoteHandling();
 	}
 }
 
@@ -243,5 +244,92 @@ function setupFormHandling() {
 			updateHiddenTextarea();
 		});
 	}
+}
+
+function setupBlockquoteHandling() {
+	const editor = document.getElementById('text_content_editor');
+	if (!editor) return;
+	
+	let lastEnterTime = 0;
+	const doubleEnterThreshold = 500; // ms
+	
+	editor.addEventListener('keydown', function(event) {
+		if (event.key === 'Enter') {
+			const selection = window.getSelection();
+			const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+			
+			if (range) {
+				// Find if cursor is inside a blockquote
+				let currentNode = range.startContainer;
+				let blockquote = null;
+				
+				// Traverse up to find blockquote
+				while (currentNode && currentNode !== editor) {
+					if (currentNode.nodeType === Node.ELEMENT_NODE && currentNode.tagName === 'BLOCKQUOTE') {
+						blockquote = currentNode;
+						break;
+					}
+					currentNode = currentNode.parentNode;
+				}
+				
+				if (blockquote) {
+					event.preventDefault();
+					
+					const currentTime = Date.now();
+					const isDoubleEnter = (currentTime - lastEnterTime) < doubleEnterThreshold;
+					lastEnterTime = currentTime;
+					
+					if (isDoubleEnter) {
+						// Double Enter - escape blockquote
+						escapeBlockquote(blockquote, range);
+					} else {
+						// Single Enter - continue blockquote on new line
+						continueBlockquote(blockquote, range);
+					}
+				} else {
+					lastEnterTime = 0;
+				}
+			}
+		} else {
+			lastEnterTime = 0;
+		}
+	});
+}
+
+function continueBlockquote(blockquote, range) {
+	// Create a new line within the blockquote
+	const br = document.createElement('br');
+	range.insertNode(br);
+	
+	// Position cursor after the br
+	const newRange = document.createRange();
+	newRange.setStartAfter(br);
+	newRange.collapse(true);
+	
+	const selection = window.getSelection();
+	selection.removeAllRanges();
+	selection.addRange(newRange);
+}
+
+function escapeBlockquote(blockquote, range) {
+	// Create a new paragraph after the blockquote
+	const newP = document.createElement('p');
+	newP.innerHTML = '<br>'; // Add a br to make it editable
+	
+	// Insert after blockquote
+	if (blockquote.nextSibling) {
+		blockquote.parentNode.insertBefore(newP, blockquote.nextSibling);
+	} else {
+		blockquote.parentNode.appendChild(newP);
+	}
+	
+	// Position cursor in the new paragraph
+	const newRange = document.createRange();
+	newRange.setStart(newP, 0);
+	newRange.collapse(true);
+	
+	const selection = window.getSelection();
+	selection.removeAllRanges();
+	selection.addRange(newRange);
 }
 </script>

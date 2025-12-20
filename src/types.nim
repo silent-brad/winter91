@@ -1,4 +1,5 @@
 import tables
+import times
 
 type
   Session* = object
@@ -25,7 +26,7 @@ type
     name*: string
     text_content*: string
     image_filename*: string
-    created_at*: string
+    created_at*: DateTime
 
 const
   static_dir* = "static"

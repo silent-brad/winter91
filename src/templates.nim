@@ -3,6 +3,8 @@ import nimja/parser
 import os
 import types
 import strutils
+import utils
+from times import DateTime, epochTime, format
 
 const base_dir = get_script_dir() & "/../templates/"
 

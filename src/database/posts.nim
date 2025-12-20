@@ -1,5 +1,6 @@
 import db_connector/db_sqlite
 import strutils
+import times
 import ../types
 
 proc create_post*(db: DbConn, walker_id: int64, text_content: string, image_filename: string = ""): int64 =
@@ -22,7 +23,7 @@ proc get_all_posts*(db: DbConn): seq[Post] =
       name: row[2],
       text_content: row[3],
       image_filename: row[4],
-      created_at: row[5]
+      created_at: parse(row[5], "yyyy-MM-dd HH:mm:ss")
     ))
   
   return posts

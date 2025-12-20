@@ -1,4 +1,5 @@
 import strutils, uri, tables, os
+from times import DateTime, format, monthday
 
 proc parse_form_data*(body: string): Table[string, string] =
   result = init_table[string, string]()
@@ -181,3 +182,12 @@ proc is_safe_file_extension*(filename: string): bool =
   let allowed_extensions = @[".jpg", ".jpeg", ".png", ".gif", ".webp"]
   let ext = filename.splitFile().ext.toLowerAscii()
   return ext in allowed_extensions
+
+proc format_date_with_ordinal*(dt: DateTime): string =
+  ## Format date like "9:02pm, Dec 12th, 2025"
+  let day = dt.monthday()
+  let suffix = if day mod 10 == 1 and day != 11: "st"
+              elif day mod 10 == 2 and day != 12: "nd"
+              elif day mod 10 == 3 and day != 13: "rd"
+              else: "th"
+  return dt.format("h:mmtt, MMM ") & $day & suffix & dt.format(", yyyy")
