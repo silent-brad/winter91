@@ -1094,3 +1094,14 @@ border-radius: 0.375rem;
   padding: 1rem;
   padding-bottom: 1rem; margin-bottom: 1rem;
 }
+
+.avatar {
+  background-position: center center;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: bold;
+  font-size: 14px;
+}

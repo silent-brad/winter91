@@ -34,9 +34,10 @@
 - [x] Write Landing page (add image of snowy mountain trail)
 
 - [ ] Image uploading does not work!
-- [ ] In walker account, in "/add-walker" page, it does not create a new walker.
-(Failed to load resource: the server responded with a status of 401 (Unauthorized))
-- [ ] On Mobile, avatar (meaning name text) in header hangs to this side
+- [x] In walker account, in "/add-walker" page, it does not create a new walker.
+- [x] On Mobile, avatar (meaning name text) in header hangs to this side
+- [x] Change error color
+- [ ] Make it so that image serving requires session?
 
 - [x] Redo logo
 - [x] Make PWA

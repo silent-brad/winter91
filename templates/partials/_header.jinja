@@ -74,7 +74,11 @@
       <div class="avatar">
         {% let id = session.get().walker_id %}
         {% let name = session.get().name %}
-        {% importnimja "partials/_walker_avatar.jinja" %}
+        <img
+          width="5rem" height="5rem" class="avatar"
+          src="/avatars/{{ id }}_{{ name.replace(" ", "_") }}.webp"
+          alt="{{ name }} Avatar"
+        />
       </div>
       <div class="dropdown-menu">
         <a href="/settings">

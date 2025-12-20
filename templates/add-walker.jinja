@@ -4,14 +4,21 @@
 
 {% block content %}
 <article>
+  {% if session.get().is_family_session %}
   <div class="welcome-section">
     <h2>Your family account has been created successfully. Now let's create your first walker account.</h2>
   </div>
+  {% endif %}
 
   <div class="grid">
     <div>
+      {% if session.get().is_family_session %}
       <h2>Create Your Walker Account</h2>
       <p>A walker account tracks your individual miles and progress. You can create multiple walker accounts for each family member.</p>
+      {% else %}
+      <h2>Create Another Walker Account</h2>
+      <p>A walker account tracks your individual miles and progress. You can create multiple walker accounts for each family member.</p>
+      {% endif %}
       
       <form hx-post="/create-walker" hx-target="#walker-response">
         <div>
