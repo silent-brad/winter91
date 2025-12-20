@@ -188,29 +188,29 @@ Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness
 
 /* Manual dark mode override */
 [data-theme="dark"] {
-  --color-background: var(--color-neutral-900);
-  --color-surface: var(--color-neutral-800);
-  --color-surface-variant: var(--color-neutral-700);
-  --color-text: var(--color-neutral-100);
-  --color-text-secondary: var(--color-secondary-300);
-  --color-text-muted: var(--color-neutral-500);
-  --color-border: var(--color-neutral-600);
-  --color-border-light: var(--color-neutral-700);
-  --color-primary: var(--color-primary-400);
-  --color-primary-hover: var(--color-primary-300);
-  --color-secondary: var(--color-secondary-400);
-  --color-accent: var(--color-accent-400);
-  --color-link: var(--color-primary-400);
-  --color-link-hover: var(--color-primary-300);
+  --color-background: var(--neutral-oklch-900);
+  --color-surface: var(--neutral-oklch-800);
+  --color-surface-variant: var(--neutral-oklch-700);
+  --color-text: var(--neutral-oklch-100);
+  --color-text-secondary: var(--secondary-oklch-300);
+  --color-text-muted: var(--neutral-oklch-500);
+  --color-border: var(--neutral-oklch-600);
+  --color-border-light: var(--neutral-oklch-700);
+  --color-primary: var(--primary-oklch-400);
+  --color-primary-hover: var(--primary-oklch-300);
+  --color-secondary: var(--secondary-oklch-400);
+  --color-accent: var(--accent-oklch-400);
+  --color-link: var(--primary-oklch-400);
+  --color-link-hover: var(--primary-oklch-300);
 
   --color-button-primary: var(--color-primary);
   --color-button-primary-hover: var(--color-primary-hover);
-  --color-button-secondary: var(--color-secondary-700);
-  --color-button-secondary-hover: var(--color-secondary-600);
-  --color-button-text: var(--color-neutral-100);
+  --color-button-secondary: var(--secondary-oklch-700);
+  --color-button-secondary-hover: var(--secondary-oklch-600);
+  --color-button-text: var(--neutral-oklch-100);
   --color-button-text-secondary: var(--color-text);
 
-  --color-input-background: var(--color-neutral-800);
+  --color-input-background: var(--neutral-oklch-800);
   --color-input-border: var(--color-border);
   --color-input-focus: var(--color-primary);
   --color-input-text: var(--color-text);
