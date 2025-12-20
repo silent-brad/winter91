@@ -33,12 +33,13 @@
 - [x] Write About page
 - [x] Write Landing page (add image of snowy mountain trail)
 
-- [ ] Image uploading does not work!
+- [?] Image uploading does not work!
 - [x] In walker account, in "/add-walker" page, it does not create a new walker.
 - [x] On Mobile, avatar (meaning name text) in header hangs to this side
 - [x] Change error color
-- [ ] Make avatars uploaded square sized
-- [ ] Make it so that image serving requires session?
+- [x] Make avatars uploaded square sized
+
+- [?] Make it so that image serving requires session?
 
 - [x] Redo logo
 - [x] Make PWA
