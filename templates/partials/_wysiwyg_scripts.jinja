@@ -1,0 +1,247 @@
+<!-- WYSIWYG Editor Scripts -->
+<script>
+// Wait for DOM to load before initializing
+document.addEventListener('DOMContentLoaded', function() {
+	initWysiwygEditor();
+});
+
+function initWysiwygEditor() {
+	// Make functions available globally
+	window.formatText = formatText;
+	window.insertLink = insertLink;
+	window.updateHiddenTextarea = updateHiddenTextarea;
+	
+	// Initialize editor if it exists
+	const editor = document.getElementById('text_content_editor');
+	if (editor) {
+		setupPlaceholder();
+		setupFormHandling();
+	}
+}
+
+// Simple WYSIWYG Editor functionality
+function formatText(command) {
+	const editor = document.getElementById('text_content_editor');
+	if (!editor) return;
+	
+	// Focus the editor first
+	editor.focus();
+	
+	if (command === 'blockquote') {
+		// Custom blockquote handling
+		const selection = window.getSelection();
+		if (selection.rangeCount > 0) {
+			const range = selection.getRangeAt(0);
+			const selectedText = range.toString();
+			
+			if (selectedText) {
+				// Create blockquote element
+				const blockquote = document.createElement('blockquote');
+				blockquote.textContent = selectedText;
+				
+				// Replace selection with blockquote
+				range.deleteContents();
+				range.insertNode(blockquote);
+				
+				// Clear selection and position cursor
+				selection.removeAllRanges();
+				const newRange = document.createRange();
+				newRange.setStartAfter(blockquote);
+				newRange.collapse(true);
+				selection.addRange(newRange);
+			} else {
+				// No selection, insert empty blockquote
+				const blockquote = document.createElement('blockquote');
+				blockquote.textContent = 'Quote text here';
+				const range = selection.getRangeAt(0);
+				range.insertNode(blockquote);
+				
+				// Select the text inside blockquote
+				const textNode = blockquote.firstChild;
+				if (textNode) {
+					const newRange = document.createRange();
+					newRange.selectNodeContents(textNode);
+					selection.removeAllRanges();
+					selection.addRange(newRange);
+				}
+			}
+		}
+	} else {
+		// Use modern approach instead of deprecated execCommand
+		try {
+			if (document.execCommand) {
+				document.execCommand(command, false, null);
+			} else {
+				// Fallback for modern browsers
+				handleModernFormatting(command);
+			}
+		} catch (e) {
+			console.warn('Formatting command failed:', command, e);
+			handleModernFormatting(command);
+		}
+	}
+	editor.focus();
+}
+
+function handleModernFormatting(command) {
+	const selection = window.getSelection();
+	if (selection.rangeCount === 0) return;
+	
+	const range = selection.getRangeAt(0);
+	const selectedText = range.toString();
+	
+	if (!selectedText) return;
+	
+	let element;
+	switch(command) {
+		case 'bold':
+			element = document.createElement('strong');
+			break;
+		case 'italic':
+			element = document.createElement('em');
+			break;
+		case 'underline':
+			element = document.createElement('u');
+			break;
+		default:
+			return;
+	}
+	
+	element.textContent = selectedText;
+	range.deleteContents();
+	range.insertNode(element);
+	
+	// Clear and reposition selection
+	selection.removeAllRanges();
+	const newRange = document.createRange();
+	newRange.setStartAfter(element);
+	newRange.collapse(true);
+	selection.addRange(newRange);
+}
+
+function insertLink() {
+	const editor = document.getElementById('text_content_editor');
+	if (!editor) return;
+	
+	editor.focus();
+	const url = prompt('Enter the link URL:');
+	if (url) {
+		const selection = window.getSelection();
+		if (selection.rangeCount > 0) {
+			const range = selection.getRangeAt(0);
+			const selectedText = range.toString();
+			
+			const link = document.createElement('a');
+			link.href = url;
+			link.textContent = selectedText || url;
+			
+			range.deleteContents();
+			range.insertNode(link);
+			
+			// Position cursor after link
+			selection.removeAllRanges();
+			const newRange = document.createRange();
+			newRange.setStartAfter(link);
+			newRange.collapse(true);
+			selection.addRange(newRange);
+		}
+		editor.focus();
+	}
+}
+
+function updateHiddenTextarea() {
+	const editor = document.getElementById('text_content_editor');
+	const hiddenTextarea = document.getElementById('text_content');
+	if (editor && hiddenTextarea) {
+		hiddenTextarea.value = editor.innerHTML;
+	}
+}
+
+// Handle placeholder for contenteditable div
+function setupPlaceholder() {
+	const editor = document.getElementById('text_content_editor');
+	if (!editor) return;
+	
+	editor.addEventListener('focus', function() {
+		if (this.innerHTML === '')
+			this.innerHTML = '';
+	});
+
+	editor.addEventListener('blur', function() {
+		if (this.innerHTML === '')
+			this.innerHTML = '';
+	});
+}
+
+// Add placeholder styling
+const style = document.createElement('style');
+style.textContent = `
+	#text_content_editor:empty:before {
+		content: attr(placeholder);
+		color: var(--color-text-muted);
+		font-style: italic;
+		pointer-events: none;
+	}
+	#text_content_editor:focus:before {
+		content: '';
+	}
+	.toolbar-btn {
+		background: var(--color-background) !important;
+		border: 1px solid var(--color-border) !important;
+		border-radius: 0.25rem !important;
+		cursor: pointer !important;
+		transition: all 0.2s !important;
+		color: inherit !important;
+		font-family: inherit !important;
+		font-size: inherit !important;
+	}
+	.toolbar-btn:hover {
+		background: var(--color-surface-variant) !important;
+		transform: translateY(-1px);
+	}
+	.toolbar-btn:active {
+		background: var(--color-border) !important;
+		transform: translateY(0);
+	}
+	blockquote {
+		border-left: 4px solid var(--color-border) !important;
+		padding-left: 1rem !important;
+		margin: 1rem 0 !important;
+		color: var(--color-text-muted) !important;
+		font-style: italic !important;
+	}
+`;
+document.head.appendChild(style);
+
+// Reload posts after successful post creation
+document.addEventListener('htmx:afterSwap', function(event) {
+	if (event.detail.target.id === 'post-response') {
+		// Check if the response contains success message
+		if (event.detail.target.innerHTML.includes('successfully')) {
+			// Clear the editor
+			const editor = document.getElementById('text_content_editor');
+			const hiddenTextarea = document.getElementById('text_content');
+			const imageInput = document.getElementById('image');
+			
+			if (editor) editor.innerHTML = '';
+			if (hiddenTextarea) hiddenTextarea.value = '';
+			if (imageInput) imageInput.value = '';
+			
+			// Refresh posts feed instead of reloading the entire page
+			setTimeout(() => {
+				htmx.trigger('#posts-feed', 'load');
+			}, 500);
+		}
+	}
+});
+
+function setupFormHandling() {
+	// Ensure content is updated before form submission
+	const postForm = document.getElementById('post-form');
+	if (postForm) {
+		postForm.addEventListener('htmx:configRequest', function(event) {
+			updateHiddenTextarea();
+		});
+	}
+}
+</script>

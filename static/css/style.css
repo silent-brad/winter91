@@ -128,7 +128,7 @@ main {
   flex: 1;
   min-height: 50vh;
   padding: var(--space-md);
-  padding-top: calc(4rem + var(--space-md));
+  padding-top: calc(6rem + var(--space-md));
 }
 
 header {
@@ -139,7 +139,6 @@ header {
   height: 6rem;
   display: flex;
   align-items: center;
-  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -188,13 +187,18 @@ nav a {
 
 nav a:hover,
 nav a:focus {
-  background-color: var(--color-surface-variant);
+  /*background-color: var(--color-surface-variant);*/
   text-decoration: none;
 }
 
 nav a[aria-current="page"] {
   background-color: var(--color-primary);
   color: var(--color-button-text);
+}
+
+a svg {
+  margin-top: 4px;
+  margin-left: 1px;
 }
 
 /* Navigation brand */
@@ -206,11 +210,11 @@ nav a[aria-current="page"] {
   font-family: Larken;
   text-decoration: none;
   font-weight: bold;
-  font-size: 2rem;
+  font-size: 1.5rem;
 
   & img {
-    width: 5rem;
-    height: 5rem;
+    width: 4rem;
+    height: 4rem;
     vertical-align: middle;
   }
 }
@@ -260,6 +264,10 @@ nav a[aria-current="page"] {
 }
 
 /* Content sections */
+article {
+  margin: var(--space-xl) 0 !important;
+}
+
 article,
 section {
   margin-bottom: var(--space-lg);
@@ -409,6 +417,10 @@ button[disabled] {
   pointer-events: none;
 }
 
+button[type="submit"] {
+  margin-top: var(--space-sm);
+}
+
 /* Button variants */
 .secondary {
   background-color: var(--color-button-secondary);
@@ -550,8 +562,8 @@ hr {
 
 /* Form container */
 .form-container {
-  max-width: 80%;
-  margin: var(--space-xl) auto;
+  max-width: 500px;
+  margin: 0 auto;
   padding: var(--space-lg);
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -1016,21 +1028,21 @@ border-radius: 0.375rem;
 }
 
 .landing-content h1 {
-  color: var(--color-background);
+  color: var(--secondary-oklch-100);
   &::selection {
-    color: var(--color-text);
-    background-color: var(--color-background);
+    color: var(--secondary-oklch-600);
+    background-color: var(--secondary-oklch-100);
   }
 
   font-size: 3rem;
-  padding: 1rem;
+  padding: 0;
   margin: 0;
 
   & i {
-    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
   }
   & b {
     text-decoration: underline;
@@ -1046,8 +1058,10 @@ border-radius: 0.375rem;
 
 .landing-content a[role="button"]:hover {
   background-color: oklch(from var(--color-button-primary-hover) l c h / 0.9);
+  color: var(--color-text-primary);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
-  transform: translateY(-2px);
+  border-color: var(--color-button-primary-hover);
+  transform: translateY(-1px);
 }
 
 .landing-content a[role="button"].secondary {

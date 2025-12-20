@@ -81,6 +81,9 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
     if session.is_none:
       status = Http302
       headers = new_http_headers([("Location", "/login")])
+    elif not session.get().is_family_session:
+      status = Http302
+      headers = new_http_headers([("Location", "/select-walker")])
     else:
       # Check for success parameter
       var success_msg: Option[string] = none(string)

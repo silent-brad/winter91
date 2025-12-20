@@ -21,11 +21,10 @@
 					<td><strong>{{user_stat.total_miles}}</strong></td>
 					<td>
 						<div style="display: flex; align-items: center; gap: 0.5rem;">
-							{% let progress_percent = (user_stat.total_miles.float / 91.0 * 91.0).min(91.0) %}
-							{% let width = "91px" %}
-							<div class="progress-bar" style="background-color: var(--color-border-light); border-radius: 6px; height: 8px; overflow: hidden; width: {{width}};">
-								<div class="progress-fill" style="background-color: var(--color-primary); height: 100%; width: {{progress_percent}}%; transition: width 0.3s ease; border-radius: 6px;"></div>
-							</div>
+							{% let progress_percent = (user_stat.total_miles.float / 91.0 * 100.0).min(100.0) %}
+              <div style="width: 1rem;">
+                {% importnimja "partials/_progress_bar.jinja" %}
+              </div>
 							<small>{{progress_percent.int}}%</small>
 						</div>
 					</td>

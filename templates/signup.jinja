@@ -4,11 +4,11 @@
 
 {% block content %}
 <article class="form-container">
-  <header>
-	<h1>Sign Up</h1>
-	<p>Join the Winter 91 challenge!</p>
+  <section>
+    <h1>Sign Up</h1>
+    <p>Join the Winter 91 challenge!</p>
+  </section>
   
-  <div id="signup-messages">
 	{% if error_message.is_some() %}
 	  <div class="error">
       {{error_message.get()}}
@@ -20,11 +20,12 @@
       {{success_message.get()}}
 	  </div>
 	{% endif %}
-  </div>
+
+  <div id="message-container"></div>
   
   <form id="family-form" method="post" action="/signup"
 		hx-post="/signup"
-		hx-target="#signup-messages"
+		hx-target="#message-container"
 		hx-swap="innerHTML">
     <label for="family-passkey">
       Invitation Code
@@ -94,7 +95,7 @@
   <hr/>
   <div class="text-center">
     <p>
-      Already have an account? 
+      Already have an account?
       <a href="/login">Log in here</a>
     </p>
   </div>

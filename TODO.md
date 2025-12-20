@@ -16,19 +16,22 @@
   - [x] Redo "select-walker" page
   - [x] Add styling to "upload image" buttons
   - [x] Fix navbar/header style
-  - [ ] Center progress bars (dashboard)
+  - [x] Add spacing between buttons in signup
+  - [x] Center progress bars (dashboard)
+  - [x] Fix login container being not centered
   - [ ] Fix button hover text color
-  - [ ] Add spacing between buttons in signup
 - [x] Add custom color scheme/css
 - [x] Remove Charm font
 
-- [ ] Fix graph in dashboard to work correctly
+- [?] Fix graph in dashboard to work correctly
+- [!] Edit style of WYSIWYG editor
 
-- [ ] In walker account, in "/add-walker" page, it does not create a new walker.
+- [x] In walker account, in "/add-walker" page, it does not create a new walker.
 (Failed to load resource: the server responded with a status of 401 (Unauthorized))
-- [ ] Add blockquotes to WYSIWYG editor
+- [x] Add blockquotes to WYSIWYG editor
+- [!] Make blockquotes escape after 2 enters
 
-- [ ] Write About page
+- [?] Write About page
 - [x] Write Landing page (add image of snowy mountain trail)
 
 - [ ] Make PWA
@@ -36,58 +39,7 @@
 - [ ] Deploy
 
 
-## Full list
-- [x] Add dashboard/progress page
-- [x] Add graph showing progress over days
-- [x] Make graph forward instead of backwards
-- [x] Create `DEPS.md` file to list all dependencies
-- [x] Add HTMX/Chart.js files to the static folder
-- [ ] Fix graph in dashboard to work correctly
-
-- [x] Add 404 page
-- [x] Prevent server-side injection
-
-## Fix accounts
-- [x] Add avatar component (avatar icon on left, Name on right)
-- [x] Make email username for family account
-  - [x] Make family account create walker (user) accounts (Name, avatar)
-  - [x] Generate default avatar with initials of name (just make `Name-avatar.webp`) (use this link: `https://ui-avatars.com/api/?background=random&name=Elijah%20White&format=png`)
-- [x] Add text in login page: "If you need to change your password, email brad@knightoffaith.systems."
-- [ ] Add avatar change
-- [ ] Add remove family member?
-- [ ] Add account deletion?
-
-## Fix editor/sharing
-- [ ] Fix WYSIWYG editor to only include B,I,U,Quote,Link
-- [x] In leaderboard, remove fields past progress bar and fix he htmx:swaperror that causes refetch to fetch header/footer
-- [x] On landing page, don't show buttons when logged in
-- Make chart in dashboard show miles ran per day and make it not filled
-
-- [x] Convert images to WebP?
-
-- [x] Add pictures/text sharing
-  - [ ] Add ability to post multiple pictures??
-  - [ ] Add notifications?
-  - [x] Add minimal WYSIWYG editor formatting to text in "post" route
-
-## Fix UI/UX
-- [ ] Create brand identity
-  - [ ] Color scheme (winter pastel dreamlandesque)
-  - [x] Create logo
-- [ ] Add custom CSS (winter theme with light/dark mode)
-  - [ ] Add neumorphism
-
-- [x] Remove `nimdotenv` lib and simply create a text file (`.PASSKEY.txt`) that stores passkey and create a simple function which gets this
-
-- [ ] Make PWA
-
-## Deploy
-- [ ] Install Nix on Laptop (currently running Mint) (run: `sh <(curl https://nixos.org/nix/install) --daemon`) and also (IMPORTANT!) enable flakes
-<!-- - [ ] Clone repo, create `.env` file with `PASSKEY` and build project (`nix build`)-->
-- [ ] Clone repo, create `.PASSKEY.txt` file and build project (`nix build`)
-- [ ] Run `./result/bin/app` and deploy to NGrok
-- [ ] In Namecheap/Cloudflare map subdomain (winter91) to NGrok URL
-
+- [ ] Add neumorphism to buttons
 
 - [ ] Add Rive animations?
 

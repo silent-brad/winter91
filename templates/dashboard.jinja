@@ -39,11 +39,8 @@
 			<h2>Your Progress</h2>
 			<h3 style="font-size: 2rem; color: var(--color-primary);">{{current_total.get()}}</h3>
 			<p style="margin: 0;">out of 91 miles</p>
-			{% let progress_percent = (current_total.get().float / 91.0 * 91.0).min(91.0) %}
-			{% let width = "300px" %}
-			<div class="progress-bar" style="background-color: var(--color-border-light); border-radius: 6px; height: 8px; overflow: hidden; width: {{width}};">
-				<div class="progress-fill" style="background-color: var(--color-primary); height: 100%; width: {{progress_percent}}%; transition: width 0.3s ease; border-radius: 6px;"></div>
-			</div>
+			{% let progress_percent = (current_total.get().float / 91.0 * 100.0).min(100.0) %}
+      {% importnimja "partials/_progress_bar.jinja" %}
 			<small style="color: var(--color-text-muted); margin-top: 0.5rem; display: block;">
 				{{progress_percent.int}}% complete
 			</small>
@@ -58,12 +55,12 @@
 				<label for="miles">
 					Miles
 					<input 
-						type="number" 
-						id="miles" 
-						name="miles" 
-						step="0.1" 
-						min="0.1" 
-						max="50" 
+						type="number"
+						id="miles"
+						name="miles"
+						step="0.1"
+						min="0.1"
+						max="50"
 						placeholder="Enter miles walked/run"
 						{% if miles.isSome() %}value="{{miles.get()}}"{% endif %}
 						required

@@ -1,32 +1,4 @@
 :root {
-  /*--primary-color: #228B22;
-  --secondary-color: #87CEEB;
-  --accent-color: #FF6B35;
-  --neutral-color: #696969;
-  --warning-color: #FFD700;
-  --error-color: #FF0000;
-  --success-color: #00FF00;*/
-  /* Silent Valley */
-/*~Lavender Grey
-#8693ab
-Muted, elegant blend of purple and grey, gently infusing subtle sophistication and creative intrigue.
-~Pale Sky
-#bdd4e7
-Soft as early morning mist, this gentle blue creates a refreshing and airy sense of peace for tranquil settings.
-~Shadow Grey
-#212227
-Misty, shadow-laden dark blends evoke twilight tranquility and silent sophistication, perfect for subtle and evocative themes.
-~Dim Grey
-#637074
-A powerful shade embodying resilience and understated elegance, suitable for grounded, enduring visual themes.
-~Powder Blue
-#aab9cf
-*/
-  /*--primary-color: #8693ab;
-  --secondary-color: #bdd4e7;
-  --accent-color: #212227;
-  --neutral-color: #637074;*/
-
   /*Pastel Dreams*/
   /*~Wisteria Blue
 #809bce
@@ -50,7 +22,7 @@ Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness
 
   --warning-color: #FFD700;
   --error-color: #FF0000;
-  --success-color: #00FF00;
+  --success-color: #d6eadf;
 
 
   /* Base colors for the application */
@@ -183,7 +155,7 @@ Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness
     --color-surface: var(--neutral-oklch-800);
     --color-surface-variant: var(--neutral-oklch-700);
     --color-text: var(--neutral-oklch-100);
-    --color-text-secondary: var(--neutral-oklch-300);
+    --color-text-secondary: var(--secondary-oklch-300);
     --color-text-muted: var(--neutral-oklch-500);
     --color-border: var(--neutral-oklch-600);
     --color-border-light: var(--neutral-oklch-700);
@@ -197,8 +169,8 @@ Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness
     /* Button colors for dark mode */
     --color-button-primary: var(--color-primary);
     --color-button-primary-hover: var(--color-primary-hover);
-    --color-button-secondary: var(--neutral-oklch-700);
-    --color-button-secondary-hover: var(--neutral-oklch-600);
+    --color-button-secondary: var(--secondary-oklch-700);
+    --color-button-secondary-hover: var(--secondary-oklch-600);
     --color-button-text: var(--neutral-oklch-100);
     --color-button-text-secondary: var(--color-text);
 
@@ -220,7 +192,7 @@ Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness
   --color-surface: var(--color-neutral-800);
   --color-surface-variant: var(--color-neutral-700);
   --color-text: var(--color-neutral-100);
-  --color-text-secondary: var(--color-neutral-300);
+  --color-text-secondary: var(--color-secondary-300);
   --color-text-muted: var(--color-neutral-500);
   --color-border: var(--color-neutral-600);
   --color-border-light: var(--color-neutral-700);
@@ -233,8 +205,8 @@ Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness
 
   --color-button-primary: var(--color-primary);
   --color-button-primary-hover: var(--color-primary-hover);
-  --color-button-secondary: var(--color-neutral-700);
-  --color-button-secondary-hover: var(--color-neutral-600);
+  --color-button-secondary: var(--color-secondary-700);
+  --color-button-secondary-hover: var(--color-secondary-600);
   --color-button-text: var(--color-neutral-100);
   --color-button-text-secondary: var(--color-text);
 
