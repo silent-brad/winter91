@@ -35,8 +35,8 @@
 - [x] Write About page
 - [x] Write Landing page (add image of snowy mountain trail)
 
-- [ ] Redo logo
-- [ ] Make PWA
+- [x] Redo logo
+- [x] Make PWA
 - [ ] Deploy
 
 
