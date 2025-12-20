@@ -22,7 +22,7 @@
 - [x] Add custom color scheme/css
 - [x] Remove Charm font
 
-- [?] Fix graph in dashboard to work correctly
+- [x] Fix graph in dashboard to work correctly
 - [x] Make log miles and miles progress not display next to each other in small view widths
 
 - [x] In post_feed, make dates display correctly
@@ -32,11 +32,11 @@
 - [x] Edit style of WYSIWYG editor
 - [x] Make blockquotes escape after 2 enters
 
-- [?] Write About page
+- [x] Write About page
 - [x] Write Landing page (add image of snowy mountain trail)
 
-- [ ] Make PWA
 - [ ] Redo logo
+- [ ] Make PWA
 - [ ] Deploy
 
 

@@ -175,9 +175,9 @@ function loadDashboardData() {
 	fetch('/api/user-miles-data')
 		.then(response => response.json())
 		.then(data => {
-			// Update chart
-			milesChart.data.labels = data.dates;
-			milesChart.data.datasets[0].data = data.miles;
+			// Update chart - reverse arrays so newest data appears on the right
+      milesChart.data.labels = data.dates.reverse();
+      milesChart.data.datasets[0].data = data.miles.reverse();
 			milesChart.update();
 			
 			// Update daily miles list
