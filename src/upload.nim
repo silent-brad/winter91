@@ -35,7 +35,10 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
     # Use imagemagick to convert to webp, resize and crop to 400x400 square
     var result = exec_cmd(&"magick \"{temp_filepath}\" \"{webp_filepath}\"")
     if result == 0:
-      result = exec_cmd(&"magick mogrify -resize 400x400^ -gravity center -extent 400x400 \"{webp_filepath}\"")
+      if directory == "avatars":
+        result = exec_cmd(&"magick mogrify -resize 400x400^ -gravity center -extent 400x400 \"{webp_filepath}\"")
+      else:
+        result = exec_cmd(&"magick mogrify -resize 600 \"{webp_filepath}\"")
     
     if result == 0 and file_exists(webp_filepath):
       # Remove temporary file only after successful conversion
