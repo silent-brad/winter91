@@ -614,8 +614,8 @@ hr {
 }
 
 .avatar-img {
-  border-radius: 50%;
-  background-size: cover;
+  border-radius: 50% !important;
+  background-size: cover !important;
   display: flex;
   align-items: center;
   justify-content: center;
