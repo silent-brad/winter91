@@ -1096,7 +1096,7 @@ border-radius: 0.375rem;
 }
 
 .avatar {
-  background-position: center center;
+  /*background-position: center center;*/
   border-radius: 50%;
   display: flex;
   align-items: center;
