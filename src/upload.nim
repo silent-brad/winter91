@@ -34,16 +34,21 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
     
     # Use imagemagick to convert to webp and resize to 400px
     var result = exec_cmd(&"magick \"{temp_filepath}\" \"{webp_filepath}\"")
-    result = exec_cmd(&"magick mogrify -resize 400 \"{webp_filepath}\"")
-    
-    # Remove temporary file
-    if file_exists(temp_filepath):
-      remove_file(temp_filepath)
+    if result == 0:
+      result = exec_cmd(&"magick mogrify -resize 400 \"{webp_filepath}\"")
     
     if result == 0 and file_exists(webp_filepath):
+      # Remove temporary file only after successful conversion
+      if file_exists(temp_filepath):
+        remove_file(temp_filepath)
       return webp_filename
     else:
       # Fallback: save original file if conversion fails
+      echo &"ImageMagick conversion failed (exit code: {result}), saving original file"
+      # Remove the temp file since we're keeping the original
+      if file_exists(temp_filepath):
+        remove_file(temp_filepath)
+      # Save original file with original extension
       let fallback_filename = &"{name_without_ext}.{original_ext}"
       let fallback_filepath = directory / fallback_filename
       write_file(fallback_filepath, file_data)

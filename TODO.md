@@ -26,8 +26,6 @@
 - [x] Make log miles and miles progress not display next to each other in small view widths
 
 - [x] In post_feed, make dates display correctly
-- [x] In walker account, in "/add-walker" page, it does not create a new walker.
-(Failed to load resource: the server responded with a status of 401 (Unauthorized))
 - [x] Add blockquotes to WYSIWYG editor
 - [x] Edit style of WYSIWYG editor
 - [x] Make blockquotes escape after 2 enters
@@ -35,9 +33,14 @@
 - [x] Write About page
 - [x] Write Landing page (add image of snowy mountain trail)
 
+- [ ] Image uploading does not work!
+- [ ] In walker account, in "/add-walker" page, it does not create a new walker.
+(Failed to load resource: the server responded with a status of 401 (Unauthorized))
+- [ ] On Mobile, avatar (meaning name text) in header hangs to this side
+
 - [x] Redo logo
 - [x] Make PWA
-- [ ] Deploy
+- [x] Deploy
 
 
 - [ ] Fix button hover text color
