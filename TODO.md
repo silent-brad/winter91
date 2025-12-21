@@ -45,7 +45,8 @@
 - [x] Deploy
 
 
-- [?] Dates are not right
+- [x] When logged in as user, then clicks on "/add-walker", clicking "create-walker-account" will not work (`/create-walker route not authorized`)
+- [x] Dates are not right
 - [x] Change error color
 - [x] Fix button hover text color
 - [x] Add neumorphism to buttons

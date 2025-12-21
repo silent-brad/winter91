@@ -89,9 +89,9 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Error creating account</div>"""
 
   of "/create-walker":
-    if session.is_none or not session.get().is_family_session:
+    if session.is_none:
       status = Http401
-      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">You must be logged into a family account to create walkers</div>"""
+      response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">You must be logged in to create walkers</div>"""
     else:
       let name = form_data.get_or_default("name", "").strip()
       
