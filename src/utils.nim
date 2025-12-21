@@ -1,5 +1,5 @@
 import strutils, uri, tables, os
-from times import DateTime, format, monthday
+from times import DateTime, format, monthday, initTime, hours, `-`
 
 proc parse_form_data*(body: string): Table[string, string] =
   result = init_table[string, string]()
@@ -184,10 +184,12 @@ proc is_safe_file_extension*(filename: string): bool =
   return ext in allowed_extensions
 
 proc format_date_with_ordinal*(dt: DateTime): string =
-  ## Format date like "9:02pm, Dec 12th, 2025"
+  ## Format date like "9:02pm, Dec 12th, 2025" with lowercase am/pm
   let day = dt.monthday()
   let suffix = if day mod 10 == 1 and day != 11: "st"
               elif day mod 10 == 2 and day != 12: "nd"
               elif day mod 10 == 3 and day != 13: "rd"
               else: "th"
-  return dt.format("h:mmtt, MMM ") & $day & suffix & dt.format(", yyyy")
+  let adjusted_dt = dt - hours(5)
+  var time_part = adjusted_dt.format("h:mmtt, MMM ").to_lower()
+  return time_part & $day & suffix & dt.format(", yyyy")

@@ -13,7 +13,8 @@
 - [checksums: Hash algorithms](https://github.com/nim-lang/checksums)
 - [db_connector: Unified db connector in Nim](https://github.com/nim-lang/db_connector)
 - [Nimja: typed and compiled template engine inspired by jinja2, twig and onionhammer/nim-templates.](https://github.com/enthus1ast/nimja)
+<!-- - [libvips-nim: Nim bindings for Libvips ⚡️ A fast image processing library with low memory needs](https://github.com/openpeeps/libvips-nim)-->
 
 ## Serverless Provider
-- [ngrok](https://ngrok.com/)
-- My old laptop running [NixOS](https://nixos.org)
+- [Cloudflare Tunnels](https://cloudflare.com/products/tunnel)
+- My Homelab running [NixOS](https://nixos.org)

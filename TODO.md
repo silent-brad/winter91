@@ -36,7 +36,6 @@
 - [?] Image uploading does not work!
 - [x] In walker account, in "/add-walker" page, it does not create a new walker.
 - [x] On Mobile, avatar (meaning name text) in header hangs to this side
-- [x] Change error color
 - [x] Make avatars uploaded square sized
 
 - [?] Make it so that image serving requires session?
@@ -46,11 +45,14 @@
 - [x] Deploy
 
 
-- [ ] Fix button hover text color
+- [?] Dates are not right
+- [x] Change error color
+- [x] Fix button hover text color
+- [x] Add neumorphism to buttons
+
 - [ ] Add pagination to post feed
 
 
-- [ ] Add neumorphism to buttons
 
 - [ ] Add Rive animations?
 

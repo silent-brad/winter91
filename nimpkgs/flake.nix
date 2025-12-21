@@ -20,6 +20,11 @@
       #rev = "master";
       flake = false;
     };
+
+    #libvips = {
+    #  url = "github:openpeeps/libvips-nim";
+    #  flake = false;
+    #};
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:
@@ -43,8 +48,19 @@
               in ''
                 mkdir -p $out/pkgs/
                 # Detect if pkg is a folder or a single file
-                if [ -d ${value}/src/${name} ]; then
-                  # For folder
+                if [ -d ${value}/${name} ]; then
+                  mkdir -p $out/pkgs/${name}
+                  cp -r ${value}/${name}/* $out/pkgs/${name}
+                elif [ -d ${value}/src ] && [ -f ${value}/src/${name}.nim ]; then
+                  # Copy main module file
+                  cp ${value}/src/${name}.nim $out/pkgs/${name}.nim
+                  # Copy subdirectory if exists
+                  if [ -d ${value}/src/${name} ]; then
+                    mkdir -p $out/pkgs/${name}
+                    cp -r ${value}/src/${name}/* $out/pkgs/${name}/
+                  fi
+                elif [ -d ${value}/src/${name} ]; then
+                  # For folder only
                   mkdir -p $out/pkgs/${name}
                   cp -r ${value}/src/${name}/* $out/pkgs/${name}
                 else

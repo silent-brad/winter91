@@ -14,14 +14,16 @@ Barely-there turquoise shimmer conjures icy dawns, frosted lakes, and delicate s
 Delicate as morning mist on fresh grass, this pale green whispers of renewal, peace, and gentle optimism.
 ~Pastel Petal
 #eac4d5
-Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness and inviting innocence for all.*/
+Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness and inviting innocence for all.
+#D19494
+   #EBD5D5*/
   --primary-color: #809bce;
   --secondary-color: #b8e0d2;
   --accent-color: #95b8d1;
-  --neutral-color: #eac4d5 /*d6eadf*/;
+  --neutral-color: #EBD5D5;
 
-  --warning-color: #eac4d5;
-  --error-color: #d782ba;
+  --warning-color: #EBD5D5;
+  --error-color: #D19494;
   --success-color: #d6eadf;
 
 
@@ -39,8 +41,11 @@ Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness
   --primary-oklch-100: oklch(from var(--primary-color) 0.90 c h);
   --primary-oklch-200: oklch(from var(--primary-color) 0.80 c h);
   --primary-oklch-300: oklch(from var(--primary-color) 0.70 c h);
+  --primary-oklch-350: oklch(from var(--primary-color) 0.65 c h);
   --primary-oklch-400: oklch(from var(--primary-color) 0.60 c h);
+  --primary-oklch-450: oklch(from var(--primary-color) 0.55 c h);
   --primary-oklch-500: oklch(from var(--primary-color) 0.50 c h);
+  --primary-oklch-550: oklch(from var(--primary-color) 0.425 c h);
   --primary-oklch-600: oklch(from var(--primary-color) 0.45 c h);
   --primary-oklch-700: oklch(from var(--primary-color) 0.40 c h);
   --primary-oklch-800: oklch(from var(--primary-color) 0.30 c h);
@@ -70,8 +75,11 @@ Feather-light blend of blush and gentle lilac, sparkling with cheerful sweetness
 
   --neutral-oklch-50: oklch(from var(--neutral-color) 0.98 0 h);
   --neutral-oklch-100: oklch(from var(--neutral-color) 0.95 0 h);
+  --neutral-oklch-150: oklch(from var(--neutral-color) 0.925 0 h);
   --neutral-oklch-200: oklch(from var(--neutral-color) 0.90 0 h);
+  --neutral-oklch-250: oklch(from var(--neutral-color) 0.85 0 h);
   --neutral-oklch-300: oklch(from var(--neutral-color) 0.80 0 h);
+  --neutral-oklch-350: oklch(from var(--neutral-color) 0.75 0 h);
   --neutral-oklch-400: oklch(from var(--neutral-color) 0.70 0 h);
   --neutral-oklch-500: oklch(from var(--neutral-color) 0.60 0 h);
   --neutral-oklch-600: oklch(from var(--neutral-color) 0.50 0 h);

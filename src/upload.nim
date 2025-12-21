@@ -1,4 +1,4 @@
-import strutils, os, strformat, osproc
+import strutils, os, strformat
 from times import format, now
 
 proc save_uploaded_file*(file_data: string, filename: string, directory: string = "pictures"): string =
@@ -32,22 +32,32 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
     let webp_filename = &"{name_without_ext}.webp"
     let webp_filepath = directory / webp_filename
     
-    # Use imagemagick to convert to webp, resize and crop to 400x400 square
-    var result = exec_cmd(&"magick \"{temp_filepath}\" \"{webp_filepath}\"")
-    if result == 0:
+    # Use ImageMagick to convert to webp and resize
+    try:
+      var magick_cmd: string
+      
+      # Build ImageMagick command based on directory
       if directory == "avatars":
-        result = exec_cmd(&"magick mogrify -resize 400x400^ -gravity center -extent 400x400 \"{webp_filepath}\"")
+        # Resize to 400x400 square for avatars
+        magick_cmd = &"convert \"{temp_filepath}\" -resize 400x400^ -gravity center -crop 400x400+0+0 +repage \"{webp_filepath}\""
       else:
-        result = exec_cmd(&"magick mogrify -resize 600 \"{webp_filepath}\"")
-    
-    if result == 0 and file_exists(webp_filepath):
-      # Remove temporary file only after successful conversion
-      if file_exists(temp_filepath):
-        remove_file(temp_filepath)
-      return webp_filename
-    else:
+        # Resize to max width 600 for other images, maintain aspect ratio
+        magick_cmd = &"convert \"{temp_filepath}\" -resize 600x600\\> \"{webp_filepath}\""
+      
+      # Execute ImageMagick command
+      let result = execShellCmd(magick_cmd)
+      
+      if result == 0 and file_exists(webp_filepath):
+        # Remove temporary file after successful conversion
+        if file_exists(temp_filepath):
+          remove_file(temp_filepath)
+        return webp_filename
+      else:
+        raise newException(IOError, "ImageMagick conversion failed")
+        
+    except Exception as e:
       # Fallback: save original file if conversion fails
-      echo &"ImageMagick conversion failed (exit code: {result}), saving original file"
+      echo &"Image conversion failed: {e.msg}, saving original file"
       # Remove the temp file since we're keeping the original
       if file_exists(temp_filepath):
         remove_file(temp_filepath)

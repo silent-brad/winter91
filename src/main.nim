@@ -58,5 +58,8 @@ proc main() {.async.} =
   await server.serve(Port(port), handle_request)
 
 when is_main_module:
-  async_check main()
-  run_forever()
+  try:
+    async_check main()
+    run_forever()
+  finally:
+    discard

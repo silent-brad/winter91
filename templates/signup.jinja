@@ -39,6 +39,8 @@
       <small>You need a valid invitation code to join.</small>
     </label>
     
+    <br/>
+
     <label for="family-email">
       Email
       <input
@@ -61,15 +63,17 @@
           minlength="8"
           required
         />
-        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('family-password')">
+        <div class="password-toggle" onclick="togglePasswordVisibility('family-password')">
           <span class="toggle-icon">
             <svg width="0.8em" height="0.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-closed-icon lucide-eye-closed"><path d="m15 18-.722-3.25"/><path d="M2 8a10.645 10.645 0 0 0 20 0"/><path d="m20 15-1.726-2.05"/><path d="m4 15 1.726-2.05"/><path d="m9 18 .722-3.25"/></svg>
           </span>
-        </button>
+        </div>
       </div>
       <small>Password must be at least 8 characters long.</small>
     </label>
     
+    <br/>
+
     <label for="family-confirm_password">
       Confirm Password
       <div class="password-field">
@@ -81,11 +85,11 @@
           minlength="8"
           required
         />
-        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('family-confirm_password')">
+        <div class="password-toggle" onclick="togglePasswordVisibility('family-confirm_password')">
           <span class="toggle-icon">
             <svg width="0.8em" height="0.8em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-closed-icon lucide-eye-closed"><path d="m15 18-.722-3.25"/><path d="M2 8a10.645 10.645 0 0 0 20 0"/><path d="m20 15-1.726-2.05"/><path d="m4 15 1.726-2.05"/><path d="m9 18 .722-3.25"/></svg>
           </span>
-        </button>
+        </div>
       </div>
     </label>
     
