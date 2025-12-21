@@ -84,7 +84,8 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           ("HX-Redirect", "/add-walker?success=signup")
         ])
         response_body = """<div class="success" style="background-color: var(--success-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Account created successfully!</div>"""
-      except:
+      except Exception as e:
+        echo "Error creating account: ", e.msg
         response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Error creating account</div>"""
 
   of "/create-walker":
