@@ -33,7 +33,7 @@
 - [x] Write About page
 - [x] Write Landing page (add image of snowy mountain trail)
 
-- [?] Image uploading does not work!
+- [x] Image uploading does not work!
 - [x] In walker account, in "/add-walker" page, it does not create a new walker.
 - [x] On Mobile, avatar (meaning name text) in header hangs to this side
 - [x] Make avatars uploaded square sized

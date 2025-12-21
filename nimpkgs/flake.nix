@@ -20,11 +20,6 @@
       #rev = "master";
       flake = false;
     };
-
-    #libvips = {
-    #  url = "github:openpeeps/libvips-nim";
-    #  flake = false;
-    #};
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:

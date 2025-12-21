@@ -39,8 +39,10 @@
             cd src && ${pkgs.nim-2_0}/bin/nim c -d:release -d:ssl --mm:none --path:../packages -o:$out/bin/app main.nim
           '';
 
-          # Make imagemagick available at runtime and set the data directory
-          makeWrapperArgs = [ "--prefix" "PATH" ":" "${pkgs.imagemagick}/bin" ];
+          postInstall = ''
+            wrapProgram $out/bin/app \
+              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.imagemagick ]}
+          '';
         };
 
         devShells.default = pkgs.mkShell {
