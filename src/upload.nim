@@ -42,10 +42,10 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
         magick_cmd = &"magick \"{temp_filepath}\" -resize 400x400^ -gravity center -crop 400x400+0+0 +repage \"{webp_filepath}\""
       else:
         # Resize to max width 600 for other images, maintain aspect ratio
-        magick_cmd = &"magick \"{temp_filepath}\" -resize 600x600\\> \"{webp_filepath}\""
+        magick_cmd = &"magick \"{temp_filepath}\" -resize 600 \"{webp_filepath}\""
       
       # Execute ImageMagick command
-      let result = execShellCmd(magick_cmd)
+      let result = exec_shell_cmd(magick_cmd)
       
       if result == 0 and file_exists(webp_filepath):
         # Remove temporary file after successful conversion
@@ -53,7 +53,7 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
           remove_file(temp_filepath)
         return webp_filename
       else:
-        raise newException(IOError, "ImageMagick conversion failed")
+        raise new_exception(IOError, "ImageMagick conversion failed")
         
     except Exception as e:
       # Fallback: save original file if conversion fails

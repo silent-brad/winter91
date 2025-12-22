@@ -51,6 +51,7 @@
 - [x] Fix button hover text color
 - [x] Add neumorphism to buttons
 
+- [ ] On /posts page, add alt text to images
 - [ ] Add pagination to post feed
 
 
