@@ -39,10 +39,10 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
       # Build ImageMagick command based on directory
       if directory == "avatars":
         # Resize to 400x400 square for avatars
-        magick_cmd = &"magick \"{temp_filepath}\" -resize 400x400^ -gravity center -crop 400x400+0+0 +repage \"{webp_filepath}\""
+        magick_cmd = &"magick \"{temp_filepath}\" -auto-orient -resize 400x400^ -gravity center -crop 400x400+0+0 +repage \"{webp_filepath}\""
       else:
         # Resize to max width 600 for other images, maintain aspect ratio
-        magick_cmd = &"magick \"{temp_filepath}\" -resize 600 \"{webp_filepath}\""
+        magick_cmd = &"magick \"{temp_filepath}\" -auto-orient -resize 600 \"{webp_filepath}\""
       
       # Execute ImageMagick command
       let result = exec_shell_cmd(magick_cmd)
