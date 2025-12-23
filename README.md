@@ -1,4 +1,6 @@
-# <img src="./static/images/logo.png" alt="Winter91 Logo" style="height:5rem;width:5rem;" /> Winter 91 Challenge
+# <img src="./static/images/logo.png" alt="Winter91 Logo" height="2rem" width="2rem" /> Winter 91 Challenge
+
+Color scheme: <https://coolors.co/809bce-95b8d1-b8e0d2-d6eadf-d19494-ebd5d5>
 
 Made with:
 <code><img width="30" height="30" src="https://api.iconify.design/devicon:nim.svg"></code>&nbsp;

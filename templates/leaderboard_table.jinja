@@ -12,20 +12,20 @@
 			{% for (rank, user_stat) in user_stats.pairs() %}
         {% let walker = user_stat.walker %}
 				<tr>
-					<td>{{rank + 1}}</td>
+					<td class="numbers">{{rank + 1}}</td>
 					<td>
             {% let id = walker.id %}
             {% let name = walker.name %}
             {% importnimja "partials/_walker_avatar.jinja" %}
 					</td>
-					<td><strong>{{user_stat.total_miles}}</strong></td>
+					<td><strong class="numbers">{{user_stat.total_miles}}</strong></td>
 					<td>
 						<div style="display: flex; align-items: center; gap: 0.5rem;">
 							{% let progress_percent = (user_stat.total_miles.float / 91.0 * 100.0).min(100.0) %}
               <div style="width: 1rem;">
                 {% importnimja "partials/_progress_bar.jinja" %}
               </div>
-							<small>{{progress_percent.int}}%</small>
+							<small class="numbers">{{progress_percent.int}}%</small>
 						</div>
 					</td>
 				</tr>

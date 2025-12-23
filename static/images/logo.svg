@@ -7,9 +7,17 @@
       }
     </style>
 
-    <g id="branch" fill="#809bce" stroke="#809bce">
+    <linearGradient id="grad" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#D6EADF" />
+      <stop offset="10%" stop-color="#B8E0D2" />
+      <stop offset="45%" stop-color="#95B8D1" />
+      <stop offset="100%" stop-color="#809BCE" />
+    </linearGradient>
+
+    <g id="branch" stroke="url(#grad)">
       <path
         d="
+          M 0 0 L 20 -34
           M 0 0 L 0 -90
           M 0 -20 L 20 -34
           M 0 -20 L -20 -34
@@ -19,9 +27,6 @@
           M 0 -60 L -20 -74"
         stroke-width="10"
         stroke-linecap="round"
-      />
-      <polygon
-        points="0,0 0,-20 20,-34 0,20"
       />
     </g>
   </defs>

@@ -37,11 +37,11 @@
 	{% if current_total.is_some() %}
 		<div style="margin-bottom: 2rem; text-align: center; padding: 1.5rem; background-color: var(--color-surface); border-radius: 0.375rem;">
 			<h2>Your Progress</h2>
-			<h3 style="font-size: 2rem; color: var(--color-primary);">{{current_total.get()}}</h3>
-			<p style="margin: 0;">out of 91 miles</p>
+			<h3 class="numbers" style="font-size: 2rem; color: var(--color-primary);">{{current_total.get()}}</h3>
+			<p class="numbers" style="margin: 0;">out of 91 miles</p>
 			{% let progress_percent = (current_total.get().float / 91.0 * 100.0).min(100.0) %}
       {% importnimja "partials/_progress_bar.jinja" %}
-			<small style="color: var(--color-text-muted); margin-top: 0.5rem; display: block;">
+			<small class="numbers" style="color: var(--color-text-muted); margin-top: 0.5rem; display: block;">
 				{{progress_percent.int}}% complete
 			</small>
 		</div>
@@ -56,6 +56,7 @@
 					Miles
 					<input
 						type="number"
+            class="numbers"
 						id="miles"
 						name="miles"
 						step="0.1"
@@ -89,7 +90,7 @@
 	<!-- Daily Miles List -->
 	<div style="background-color: var(--color-surface); padding: 1.5rem; border-radius: 0.375rem;">
 		<h3>Recent Activity</h3>
-		<div id="daily-miles-list">
+		<div id="daily-miles-list" class="numbers">
 			<p>Loading daily miles...</p>
 		</div>
 	</div>

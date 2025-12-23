@@ -5,7 +5,7 @@
         {% let id = post.walker_id %}
         {% let name = post.name %}
         {% importnimja "partials/_walker_avatar.jinja" %}
-				<small style="color: var(--color-text-muted); margin-left: 0.5rem;">{{post.created_at.format_date_with_ordinal()}}</small>
+				<small class="numbers" style="color: var(--color-text-muted); margin-left: 0.5rem;">{{post.created_at.format_date_with_ordinal()}}</small>
 			</div>
 			
 			<div style="margin-bottom: 0.5rem;">{{post.text_content}}</div>

@@ -191,5 +191,5 @@ proc format_date_with_ordinal*(dt: DateTime): string =
               elif day mod 10 == 3 and day != 13: "rd"
               else: "th"
   let adjusted_dt = dt - hours(5)
-  var time_part = adjusted_dt.format("h:mmtt, MMM ").to_lower()
+  var time_part = adjusted_dt.format("h:mmtt, MMM ")
   return time_part & $day & suffix & dt.format(", yyyy")
