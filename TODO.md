@@ -38,8 +38,6 @@
 - [x] On Mobile, avatar (meaning name text) in header hangs to this side
 - [x] Make avatars uploaded square sized
 
-- [?] Make it so that image serving requires session?
-
 - [x] Redo logo
 - [x] Make PWA
 - [x] Deploy
@@ -53,6 +51,8 @@
 
 - [ ] On /posts page, add alt text to images
 - [ ] Add pagination to post feed
+- [ ] Add delete button to walker settings
+- [ ] Add delete/edit button to post feed
 
 
 

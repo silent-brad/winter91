@@ -18,6 +18,7 @@ proc init_database*(): DbConn =
       family_id INTEGER NOT NULL,
       name TEXT NOT NULL,
       has_custom_avatar BOOLEAN DEFAULT FALSE,
+      avatar_filename TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (family_id) REFERENCES family (id)
     )

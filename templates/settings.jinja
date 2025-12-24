@@ -43,8 +43,8 @@
 			<div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 1rem 0;">
 				{% if walker.is_some() %}
           {% let walker = walker.get() %}
-          {% let id = walker.id %}
           {% let name = walker.name %}
+          {% let avatar_filename = walker.avatar_filename %}
           {% importnimja "partials/_walker_avatar.jinja" %}
 				{% endif %}
 			</div>

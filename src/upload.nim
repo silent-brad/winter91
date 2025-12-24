@@ -1,5 +1,13 @@
-import strutils, os, strformat
+import strutils, os, strformat, random
 from times import format, now
+
+proc generate_random_filename*(extension: string = "webp"): string =
+  # Generate random filename with letters, numbers, hyphens, and underscores
+  let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+  var result = ""
+  for i in 0..<16:  # Generate 16 character filename
+    result.add(chars[rand(chars.len - 1)])
+  return result & "." & extension
 
 proc save_uploaded_file*(file_data: string, filename: string, directory: string = "pictures"): string =
   # Save uploaded file data to disk and return the filename
@@ -9,8 +17,8 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
   # Extract extension from original filename
   let original_ext = if filename.contains("."): filename.split(".")[^1].to_lower_ascii() else: "jpg"
   
-  # Generate unique filename (remove extension from filename first)
-  let name_without_ext = if filename.contains("."): filename.split(".")[0..^2].join(".") else: filename
+  # Generate random filename
+  let random_filename = generate_random_filename("webp")
   
   # Ensure directory exists
   if not dir_exists(directory):
@@ -18,19 +26,17 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
   
   # Check if file is already webp
   if original_ext == "webp":
-    let unique_filename = &"{name_without_ext}.webp"
-    let filepath = directory / unique_filename
+    let filepath = directory / random_filename
     write_file(filepath, file_data)
-    return unique_filename
+    return random_filename
   else:
-    # Save original file temporarily
-    let temp_filename = &"{name_without_ext}.{original_ext}"
+    # Save original file temporarily with random name
+    let temp_filename = generate_random_filename(original_ext)
     let temp_filepath = directory / temp_filename
     write_file(temp_filepath, file_data)
     
-    # Convert to webp
-    let webp_filename = &"{name_without_ext}.webp"
-    let webp_filepath = directory / webp_filename
+    # Convert to webp with random filename
+    let webp_filepath = directory / random_filename
     
     # Use ImageMagick to convert to webp and resize
     try:
@@ -51,7 +57,7 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
         # Remove temporary file after successful conversion
         if file_exists(temp_filepath):
           remove_file(temp_filepath)
-        return webp_filename
+        return random_filename
       else:
         raise new_exception(IOError, "ImageMagick conversion failed")
         
@@ -61,8 +67,8 @@ proc save_uploaded_file*(file_data: string, filename: string, directory: string 
       # Remove the temp file since we're keeping the original
       if file_exists(temp_filepath):
         remove_file(temp_filepath)
-      # Save original file with original extension
-      let fallback_filename = &"{name_without_ext}.{original_ext}"
+      # Save original file with original extension but random name
+      let fallback_filename = generate_random_filename(original_ext)
       let fallback_filepath = directory / fallback_filename
       write_file(fallback_filepath, file_data)
       return fallback_filename

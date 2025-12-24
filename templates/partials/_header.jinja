@@ -72,11 +72,11 @@
     {% if session.is_some() and not session.get().is_family_session %}
     <div class="avatar-dropdown">
       <div class="avatar">
-        {% let id = session.get().walker_id %}
         {% let name = session.get().name %}
+        {% let avatar_filename = session.get().avatar_filename %}
         <img
           width="40px" height="40px" class="avatar-img"
-          src="/avatars/{{ id }}_{{ name.replace(" ", "_") }}.webp"
+          src="/avatars/{{ avatar_filename }}"
           alt="{{ name }} Avatar"
         />
       </div>

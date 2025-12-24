@@ -11,6 +11,7 @@ type
     id*: int64
     family_id*: int64
     name*: string
+    avatar_filename*: string
     has_custom_avatar*: bool
     created_at*: DateTime
 

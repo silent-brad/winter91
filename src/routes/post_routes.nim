@@ -101,7 +101,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
         response_body = """<div class="error" style="background-color: var(--error-oklch-500); color: var(--neutral-oklch-50); padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">Invalid name format</div>"""
       else:
         try:
-          let walker_id = create_walker_account(db_conn, session.get().family_id, name)
+          let (walker_id, avatar_filename) = create_walker_account(db_conn, session.get().family_id, name)
           
           # Switch to the new walker
           let new_session = Session(
@@ -109,6 +109,7 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             walker_id: walker_id,
             email: session.get().email,
             name: name,
+            avatar_filename: avatar_filename,
             is_family_session: false
           )
           

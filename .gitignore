@@ -30,3 +30,5 @@ winter91.db
 !templates/**
 !static/
 !static/**
+
+!*.sql

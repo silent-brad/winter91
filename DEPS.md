@@ -14,6 +14,6 @@
 - [db_connector: Unified db connector in Nim](https://github.com/nim-lang/db_connector)
 - [Nimja: typed and compiled template engine inspired by jinja2, twig and onionhammer/nim-templates.](https://github.com/enthus1ast/nimja)
 
-## Serverless Provider
+## Server Provider
 - [Cloudflare Tunnels](https://cloudflare.com/products/tunnel)
 - My Homelab running [NixOS](https://nixos.org)

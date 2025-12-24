@@ -26,8 +26,8 @@
       {% if walkers.len > 0 %}
       {% for walker in walkers %}
       <a href="/switch-walker/{{ walker.id }}" class="walker-card">
-        {% let id = walker.id %}
         {% let name = walker.name %}
+        {% let avatar_filename = walker.avatar_filename %}
         {% importnimja "partials/_walker_avatar.jinja" %}
         <div style="font-size: 1.5rem; opacity: 0.5;">→</div>
       </a>

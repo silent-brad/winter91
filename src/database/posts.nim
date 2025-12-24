@@ -9,7 +9,7 @@ proc create_post*(db: DbConn, walker_id: int64, text_content: string, image_file
 
 proc get_all_posts*(db: DbConn): seq[Post] =
   let rows = db.get_all_rows(sql"""
-    SELECT p.id, p.walker_id, u.name, p.text_content, p.image_filename, p.created_at
+    SELECT p.id, p.walker_id, u.name, u.avatar_filename, p.text_content, p.image_filename, p.created_at
     FROM post p
     JOIN walker u ON p.walker_id = u.id
     ORDER BY p.created_at DESC
@@ -21,9 +21,10 @@ proc get_all_posts*(db: DbConn): seq[Post] =
       id: parse_biggest_int(row[0]),
       walker_id: parse_biggest_int(row[1]),
       name: row[2],
-      text_content: row[3],
-      image_filename: row[4],
-      created_at: parse(row[5], "yyyy-MM-dd HH:mm:ss")
+      avatar_filename: row[3],
+      text_content: row[4],
+      image_filename: row[5],
+      created_at: parse(row[6], "yyyy-MM-dd HH:mm:ss")
     ))
   
   return posts

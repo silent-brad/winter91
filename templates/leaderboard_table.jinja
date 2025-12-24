@@ -14,8 +14,8 @@
 				<tr>
 					<td class="numbers">{{rank + 1}}</td>
 					<td>
-            {% let id = walker.id %}
             {% let name = walker.name %}
+            {% let avatar_filename = walker.avatar_filename %}
             {% importnimja "partials/_walker_avatar.jinja" %}
 					</td>
 					<td><strong class="numbers">{{user_stat.total_miles}}</strong></td>

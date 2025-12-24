@@ -158,29 +158,20 @@ proc validate_email*(email: string): bool =
       return false
   return true
 
-proc validate_color*(color: string): bool =
-  ## Validate hex color format
-  if color.len != 7 or color[0] != '#':
-    return false
-  for i in 1..6:
-    if not (color[i].isDigit() or color[i] in "abcdefABCDEF"):
-      return false
-  return true
-
 proc validate_name*(name: string): bool =
   ## Validate name to prevent injection
   if name.len == 0 or name.len > 100:
     return false
   # Allow only letters, numbers, spaces, hyphens, apostrophes
   for c in name:
-    if not (c.isAlphaNumeric() or c in " -'"):
+    if not (c.is_alpha_numeric() or c in " -'"):
       return false
   return true
 
 proc is_safe_file_extension*(filename: string): bool =
   ## Check if file extension is safe for upload
   let allowed_extensions = @[".jpg", ".jpeg", ".png", ".gif", ".webp"]
-  let ext = filename.splitFile().ext.toLowerAscii()
+  let ext = filename.split_file().ext.to_lower_ascii()
   return ext in allowed_extensions
 
 proc format_date_with_ordinal*(dt: DateTime): string =

@@ -27,9 +27,9 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       var success_msg: Option[string] = none(string)
       if req.url.query.len > 0:
         if "success=signup" in req.url.query:
-          success_msg = some("Welcome to Winter 100!")
+          success_msg = some("Welcome to Winter91!")
         elif "success=login" in req.url.query:
-          success_msg = some("Welcome back to Winter 100!")
+          success_msg = some("Welcome back to Winter91!")
       response_body = render_leaderboard(session, success_msg)
 
   of "/dashboard":
@@ -102,6 +102,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
           name: walker.name,
           family_id: walker.family_id,
           has_custom_avatar: walker.has_custom_avatar,
+          avatar_filename: walker.avatar_filename,
           created_at: $walker.created_at
         )
         walkers.add(walker_info)
@@ -120,7 +121,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       let user_opt = get_walker_by_id(db_conn, session.get().walker_id)
       if user_opt.is_some:
         let walker = user_opt.get()
-        var user_info: Walker_Info = Walker_Info(id: walker.id, name: walker.name)
+        var user_info: Walker_Info = Walker_Info(id: walker.id, name: walker.name, avatar_filename: walker.avatar_filename)
         response_body = render_settings(some(user_info), session, none(string), none(string))
       else:
         status = Http302
@@ -136,7 +137,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
       for db_entry in leaderboard:
         var id: int64 = db_entry.walker.id
         var name: string = db_entry.walker.name
-        var walker: Walker_Info = Walker_Info(id: id, name: name)
+        var walker: Walker_Info = Walker_Info(id: id, name: name, avatar_filename: db_entry.walker.avatar_filename)
         var entry: Entry = Entry(
           walker: walker,
           total_miles: db_entry.total_miles,
@@ -208,6 +209,7 @@ proc handle_get_routes*(req: Request, session: Option[Session], db_conn: DbConn)
             walker_id: walker_id,
             email: session.get().email,
             name: walker_opt.get().name,
+            avatar_filename: walker_opt.get().avatar_filename,
             is_family_session: false
           )
           
