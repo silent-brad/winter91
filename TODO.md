@@ -51,7 +51,7 @@
 
 - [ ] On /posts page, add alt text to images
 - [ ] Add pagination to post feed
-- [ ] Add delete button to walker settings
+- [x] Add delete button to walker settings
 - [ ] Add delete/edit button to post feed
 
 

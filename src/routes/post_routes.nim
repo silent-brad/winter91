@@ -271,6 +271,23 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
             else:
               response_body = &"""<p style="color: red;">{error_msg}</p>"""
 
+  of "/delete-walker":
+    if session.is_none:
+      status = Http401
+      response_body = """<p style="color: red;">You must be logged in to delete your account</p>"""
+    else:
+      try:
+        delete_walker_account(db_conn, session.get().walker_id)
+        # Clear session and redirect to home
+        headers = new_http_headers([
+          ("Set-Cookie", "session_id=; HttpOnly; Path=/; Max-Age=0"),
+          ("HX-Redirect", "/?success=account-deleted")
+        ])
+        response_body = """<p style="color: green;">Account deleted successfully!</p>"""
+      except Exception as e:
+        echo "Error deleting walker: ", e.msg
+        response_body = """<p style="color: red;">Error deleting account</p>"""
+
   else:
     status = Http404
     response_body = "Endpoint not found"

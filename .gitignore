@@ -31,4 +31,5 @@ winter91.db
 !static/
 !static/**
 
-!*.sql
+!sql
+!sql/**.sql

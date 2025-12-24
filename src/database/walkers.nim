@@ -71,11 +71,32 @@ proc update_walker_avatar*(db: DbConn, walker_id: int64) =
   db.exec(sql"UPDATE walker SET has_custom_avatar = true WHERE id = ?", walker_id)
 
 proc delete_walker_account*(db: DbConn, walker_id: int64) =
+  # Get walker info before deletion to access file info
+  let walker_opt = get_walker_by_id(db, walker_id)
+  if walker_opt.is_some:
+    let walker = walker_opt.get()
+    
+    # Delete avatar file if it exists
+    let avatar_path = "avatars" / walker.avatar_filename
+    if file_exists(avatar_path):
+      try:
+        remove_file(avatar_path)
+      except:
+        discard
+    
+    # Get all posts by this walker to delete associated picture files
+    let post_rows = db.get_all_rows(sql"SELECT image_filename FROM post WHERE walker_id = ? AND image_filename IS NOT NULL AND image_filename != ''", walker_id)
+    for row in post_rows:
+      let picture_path = "pictures" / row[0]
+      if file_exists(picture_path):
+        try:
+          remove_file(picture_path)
+        except:
+          discard
+
   # Delete associated mile entries and posts first
   db.exec(sql"DELETE FROM mile_entry WHERE walker_id = ?", walker_id)
   db.exec(sql"DELETE FROM post WHERE walker_id = ?", walker_id)
 
-  # TODO: Remove avatar and picture files
-  
   # Delete the walker account
   db.exec(sql"DELETE FROM walker WHERE id = ?", walker_id)
