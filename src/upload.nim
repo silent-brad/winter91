@@ -1,16 +1,39 @@
 import strutils, os, strformat, random
-from times import format, now
+from times import format, now, getTime, toUnix
+import std/sha1
 
-# Initialize random seed once
-randomize()
+# Initialize random seed with high-precision time and process id for uniqueness
+randomize(get_time().to_unix() + get_current_process_id())
 
-proc generate_random_filename*(extension: string = "webp"): string =
-  # Generate random filename with letters, numbers, hyphens, and underscores
-  let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
-  var result = ""
-  for i in 0..<16:  # Generate 16 character filename
-    result.add(chars[rand(chars.len - 1)])
-  return result & "." & extension
+proc generate_random_filename*(extension: string = "webp", directory: string = ""): string =
+  # Generate cryptographically random filename using timestamp + process ID + random data + SHA1
+  let timestamp = $get_time().to_unix()
+  let process_id = $get_current_process_id()
+  
+  # Generate random bytes for additional entropy
+  var random_data = ""
+  for i in 0..<32:
+    random_data.add(char(rand(255)))
+  
+  # Combine timestamp, process ID, and random data, then hash
+  let combined = timestamp & process_id & random_data
+  let hash = $secure_hash(combined)
+  
+  # Take first 16 characters of hash for filename
+  let base_filename = hash[0..15] & "." & extension
+  
+  # Check for collision and regenerate if needed (extremely unlikely but safe)
+  if directory.len > 0:
+    var final_filename = base_filename
+    var counter = 0
+    while file_exists(directory / final_filename) and counter < 1000:
+      # Add counter to hash if collision detected
+      let new_hash = $secure_hash(combined & $counter)
+      final_filename = new_hash[0..15] & "." & extension
+      inc(counter)
+    return final_filename
+  
+  return base_filename
 
 proc save_uploaded_file*(file_data: string, original_ext: string, directory: string = "pictures"): string =
   # Save uploaded file data to disk and return the filename
@@ -18,7 +41,7 @@ proc save_uploaded_file*(file_data: string, original_ext: string, directory: str
     return ""
   
   # Generate random filename
-  let random_filename = generate_random_filename("webp")
+  let random_filename = generate_random_filename("webp", directory)
   
   # Ensure directory exists
   if not dir_exists(directory):
@@ -31,7 +54,7 @@ proc save_uploaded_file*(file_data: string, original_ext: string, directory: str
     return random_filename
   else:
     # Save original file temporarily with random name
-    let temp_filename = generate_random_filename(original_ext)
+    let temp_filename = generate_random_filename(original_ext, directory)
     let temp_filepath = directory / temp_filename
     write_file(temp_filepath, file_data)
     
@@ -68,7 +91,7 @@ proc save_uploaded_file*(file_data: string, original_ext: string, directory: str
       if file_exists(temp_filepath):
         remove_file(temp_filepath)
       # Save original file with original extension but random name
-      let fallback_filename = generate_random_filename(original_ext)
+      let fallback_filename = generate_random_filename(original_ext, directory)
       let fallback_filepath = directory / fallback_filename
       write_file(fallback_filepath, file_data)
       return fallback_filename
