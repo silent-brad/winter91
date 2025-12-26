@@ -234,18 +234,27 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
                   remove_file(upload_path)
                   # Update walker avatar flag in database
                   update_walker_avatar(db_conn, avatar_filename, session.get().walker_id)
-                  # Update session with new avatar
-                  let session_id = generate_session_id()
-                  {.cast(gcsafe).}:
-                    with_lock sessions_lock:
-                      sessions[session_id] = Session(
-                        family_id: session.get().family_id,
-                        walker_id: session.get().walker_id,
-                        email: session.get().email,
-                        name: session.get().name,
-                        avatar_filename: avatar_filename,
-                        is_family_session: false
-                      )
+                  # Update existing session with new avatar
+                  var current_session_id: string = ""
+                  if req.headers.has_key("Cookie"):
+                    let cookies = req.headers["Cookie"]
+                    for cookie in cookies.split(";"):
+                      let parts = cookie.strip().split("=")
+                      if parts.len == 2 and parts[0] == "session_id":
+                        current_session_id = parts[1]
+                        break
+                  
+                  if current_session_id != "":
+                    {.cast(gcsafe).}:
+                      with_lock sessions_lock:
+                        sessions[current_session_id] = Session(
+                          family_id: session.get().family_id,
+                          walker_id: session.get().walker_id,
+                          email: session.get().email,
+                          name: session.get().name,
+                          avatar_filename: avatar_filename,
+                          is_family_session: false
+                        )
                 except Exception as e:
                   echo "Error updating avatar: ", e.msg
                   success = false
