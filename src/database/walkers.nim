@@ -77,22 +77,24 @@ proc delete_walker_account*(db: DbConn, walker_id: int64) =
     let walker = walker_opt.get()
     
     # Delete avatar file if it exists
-    let avatar_path = "avatars" / walker.avatar_filename
-    if file_exists(avatar_path):
-      try:
-        remove_file(avatar_path)
-      except:
-        discard
+    if walker.avatar_filename.len > 0:
+      let avatar_path = "avatars" / walker.avatar_filename
+      if file_exists(avatar_path):
+        try:
+          remove_file(avatar_path)
+        except Exception as e:
+          echo "Warning: Failed to delete avatar file: ", avatar_path, " - ", e.msg
     
     # Get all posts by this walker to delete associated picture files
     let post_rows = db.get_all_rows(sql"SELECT image_filename FROM post WHERE walker_id = ? AND image_filename IS NOT NULL AND image_filename != ''", walker_id)
     for row in post_rows:
-      let picture_path = "pictures" / row[0]
-      if file_exists(picture_path):
-        try:
-          remove_file(picture_path)
-        except:
-          discard
+      if row[0].len > 0:
+        let picture_path = "pictures" / row[0]
+        if file_exists(picture_path):
+          try:
+            remove_file(picture_path)
+          except Exception as e:
+            echo "Warning: Failed to delete picture file: ", picture_path, " - ", e.msg
 
   # Delete associated mile entries and posts first
   db.exec(sql"DELETE FROM mile_entry WHERE walker_id = ?", walker_id)
