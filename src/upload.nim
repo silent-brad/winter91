@@ -9,13 +9,10 @@ proc generate_random_filename*(extension: string = "webp"): string =
     result.add(chars[rand(chars.len - 1)])
   return result & "." & extension
 
-proc save_uploaded_file*(file_data: string, filename: string, directory: string = "pictures"): string =
+proc save_uploaded_file*(file_data: string, original_ext: string, directory: string = "pictures"): string =
   # Save uploaded file data to disk and return the filename
   if file_data.len == 0:
     return ""
-  
-  # Extract extension from original filename
-  let original_ext = if filename.contains("."): filename.split(".")[^1].to_lower_ascii() else: "jpg"
   
   # Generate random filename
   let random_filename = generate_random_filename("webp")

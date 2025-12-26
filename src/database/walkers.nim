@@ -42,7 +42,7 @@ proc create_generic_avatar(name: string): string =
   var avatar_filename: string
   try:
     let avatar_data = client.get_content(avatar_url)
-    avatar_filename = avatar_data.save_uploaded_file("avatar.webp", "avatars")
+    avatar_filename = avatar_data.save_uploaded_file("webp", "avatars")
   finally:
     client.close()
   return avatar_filename
@@ -67,8 +67,8 @@ proc update_walker_name*(db: DbConn, walker_id: int64, name: string) =
       # Delete the old avatar file
       remove_file("avatars/" & old_avatar_filename)
 
-proc update_walker_avatar*(db: DbConn, walker_id: int64) =
-  db.exec(sql"UPDATE walker SET has_custom_avatar = true WHERE id = ?", walker_id)
+proc update_walker_avatar*(db: DbConn, avatar_filename: string, walker_id: int64) =
+  db.exec(sql"UPDATE walker SET has_custom_avatar = true, avatar_filename = ? WHERE id = ?", avatar_filename, walker_id)
 
 proc delete_walker_account*(db: DbConn, walker_id: int64) =
   # Get walker info before deletion to access file info

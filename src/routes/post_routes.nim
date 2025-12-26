@@ -164,7 +164,9 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
           let upload_path = "uploads" / orig_filename
           if file_exists(upload_path):
             let file_data = read_file(upload_path)
-            image_filename = save_uploaded_file(file_data, orig_filename, "pictures")
+            # Extract extension from original filename
+            let original_ext = if orig_filename.contains("."): orig_filename.split(".")[^1].to_lower_ascii() else: "jpg"
+            image_filename = save_uploaded_file(file_data, original_ext, "pictures")
             # Clean up the temporary file
             remove_file(upload_path)
         
@@ -226,15 +228,24 @@ proc handle_post_routes*(req: Request, session: Option[Session], db_conn: DbConn
                   let file_data = read_file(upload_path)
                   # Extract extension from original filename
                   let original_ext = if orig_filename.contains("."): orig_filename.split(".")[^1].to_lower_ascii() else: "jpg"
-                  # Generate walker-specific filename that can be overwritten
-                  let name_with_underscore = walker.name.replace(" ", "_")
-                  let walker_filename = $session.get().walker_id & "_" & name_with_underscore & "." & original_ext
                   # Save to avatars directory, allowing overwrite of existing file
-                  discard save_uploaded_file(file_data, walker_filename, "avatars")
+                  let avatar_filename = save_uploaded_file(file_data, original_ext, "avatars")
                   # Clean up the temporary file
                   remove_file(upload_path)
                   # Update walker avatar flag in database
-                  update_walker_avatar(db_conn, session.get().walker_id)
+                  update_walker_avatar(db_conn, avatar_filename, session.get().walker_id)
+                  # Update session with new avatar
+                  let session_id = generate_session_id()
+                  {.cast(gcsafe).}:
+                    with_lock sessions_lock:
+                      sessions[session_id] = Session(
+                        family_id: session.get().family_id,
+                        walker_id: session.get().walker_id,
+                        email: session.get().email,
+                        name: session.get().name,
+                        avatar_filename: avatar_filename,
+                        is_family_session: false
+                      )
                 except Exception as e:
                   echo "Error updating avatar: ", e.msg
                   success = false
