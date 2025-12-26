@@ -1,6 +1,9 @@
 import strutils, os, strformat, random
 from times import format, now
 
+# Initialize random seed once
+randomize()
+
 proc generate_random_filename*(extension: string = "webp"): string =
   # Generate random filename with letters, numbers, hyphens, and underscores
   let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
