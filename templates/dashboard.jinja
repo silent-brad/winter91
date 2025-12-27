@@ -118,26 +118,6 @@ function decrementMiles() {
 // Chart setup
 const ctx = document.getElementById('milesChart').getContext('2d');
 
-/*const data = {"dates": ["2025-11-25","2025-11-24"], "miles": [10.0,12.0], "entries": [{"date": "2025-11-25", "miles": 10.0},{"date": "2025-11-24", "miles": 2.0},{"date": "2025-11-24", "miles": 6.5},{"date": "2025-11-24", "miles": 3.5}]};
-
-new Chart(ctx, {
-  type: 'line',
-  data: {
-	labels: data.dates,
-	datasets: [{
-	  label: 'Daily Miles',
-	  data: data.miles, // Will be populated with miles data
-	  borderColor: 'rgb(59, 130, 246)',
-	  backgroundColor: 'rgba(59, 130, 246, 0.1)',
-	  //tension: 0.1,
-	  fill: true
-	}],
-  },
-  options: {
-	responsive: false,
-  },
-});*/
-
 const milesChart = new Chart(ctx, {
 	type: 'line',
 	data: {
@@ -176,9 +156,30 @@ function loadDashboardData() {
 	fetch('/api/user-miles-data')
 		.then(response => response.json())
 		.then(data => {
-			// Update chart - reverse arrays so newest data appears on the right
-      milesChart.data.labels = data.dates.reverse();
-      milesChart.data.datasets[0].data = data.miles.reverse();
+			// Fill missing days from Dec 21st to today with 0 miles
+			const startDate = new Date('2025-12-21');
+			const today = new Date();
+			const allDates = [];
+			const allMiles = [];
+			
+			// Create a map of existing data for quick lookup
+			const dataMap = new Map();
+			if (data.dates && data.miles) {
+				for (let i = 0; i < data.dates.length; i++) {
+					dataMap.set(data.dates[i], data.miles[i]);
+				}
+			}
+			
+			// Fill all days from Dec 21st to today
+			for (let d = new Date(startDate); d <= today; d.setDate(d.getDate() + 1)) {
+				const dateStr = d.toISOString().split('T')[0];
+				allDates.push(dateStr);
+				allMiles.push(dataMap.get(dateStr) || 0);
+			}
+			
+			// Update chart - dates are already in chronological order (past to present)
+      milesChart.data.labels = allDates;
+      milesChart.data.datasets[0].data = allMiles;
 			milesChart.update();
 			
 			// Update daily miles list
