@@ -33,3 +33,5 @@ winter91.db
 
 !sql
 !sql/**.sql
+
+!reset_password.sh
